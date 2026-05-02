@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ── Primary SEO ── -->
+  <title>Tokans — Verifiable Tokens of Human Contribution in the AI Era</title>
+  <meta name="description" content="Tokans.org is a contribution-based professional ecosystem where engineers, product managers, and builders earn verifiable proof of real work — not resumes. AI needs tokens. Humans need Tokans." />
+  <meta name="keywords" content="tokans, human contribution, ai era careers, verified professional skills, contribution based hiring, professional reputation, peer reviewed work, build tokans, work tokans, india hiring platform, ai displaced professionals" />
+  <meta name="author" content="Tokans.org" />
+  <link rel="canonical" href="https://tokans.org/" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- ── Open Graph / Social ── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tokans.org/" />
+  <meta property="og:title" content="Tokans — Verifiable Tokens of Human Contribution" />
+  <meta property="og:description" content="A pay-it-forward ecosystem for professionals navigating the AI era. Earn verifiable proof of what you've actually built, delivered, and taught — not what you claim." />
+  <meta property="og:image" content="https://tokans.org/og-image.png" />
+  <meta property="og:site_name" content="Tokans" />
+  <meta property="og:locale" content="en_IN" />
+
+  <!-- ── Twitter Card ── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@tokansorg" />
+  <meta name="twitter:title" content="Tokans — Verifiable Tokens of Human Contribution" />
+  <meta name="twitter:description" content="AI needs tokens. Humans need Tokans. A contribution-based professional ecosystem for the AI era." />
+  <meta name="twitter:image" content="https://tokans.org/og-image.png" />
+
+  <!-- ── GEO / AI Overview Optimization ── -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow" />
+
+  <!-- ── Structured Data: Organization ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Tokans",
+    "url": "https://tokans.org",
+    "logo": "https://tokans.org/logo.png",
+    "description": "Tokans is a pay-it-forward, contribution-based ecosystem for professionals navigating the AI era. Tokans are verifiable tokens of human contribution, earned through learning, building, mentoring, and real work.",
+    "foundingDate": "2026",
+    "areaServed": "IN",
+    "sameAs": ["https://twitter.com/tokansorg", "https://linkedin.com/company/tokans"]
+  }
+  </script>
+
+  <!-- ── Structured Data: WebSite + SearchAction ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Tokans",
+    "url": "https://tokans.org",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://tokans.org/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- ── Structured Data: FAQPage for GEO ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What are Tokans?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tokans are verifiable tokens of human contribution. They are earned through learning, building, mentoring, and real work — not bought, not transferred, and not gamified points. Each Tokan carries a verification weight based on how it was validated, from self-reported (0.3x) up to employer-verified (1.6x)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is Tokans different from LinkedIn?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LinkedIn shows what you say you've done. Tokans shows what you've actually proven recently. Unlike LinkedIn, Tokans profiles are built on peer-reviewed, platform-verified, and employer-verified contributions — not self-reported claims. Every score decays over time, keeping profiles honest and current."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who is Tokans designed for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tokans is designed for professionals navigating the AI era — including software engineers, product managers, designers, and others who may be AI-displaced; founders who have built products with AI tools and need verified technical help; employers who can no longer trust resumes in the age of AI-generated content; and mentors, angel investors, and mission backers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is Tokan Velocity?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tokan Velocity is the number of Tokans earned in the last 90 days. It is a key signal of active contribution and current engagement — distinguishing professionals who are actively building and contributing from those who earned Tokans in the past."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ── Fonts ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav id="navbar" aria-label="Main navigation">
+  <a href="/" class="nav-logo" aria-label="Tokans home">
+    <img src="logo.png" alt="Logo" class="u-style-1">Tok<span><i><u>ans</u></i></span>
+  </a>
+  <div class="nav-actions">
+    <a href="#how-it-works" class="nav-link">How it works</a>
+    <a href="#for-employers" class="nav-link">Employers</a>
+    <a href="#login" class="btn btn-outline" data-modal-target="login" aria-label="Login — Coming Soon">Login</a>
+    <a href="#signup" class="btn btn-primary btn-disabled" data-modal-target="signup" aria-label="Sign up — Coming Soon">
+      Get started <span class="badge-soon">Coming soon</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ════════════════ HERO ════════════════ -->
+<section id="hero" aria-labelledby="hero-heading">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero-grid">
+
+      <div class="hero-left">        
+        <h1 class="h-hero" id="hero-heading">
+          AI needs<br />
+          <span class="text-amber">Tokens.</span><br />
+          Hum<i><u>ans</u></i> need<br />
+          <span class="text-amber">Tok<i><u>ans</u></i>.</span>
+        </h1>
+        <p class="lead hero-lead">
+          A pay-it-forward ecosystem where professionals earn verifiable proof of real contribution — not résumés, not AI-generated claims. Built for the careers that matter in the AI era.
+        </p>
+        <div class="hero-ctas">
+          <a href="#signup" class="btn btn-primary btn-disabled" data-modal-target="signup">
+            Join the waitlist <span class="badge-soon">Soon</span>
+          </a>
+          <a href="#how-it-works" class="btn btn-outline">See how it works →</a>
+        </div>
+        <p class="hero-note">
+          <strong>Not bought. Not transferred. Not gamified.</strong><br />
+          Tokans are earned through learning, building, mentoring, and real work.
+        </p>
+      </div>
+
+      <!-- Live-ish score card -->
+      <div class="hero-right" aria-label="Example Tokan profile score card" role="img">
+        <div class="score-card" id="scoreCard">
+          <div class="sc-header">
+            <div class="sc-profile">
+              <div class="sc-avatar" aria-hidden="true">P</div>
+              <div>
+                <div class="sc-name">Priya Ramakrishnan</div>
+                <div class="sc-role">// Senior SDE · Bangalore</div>
+              </div>
+            </div>
+            <div class="sc-total">
+              <div class="sc-total-num" id="totalCount">0</div>
+              <div class="sc-total-label">Overall Tokans</div>
+            </div>
+          </div>
+
+          <div class="sc-bars">
+            <div class="sc-bar-row">
+              <div class="sc-bar-label">Build</div>
+              <div class="sc-bar-track"><div class="sc-bar-fill build u-style-2" data-pct="72"></div></div>
+              <div class="sc-bar-val">260</div>
+              <div class="sc-confidence">High confidence</div>
+            </div>
+            <div class="sc-bar-row">
+              <div class="sc-bar-label">Work</div>
+              <div class="sc-bar-track"><div class="sc-bar-fill work u-style-2" data-pct="50"></div></div>
+              <div class="sc-bar-val">180</div>
+              <div class="sc-confidence">Employer verified</div>
+            </div>
+            <div class="sc-bar-row">
+              <div class="sc-bar-label">Mentor</div>
+              <div class="sc-bar-track"><div class="sc-bar-fill mentor u-style-2" data-pct="28"></div></div>
+              <div class="sc-bar-val">100</div>
+              <div class="sc-confidence">Top 10%</div>
+            </div>
+            <div class="sc-bar-row">
+              <div class="sc-bar-label">Knowledge</div>
+              <div class="sc-bar-track"><div class="sc-bar-fill know u-style-2" data-pct="22"></div></div>
+              <div class="sc-bar-val">80</div>
+              <div class="sc-confidence">Peer reviewed</div>
+            </div>
+          </div>
+
+          <div class="sc-badges">
+            <span class="badge badge-amber">Project Proven</span>
+            <span class="badge badge-sage">High Reliability</span>
+            <span class="badge badge-amber">Employer Verified</span>
+          </div>
+
+          <div class="sc-velocity">
+            <span class="sc-vel-label">// Tokan Velocity (90 days)</span>
+            <span class="sc-vel-val">+340 <span class="sc-vel-arrow">↑</span> Active</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ MARQUEE ════════════════ -->
+<div class="marquee-wrapper" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <!-- items injected by JS to avoid HTML duplication -->
+  </div>
+</div>
+
+<!-- ════════════════ PROBLEM SECTION ════════════════ -->
+<section class="section" id="problem" aria-labelledby="problem-heading">
+  <div class="container">
+    <div class="eyebrow reveal">The problem we solve</div>
+    <h2 class="h-section reveal reveal-delay-1 u-style-3" id="problem-heading">
+      Three broken systems.<br /><em class="text-amber">One fix.</em>
+    </h2>
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <div class="p-num">// 01</div>
+        <h3 class="p-title">The displaced professional</h3>
+        <p class="p-body">AI has automated roles, flattened teams, and made traditional credentials meaningless. Engineers, PMs, and designers have no structured path to rebuild and prove their value in a world that's moved on.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="p-num">// 02</div>
+        <h3 class="p-title">The broken hiring signal</h3>
+        <p class="p-body">AI-generated CVs, AI-assisted take-homes, AI-coached interviews. Employers can no longer trust what candidates claim. The signal-to-noise ratio in hiring has collapsed — and it's getting worse.</p>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="p-num">// 03</div>
+        <h3 class="p-title">The vibe-coded founder</h3>
+        <p class="p-body">Built v1 with Cursor, Bolt, or Claude. Have traction. Now stuck. Non-technical founders who can't evaluate candidates have no reliable way to find someone they can trust with their codebase.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ HOW IT WORKS ════════════════ -->
+<section class="section" id="how-it-works" aria-labelledby="how-heading">
+  <div class="container">
+    <div class="eyebrow reveal">The Tokan system</div>
+    <h2 class="h-section reveal reveal-delay-1 u-style-4" id="how-heading">
+      Six ways to prove<br /><em class="text-amber">what you actually do.</em>
+    </h2>
+
+    <div class="how-grid">
+
+      <div class="tokan-types reveal">
+        <div class="type-row">
+          <span class="type-icon icon-build">Build</span>
+          <div class="type-content">
+            <div class="type-name">Build Tokans</div>
+            <div class="type-desc">GitHub contributions that shipped — merged PRs, reviewed code, meaningful projects. Not stars. Not forks.</div>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-icon icon-work">Work</span>
+          <div class="type-content">
+            <div class="type-name">Work Tokans</div>
+            <div class="type-desc">Freelance tasks, project milestones, and employer-verified deliverables. The closest signal to real-world output.</div>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-icon icon-mentor">Mentor</span>
+          <div class="type-content">
+            <div class="type-name">Mentor Tokans</div>
+            <div class="type-desc">Validated mentoring sessions with confirmed mentee progress. You teach. They grow. Both get verified.</div>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-icon icon-know">Know</span>
+          <div class="type-content">
+            <div class="type-name">Knowledge Tokans</div>
+            <div class="type-desc">Verified courses, assessments, and technical explanations. Capped at 40% of total — learning without doing only counts for so much.</div>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-icon icon-impact">Impact</span>
+          <div class="type-content">
+            <div class="type-name">Impact Tokans</div>
+            <div class="type-desc">Referrals, community contributions, high-quality peer reviews. Helping others builds your record too.</div>
+          </div>
+        </div>
+        <div class="type-row">
+          <span class="type-icon icon-legacy">Legacy</span>
+          <div class="type-content">
+            <div class="type-name">Legacy / Handoff Tokans</div>
+            <div class="type-desc">Taking over codebases, writing docs for others' code, audits, refactoring. The skill AI can't easily replace — and what vibe-coded founders desperately need.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="formula-box">
+          <div class="formula-title">// Scoring formula</div>
+          <div class="formula-eq">
+            Tokans = Base Value<br />
+            &nbsp;&nbsp;× <em>Verification Weight</em><br />
+            &nbsp;&nbsp;× <em>Impact Multiplier</em><br />
+            &nbsp;&nbsp;× <em>Confidence Factor</em>
+          </div>
+          <div class="verify-grid u-style-5">
+            <div class="verify-item">
+              <span class="verify-label">Self-reported</span>
+              <span class="verify-weight w-lo">0.3×</span>
+            </div>
+            <div class="verify-item">
+              <span class="verify-label">Peer (1–2)</span>
+              <span class="verify-weight w-mid">0.7×</span>
+            </div>
+            <div class="verify-item">
+              <span class="verify-label">Peer (3+)</span>
+              <span class="verify-weight w-mid">1.0×</span>
+            </div>
+            <div class="verify-item">
+              <span class="verify-label">Platform verified</span>
+              <span class="verify-weight w-hi">1.3×</span>
+            </div>
+            <div class="verify-item u-style-6">
+              <span class="verify-label">Employer verified</span>
+              <span class="verify-weight w-top">1.6×</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="thresholds">
+          <div class="thresh-label">// Hiring thresholds</div>
+          <div class="thresh-track">
+            <div class="thresh-fill"></div>
+          </div>
+          <div class="thresh-markers">
+            <div class="thresh-m">0<span>Early</span></div>
+            <div class="thresh-m">200<span>Emerging</span></div>
+            <div class="thresh-m">500<span>Proven</span></div>
+            <div class="thresh-m">1000+<span>Expert</span></div>
+          </div>
+        </div>
+
+        <div class="u-style-7">
+          <div class="u-style-8">// Anti-gaming</div>
+          <div class="u-style-9">
+            Scores decay over time. Mutual reviews are flagged. Reviewer Quality Score (RQS) adjusts weights dynamically. Gaming means account disabled — not a score penalty. Marked publicly.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ ROLES ════════════════ -->
+<section class="section" id="roles" aria-labelledby="roles-heading">
+  <div class="container">
+    <div class="eyebrow reveal">Who is Tokans for?</div>
+    <h2 class="h-section reveal reveal-delay-1 u-style-10" id="roles-heading">
+      Built for everyone<br /><em class="text-amber">navigating the AI era.</em>
+    </h2>
+    <div class="roles-grid">
+
+      <div class="role-card rc-amber reveal">
+        <div class="role-icon" aria-hidden="true">🎯</div>
+        <div class="role-name">Opportunity Seeker</div>
+        <div class="role-sub">// SDE · EM · PM · Designer · DS/ML · DevOps · QA · Marketing · BA</div>
+        <div class="role-desc">AI-displaced professionals rebuilding on real contribution. Complete your first peer review, earn your first Tokan, and open a verifiable record of what you actually do.</div>
+        <div class="role-barrier">↳ Entry: Complete first Tokan task (~8 min)</div>
+      </div>
+
+      <div class="role-card rc-sage reveal reveal-delay-1">
+        <div class="role-icon" aria-hidden="true">🏗️</div>
+        <div class="role-name">Builder</div>
+        <div class="role-sub">// Idea stage · Vibe-coded founder</div>
+        <div class="role-desc">Building with AI tools and need real technical help? Whether you need a co-founder or a trusted codebase handoff, Tokans matches you with verified engineers.</div>
+        <div class="role-barrier">↳ Entry: Describe your build + site verification</div>
+      </div>
+
+      <div class="role-card rc-purple reveal reveal-delay-2">
+        <div class="role-icon" aria-hidden="true">🧭</div>
+        <div class="role-name">Mentor</div>
+        <div class="role-sub">// 500+ Tokans required · Peer-nominated path</div>
+        <div class="role-desc">Guide others, earn Mentor Tokans, and be listed in the mentor directory. Mentoring is a status earned — not a button you click.</div>
+        <div class="role-barrier">↳ Entry: 500 Tokans with 20%+ Build or Work</div>
+      </div>
+
+      <div class="role-card rc-blue reveal">
+        <div class="role-icon" aria-hidden="true">💼</div>
+        <div class="role-name">Employer</div>
+        <div class="role-sub">// Startup · SME · AI-heavy teams</div>
+        <div class="role-desc">Stop guessing. Get a curated shortlist of max 5 contribution-verified candidates. Every match explains itself. Every rejection trains the engine.</div>
+        <div class="role-barrier">↳ Entry: Complete 7-question brief (10 min)</div>
+      </div>
+
+      <div class="role-card rc-red reveal reveal-delay-1">
+        <div class="role-icon" aria-hidden="true">🤝</div>
+        <div class="role-name">Donor / Mission Backer</div>
+        <div class="role-sub">// Pay-it-forward · ₹5,000 minimum</div>
+        <div class="role-desc">Sponsor another professional's onboarding or assessment. Senior leaders, diaspora members, and mission believers keeping the ecosystem accessible.</div>
+        <div class="role-barrier">↳ Entry: Identity verification</div>
+      </div>
+
+      <div class="role-card rc-green reveal reveal-delay-2">
+        <div class="role-icon" aria-hidden="true">🔭</div>
+        <div class="role-name">Angel Investor / Scout</div>
+        <div class="role-sub">// Verified investors · No cold browse</div>
+        <div class="role-desc">Discover high-velocity builders and engineers building their own things. Express interest, post Scout Briefs, get quarterly digests of top contributors.</div>
+        <div class="role-barrier">↳ Entry: Verified investor identity</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ EMPLOYER ════════════════ -->
+<section class="section" id="for-employers" aria-labelledby="employer-heading">
+  <div class="container">
+    <div class="eyebrow reveal">For employers</div>
+    <div class="employer-grid">
+      <div class="reveal">
+        <h2 class="h-section u-style-11" id="employer-heading">
+          AI made hiring<br />more consequential<br /><em class="text-amber">and less reliable.</em>
+        </h2>
+        <p class="lead u-style-12">
+          We fix the second half. Start with a 10-minute brief. Get a shortlist of five contribution-verified engineers. Every profile explains the match. Every hire becomes evidence.
+        </p>
+        <div class="u-style-13">
+          <div class="u-style-14">
+            <span class="u-style-15">✓</span>
+            <div class="u-style-16">Name hidden until <strong class="u-style-17">mutual interest</strong> — forces signal-based evaluation, not gut feel</div>
+          </div>
+          <div class="u-style-14">
+            <span class="u-style-15">✓</span>
+            <div class="u-style-16">Max <strong class="u-style-17">3 active expressions of interest</strong> — no spray-and-pray hiring</div>
+          </div>
+          <div class="u-style-14">
+            <span class="u-style-15">✓</span>
+            <div class="u-style-16">Every rejection feeds the engine — <strong class="u-style-17">"Not a fit — tell us why"</strong> is structured, not a form</div>
+          </div>
+          <div class="u-style-14">
+            <span class="u-style-15">✓</span>
+            <div class="u-style-16">Vibe-coded founders get a <strong class="u-style-17">codebase assessment first</strong> — not a browse queue</div>
+          </div>
+        </div>
+        <a href="#signup" class="btn btn-primary btn-disabled" data-modal-target="signup">
+          Post a hiring brief <span class="badge-soon">Coming soon</span>
+        </a>
+        <div class="u-style-18">
+          One-time brief from ₹15,000 · Project placement at 12% of value
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="match-card" role="img" aria-label="Example employer match card showing anonymized candidate">
+          <div class="mc-header">
+            <div class="mc-hidden">[ Name hidden until mutual interest ]</div>
+            <div class="mc-score">Match: 87%</div>
+          </div>
+          <div class="mc-bars">
+            <div class="mc-bar-row">
+              <span class="mc-bar-label">Build</span>
+              <div class="mc-track"><div class="mc-fill build"></div></div>
+              <span class="mc-conf">High confidence</span>
+            </div>
+            <div class="mc-bar-row">
+              <span class="mc-bar-label">Work</span>
+              <div class="mc-track"><div class="mc-fill work"></div></div>
+              <span class="mc-conf">Employer verified</span>
+            </div>
+            <div class="mc-bar-row">
+              <span class="mc-bar-label">Mentor</span>
+              <div class="mc-track"><div class="mc-fill mentor"></div></div>
+              <span class="mc-conf">Peer reviewed</span>
+            </div>
+          </div>
+          <div class="mc-contribution">
+            <strong>// Top verified contribution</strong>
+            Led migration of monolith to microservices for a 50k DAU product. Reviewed by 3 peers + 1 platform engineer.
+          </div>
+          <div class="mc-meta">
+            <span><strong>Availability</strong>Part-time / open to project</span>
+            <span><strong>Location</strong>Bangalore (remote-first)</span>
+          </div>
+          <div class="u-style-19">
+            Tokan velocity: +340 in last 90 days ↑ Active
+          </div>
+          <div class="mc-actions">
+            <button class="mc-btn mc-btn-yes" data-modal-target="signup">Express interest</button>
+            <button class="mc-btn mc-btn-no">Not a fit — tell us why</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ VS SECTION ════════════════ -->
+<section class="section--tight" id="vs" aria-labelledby="vs-heading">
+  <div class="container">
+    <div class="eyebrow reveal u-style-20">Tokans vs. the status quo</div>
+    <div class="vs-grid reveal">
+      <div class="vs-col">
+        <div class="vs-head">LinkedIn</div>
+        <div class="vs-item"><span class="vs-icon" aria-hidden="true">✗</span> Resume and self-reported claims</div>
+        <div class="vs-item"><span class="vs-icon" aria-hidden="true">✗</span> AI-generated profiles, unverifiable</div>
+        <div class="vs-item"><span class="vs-icon" aria-hidden="true">✗</span> Static — no decay, no freshness signal</div>
+        <div class="vs-item"><span class="vs-icon" aria-hidden="true">✗</span> No peer verification system</div>
+        <div class="vs-item"><span class="vs-icon" aria-hidden="true">✗</span> No signal for AI-era displacement</div>
+        <div class="vs-item"><span class="vs-icon" aria-hidden="true">✗</span> No handoff or Legacy skill visibility</div>
+      </div>
+      <div class="vs-col">
+        <div class="vs-head">Tokans</div>
+        <div class="vs-item"><span class="vs-icon text-sage" aria-hidden="true">✓</span> Contribution-based, peer and employer verified</div>
+        <div class="vs-item"><span class="vs-icon text-sage" aria-hidden="true">✓</span> Every claim carries a verification weight</div>
+        <div class="vs-item"><span class="vs-icon text-sage" aria-hidden="true">✓</span> Scores decay — recency is baked in</div>
+        <div class="vs-item"><span class="vs-icon text-sage" aria-hidden="true">✓</span> Reviewer Quality Score + anti-gaming</div>
+        <div class="vs-item"><span class="vs-icon text-sage" aria-hidden="true">✓</span> Built around the AI displacement reality</div>
+        <div class="vs-item"><span class="vs-icon text-sage" aria-hidden="true">✓</span> Legacy/Handoff Tokans: a category that exists nowhere else</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ MISSION QUOTE ════════════════ -->
+<section class="section" id="mission" aria-labelledby="mission-heading">
+  <div class="container">
+    <div class="mission-quote reveal">
+      <div class="eyebrow u-style-21">// Our thesis</div>
+      <blockquote id="mission-heading">
+        "High Tokans should correlate with <em>better real-world performance.</em> Everything — the scoring engine, peer reviews, employer matching — exists to make that correlation real and provable."
+      </blockquote>
+      <p class="u-style-22">
+        The one metric that decides everything: do high Tokan profiles perform measurably better in real engagements?
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ FAQ (SEO / GEO) ════════════════ -->
+<section class="section--tight" id="faq" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="eyebrow reveal">Frequently asked</div>
+    <h2 class="h-section reveal reveal-delay-1 u-style-23" id="faq-heading">
+      Common questions
+    </h2>
+    <div class="u-style-24">
+
+      <details class="faq-item reveal u-style-25">
+        <summary class="u-style-26">
+          What exactly is a Tokan?
+          <span class="u-style-27">+</span>
+        </summary>
+        <div class="u-style-28">
+          A Tokan is a verifiable unit of professional contribution. Unlike points you earn on a gamified platform, Tokans are weighted by how they were verified — ranging from 0.3× for self-reported to 1.6× for employer-verified. They decay over time (100% in 0–3 months, down to 40% after 12 months), so your score always reflects what you've <em class="u-style-17">recently</em> proven — not just your career highlight reel.
+        </div>
+      </details>
+
+      <details class="faq-item reveal u-style-25">
+        <summary class="u-style-26">
+          How is this different from LinkedIn or GitHub?
+          <span class="u-style-27">+</span>
+        </summary>
+        <div class="u-style-28">
+          LinkedIn shows what you say you've done. GitHub shows code you've pushed. Tokans shows what you've actually proven recently — with peer verification, employer verification, and anti-gaming systems built in. We also specifically track Legacy/Handoff skills (taking over codebases, documentation, refactoring) which no other platform surfaces as a distinct category.
+        </div>
+      </details>
+
+      <details class="faq-item reveal u-style-25">
+        <summary class="u-style-26">
+          Can you buy or transfer Tokans?
+          <span class="u-style-27">+</span>
+        </summary>
+        <div class="u-style-28">
+          No. Tokans are not a cryptocurrency, a loyalty point, or a transferable asset. They are earned through contribution and attached to you. Attempting to game the system — mutual reviews, fake contributions — results in account disablement and is marked publicly. The value of Tokans depends entirely on the integrity of the system.
+        </div>
+      </details>
+
+      <details class="faq-item reveal">
+        <summary class="u-style-26">
+          When is Tokans launching?
+          <span class="u-style-27">+</span>
+        </summary>
+        <div class="u-style-28">
+          We're in the founding-member phase right now. We're locking employer design partners, recruiting founding reviewers, and preparing onboarding for our first cohort. Join the waitlist to be among the first to access the platform — early members shape how the system works.
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ════════════════ CTA ════════════════ -->
+<section id="cta" aria-labelledby="cta-heading">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div class="cta-pre">// Be a founding member</div>
+      <h2 class="cta-heading" id="cta-heading">
+        Your first contribution<br />takes <em class="text-amber">eight minutes.</em>
+      </h2>
+      <p class="cta-sub">
+        Review a peer's profile. Start building your verifiable record. Join the professionals who are proving their value in the AI era — not just claiming it.
+      </p>
+      <div class="cta-buttons">
+        <a href="#signup" class="btn btn-primary btn-disabled u-style-29" data-modal-target="signup">
+          Join the waitlist <span class="badge-soon">Coming soon</span>
+        </a>
+        <a href="#login" class="btn btn-outline u-style-29" data-modal-target="login">
+          Login
+        </a>
+      </div>
+      <p class="cta-note">
+        Employers · <a href="https://experthires.tokans.com" class="u-style-30">experthires.tokans.com</a> &nbsp;·&nbsp; India-first launch
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">Tok<span>ans</span></a>
+        <div class="footer-tagline">
+          A pay-it-forward ecosystem for professionals navigating the AI era.<br /><br />
+          AI needs Tokens.<br />Hum<i><u>ans</u></i> need Tok<i><u>ans</u></i> .
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#roles">Who it's for</a></li>
+          <li><a href="#for-employers">For employers</a></li>
+          <li><a href="https://experthires.tokans.com">Expert Hires</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <ul>
+          <li><a href="#" data-modal-target="signup">Sign up <span class="u-style-31">soon</span></a></li>
+          <li><a href="#" data-modal-target="login">Log in <span class="u-style-31">soon</span></a></li>
+          <li><a href="mailto:hello@tokans.org">Contact us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://twitter.com/tokansorg" rel="noopener">X / Twitter</a></li>
+          <li><a href="https://linkedin.com/company/tokans" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://peerlist.io/tokans" rel="noopener">Peerlist</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        © 2026 Tokans.org · Not bought. Not transferred. Not gamified.
+      </div>
+      <div class="footer-mission">
+        AI needs Tokens. Hum<i><u>ans</u></i> need Tok<i><u>ans</u></i>.™
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════ COMING SOON MODAL ════════════════ -->
+<div class="cs-overlay" id="csOverlay" role="dialog" aria-modal="true" aria-labelledby="csTitle" data-modal-close="overlay">
+  <div class="cs-box">
+    <div class="cs-icon" aria-hidden="true">🚀</div>
+    <div class="cs-badge" id="csBadge">Coming Soon</div>
+    <h3 class="cs-title" id="csTitle">Almost there</h3>
+    <p class="cs-body" id="csBody">
+      We're in the founding-member phase — onboarding is opening soon. Join the waitlist to be among the first to earn Tokans and shape how the platform works.
+    </p>
+    <button class="cs-close" data-modal-close="button" aria-label="Close dialog">Close</button>
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+
+
+</body>
+</html>
