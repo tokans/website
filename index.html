@@ -121,12 +121,30 @@
   <div class="nav-actions">
     <a href="#how-it-works" class="nav-link">How it works</a>
     <a href="#for-employers" class="nav-link">Employers</a>
-    <a href="#login" class="btn btn-outline" data-modal-target="login" aria-label="Login — Coming Soon">Login</a>
-    <a href="#signup" class="btn btn-primary btn-disabled" data-modal-target="signup" aria-label="Sign up — Coming Soon">
+    <a href="#login" class="btn btn-outline nav-btn-login" data-modal-target="login" aria-label="Login — Coming Soon">Login</a>
+    <a href="#signup" class="btn btn-primary btn-disabled nav-btn-signup" data-modal-target="signup" aria-label="Sign up — Coming Soon">
       Get started <span class="badge-soon">Coming soon</span>
     </a>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navMobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile dropdown menu -->
+  <div class="nav-mobile-menu" id="navMobileMenu" aria-hidden="true" role="dialog" aria-label="Mobile navigation">
+    <a href="#how-it-works" class="nav-mobile-link">How it works</a>
+    <a href="#for-employers" class="nav-mobile-link">Employers</a>
+    <div class="nav-mobile-divider"></div>
+    <div class="nav-mobile-actions">
+      <a href="#login" class="btn btn-outline" data-modal-target="login">Login</a>
+      <a href="#signup" class="btn btn-primary btn-disabled" data-modal-target="signup">
+        Join the waitlist <span class="badge-soon">Soon</span>
+      </a>
+    </div>
   </div>
 </nav>
+<!-- Mobile menu backdrop -->
+<div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
 
 <!-- ════════════════ HERO ════════════════ -->
 <section id="hero" aria-labelledby="hero-heading">

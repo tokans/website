@@ -4,7 +4,49 @@
     navbar.classList.toggle('scrolled', window.scrollY > 40);
   }, { passive: true });
 
-  /* ── Scroll-reveal ── */
+  /* ── Hamburger mobile menu ── */
+  const hamburger   = document.getElementById('navHamburger');
+  const mobileMenu  = document.getElementById('navMobileMenu');
+  const backdrop    = document.getElementById('navBackdrop');
+
+  function openMobileNav() {
+    mobileMenu.classList.add('open');
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    hamburger.classList.add('active');
+    hamburger.setAttribute('aria-expanded', 'true');
+    backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileNav() {
+    mobileMenu.classList.remove('open');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    hamburger.classList.remove('active');
+    hamburger.setAttribute('aria-expanded', 'false');
+    backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.contains('open') ? closeMobileNav() : openMobileNav();
+  });
+  backdrop.addEventListener('click', closeMobileNav);
+
+  // Close on link click inside mobile menu
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', closeMobileNav);
+  });
+
+  // Close mobile menu on resize to desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeMobileNav();
+  }, { passive: true });
+
+  /* ── Global Escape key (closes mobile nav AND modal) ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeMobileNav(); closeModal(); }
+  });
+
+/* ── Scroll-reveal ── */
   const revealEls = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
@@ -103,6 +145,4 @@
       closeModal(trigger.dataset.modalClose === 'overlay' ? e : undefined);
     });
   });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-  });
+  // Escape key handled globally above (closes both mobile nav and modal)

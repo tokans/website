@@ -188,6 +188,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
       border-bottom: 1px solid transparent;
       transition: background 0.35s ease, border-color 0.35s ease, backdrop-filter 0.35s ease;
     }
@@ -1034,24 +1035,235 @@
       to   { opacity: 1; transform: none; }
     }
 
+    /* ── Hamburger & Mobile Nav ── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+    .nav-hamburger:hover { border-color: rgba(255,255,255,0.22); }
+    .nav-hamburger span {
+      display: block;
+      width: 18px;
+      height: 1.5px;
+      background: var(--cream);
+      border-radius: 2px;
+      transition: transform 0.28s cubic-bezier(.22,.61,.36,1), opacity 0.2s, width 0.2s;
+      transform-origin: center;
+    }
+    .nav-hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
+    .nav-hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .nav-mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(10,9,8,0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column;
+      padding: 12px 20px 24px;
+      gap: 2px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.22,.61,.36,1);
+      pointer-events: none;
+    }
+    .nav-mobile-menu.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .nav-mobile-link {
+      display: block;
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 500;
+      padding: 14px 8px;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .nav-mobile-link:hover { color: var(--amber); }
+    .nav-mobile-divider { height: 1px; background: var(--border); margin: 4px 0; display: none; }
+    .nav-mobile-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .nav-mobile-actions .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 14px 20px;
+      font-size: 0.92rem;
+    }
+
+    .nav-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      top: 64px;
+      z-index: 99;
+      background: transparent;
+    }
+    .nav-backdrop.active { display: block; }
+
     /* ── Responsive ── */
+
+    /* Tablet: 960px */
     @media (max-width: 960px) {
-      .hero-grid { grid-template-columns: 1fr; }
-      .score-card { max-width: 440px; }
+      .container { padding: 0 24px; }
+
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .score-card { max-width: 480px; }
+
       .how-grid { grid-template-columns: 1fr; gap: 40px; }
       .employer-grid { grid-template-columns: 1fr; gap: 40px; }
-      .roles-grid { grid-template-columns: 1fr 1fr; }
+      .roles-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
       .problem-grid { grid-template-columns: 1fr; }
+
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+
+      /* CTA tighter on tablet */
+      #cta { padding: 88px 0; }
     }
+
+    /* Phablet/large phone: 768px — hamburger kicks in */
+    @media (max-width: 768px) {
+      nav { position: fixed; flex-wrap: wrap; height: auto; min-height: 60px; padding: 0 20px; }
+
+      .nav-actions { gap: 8px; }
+      .nav-link { display: none; }
+      .nav-btn-signup { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-mobile-menu { display: flex; }
+
+      /* Push hero down to account for taller nav when open */
+      #hero { padding-top: 140px; }
+
+      .hero-grid { gap: 40px; }
+      .score-card { max-width: 100%; }
+
+      .section { padding: 72px 0; }
+      .section--tight { padding: 52px 0; }
+
+      /* Problem grid: 2 cols on phablet */
+      .problem-grid { grid-template-columns: 1fr 1fr; gap: 1px; }
+
+      /* Employer section */
+      .employer-grid { gap: 32px; }
+
+      /* CTA section */
+      #cta { padding: 72px 0; }
+      .cta-heading { font-size: clamp(1.9rem, 6vw, 3rem); }
+      .cta-sub { font-size: 0.98rem; max-width: 100%; }
+      .cta-buttons { gap: 10px; }
+      .cta-note { font-size: 0.65rem; padding: 0 8px; }
+
+      /* Footer */
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+      footer { padding: 40px 0; }
+    }
+
+    /* Mobile: 640px */
     @media (max-width: 640px) {
+      .container { padding: 0 18px; }
+
+      nav { padding: 0 16px; min-height: 56px; }
+      .nav-backdrop { top: 56px; }
+
+      #hero { padding-top: 120px; padding-bottom: 60px; }
+      .h-hero { font-size: clamp(2.6rem, 9vw, 4rem); }
+
+      /* Single-column problem grid */
+      .problem-grid { grid-template-columns: 1fr; }
+      .problem-card { padding: 28px 22px; }
+
+      /* Score card bar rows — hide confidence label on smallest */
+      .sc-confidence { display: none; }
+      .sc-bar-label { width: 58px; }
+
+      /* Roles single col */
       .roles-grid { grid-template-columns: 1fr; }
+
+      /* VS grid */
       .vs-grid { grid-template-columns: 1fr; }
       .vs-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
-      .footer-grid { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .vs-col { padding: 24px 20px; }
+
+      /* Verify grid */
       .verify-grid { grid-template-columns: 1fr; }
-      nav { padding: 0 16px; }
+
+      /* Match card meta — stack vertically */
+      .mc-meta { flex-direction: column; gap: 10px; }
+
+      /* Footer single col */
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+      .footer-tagline { max-width: 100%; }
+
+      /* CTA — reduce padding, full-width buttons */
+      #cta { padding: 60px 0; }
+      .cta-heading { font-size: clamp(1.75rem, 7.5vw, 2.6rem); }
+      .cta-buttons { flex-direction: column; align-items: stretch; }
+      .cta-buttons .btn { width: 100%; justify-content: center; padding: 14px 20px; }
+      .cta-note { font-size: 0.62rem; }
+
+      /* Sections tighter */
+      .section { padding: 56px 0; }
+      .section--tight { padding: 44px 0; }
+
+      /* FAQ */
+      .u-style-26 { padding: 18px 20px; font-size: 0.9rem; }
+      .u-style-28 { padding: 0 20px 18px; }
+      .u-style-24 { border-radius: var(--radius); }
+    }
+
+    /* Small phone: 420px */
+    @media (max-width: 420px) {
+      .container { padding: 0 14px; }
+      .nav-btn-login { padding: 9px 14px; font-size: 0.8rem; }
+
+      .h-hero { font-size: clamp(2.3rem, 9.5vw, 3rem); }
+      .hero-ctas { gap: 10px; }
+      .hero-ctas .btn { padding: 12px 18px; font-size: 0.84rem; }
+
+      .score-card { padding: 20px; }
+      .sc-total-num { font-size: 1.5rem; }
+
+      .formula-box { padding: 22px 18px; }
+
+      .mc-actions { flex-direction: column; }
+      .mc-btn { flex: none; }
+
+      .role-card { padding: 22px 18px; }
+
+      /* CTA */
+      .cta-heading { font-size: clamp(1.6rem, 8vw, 2.2rem); }
+      #cta { padding: 52px 0; }
+    }
+
+    /* Landscape phone: short viewport */
+    @media (max-height: 500px) and (max-width: 900px) {
+      nav { min-height: 52px; }
+      #hero { padding-top: 100px; padding-bottom: 48px; }
+      .nav-mobile-menu { max-height: calc(100vh - 52px); overflow-y: auto; }
     }
 /* Extracted inline styles */
 .u-style-1 { width: 40px; height: auto; }
