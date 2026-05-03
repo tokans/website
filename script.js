@@ -1,148 +1,232 @@
-/* ── Nav scroll ── */
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-  }, { passive: true });
+'use strict';
 
-  /* ── Hamburger mobile menu ── */
-  const hamburger   = document.getElementById('navHamburger');
-  const mobileMenu  = document.getElementById('navMobileMenu');
-  const backdrop    = document.getElementById('navBackdrop');
+/* ═══════════════════════════════
+   NAV — scroll state
+═══════════════════════════════ */
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 10);
+}, { passive: true });
 
-  function openMobileNav() {
-    mobileMenu.classList.add('open');
-    mobileMenu.setAttribute('aria-hidden', 'false');
-    hamburger.classList.add('active');
-    hamburger.setAttribute('aria-expanded', 'true');
-    backdrop.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMobileNav() {
-    mobileMenu.classList.remove('open');
-    mobileMenu.setAttribute('aria-hidden', 'true');
-    hamburger.classList.remove('active');
-    hamburger.setAttribute('aria-expanded', 'false');
-    backdrop.classList.remove('active');
-    document.body.style.overflow = '';
-  }
 
-  hamburger.addEventListener('click', () => {
-    mobileMenu.classList.contains('open') ? closeMobileNav() : openMobileNav();
+/* ═══════════════════════════════
+   NAV — hamburger
+═══════════════════════════════ */
+const hamburger  = document.getElementById('navHamburger');
+const mobileMenu = document.getElementById('navMobileMenu');
+const backdrop   = document.getElementById('navBackdrop');
+
+function openNav() {
+  mobileMenu.classList.add('open');
+  mobileMenu.setAttribute('aria-hidden', 'false');
+  hamburger.classList.add('active');
+  hamburger.setAttribute('aria-expanded', 'true');
+  backdrop.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeNav() {
+  mobileMenu.classList.remove('open');
+  mobileMenu.setAttribute('aria-hidden', 'true');
+  hamburger.classList.remove('active');
+  hamburger.setAttribute('aria-expanded', 'false');
+  backdrop.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+hamburger.addEventListener('click', () =>
+  mobileMenu.classList.contains('open') ? closeNav() : openNav()
+);
+backdrop.addEventListener('click', closeNav);
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 768) closeNav();
+}, { passive: true });
+
+
+/* ═══════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════ */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
   });
-  backdrop.addEventListener('click', closeMobileNav);
+}, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+revealEls.forEach(el => revealObs.observe(el));
 
-  // Close on link click inside mobile menu
-  mobileMenu.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', closeMobileNav);
+
+/* ═══════════════════════════════
+   PROFILE CARD — animate bars on entry
+═══════════════════════════════ */
+const profileCard = document.querySelector('.profile-card');
+if (profileCard) {
+  const barFills = profileCard.querySelectorAll('.pc-bar-fill');
+  // Store target widths, start at 0
+  barFills.forEach(bar => {
+    bar.dataset.target = bar.style.width;
+    bar.style.width = '0%';
   });
-
-  // Close mobile menu on resize to desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 768) closeMobileNav();
-  }, { passive: true });
-
-  /* ── Global Escape key (closes mobile nav AND modal) ── */
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeMobileNav(); closeModal(); }
-  });
-
-/* ── Scroll-reveal ── */
-  const revealEls = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
+  const cardObs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  revealEls.forEach(el => observer.observe(el));
-
-  /* ── Score card animated counter + bars ── */
-  function animateCount(el, target, duration) {
-    let start = 0;
-    const step = timestamp => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      el.textContent = Math.round(ease * target);
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }
-
-  const scoreCard = document.getElementById('scoreCard');
-  let scoreAnimated = false;
-  const scoreObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting && !scoreAnimated) {
-        scoreAnimated = true;
-        animateCount(document.getElementById('totalCount'), 620, 1600);
-        document.querySelectorAll('.sc-bar-fill').forEach(bar => {
-          bar.style.width = bar.dataset.pct + '%';
+        // Stagger bar animations
+        barFills.forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.width = bar.dataset.target;
+          }, 200 + i * 120);
         });
+        cardObs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.3 });
-  scoreObs.observe(scoreCard);
+  }, { threshold: 0.4 });
+  cardObs.observe(profileCard);
+}
 
-  /* ── FAQ toggle icon ── */
-  document.querySelectorAll('.faq-item').forEach(item => {
-    item.addEventListener('toggle', () => {
-      const icon = item.querySelector('summary span');
-      icon.textContent = item.open ? '−' : '+';
-    });
-  });
 
-  /* ── Marquee ── */
-  const items = [
-    'Build Tokans', 'Work Tokans', 'Mentor Tokans', 'Knowledge Tokans', 'Impact Tokans', 'Legacy Tokans',
-    'Peer Verified', 'Employer Verified', 'Tokan Velocity', 'Contribution Based', 'Anti-Gaming', 'India First',
-    'Not a Resume', 'Not Gamified', 'Real Work Only', 'Proven Contributor', 'High Reliability',
-  ];
-  const track = document.getElementById('marqueeTrack');
-  const doubled = [...items, ...items];
-  doubled.forEach(text => {
+/* ═══════════════════════════════
+   MARQUEE — build items
+═══════════════════════════════ */
+const marqueeItems = [
+  'Build Tokans', 'Legacy & Handoff', 'Employer Verified 1.6×', 'Peer Reviewed',
+  'Score Decay Built In', 'No AI-Generated CVs', 'Real Work. Real Signal.',
+  'Work Tokans', 'Mentor Tokans', 'Not Bought. Not Transferred.',
+];
+const track = document.getElementById('marqueeTrack');
+if (track) {
+  [...marqueeItems, ...marqueeItems].forEach(text => {
     const div = document.createElement('div');
     div.className = 'marquee-item';
-    div.innerHTML = `<span class="dot"></span>${text}`;
+    div.innerHTML = `<span class="dot" aria-hidden="true"></span>${text}`;
     track.appendChild(div);
   });
+}
 
-  /* ── Coming soon modal ── */
-  function showModal(type) {
-    const overlay = document.getElementById('csOverlay');
-    const badge   = document.getElementById('csBadge');
-    const title   = document.getElementById('csTitle');
-    const body    = document.getElementById('csBody');
-    if (type === 'login') {
-      badge.textContent = 'Coming soon';
-      title.textContent = 'Login · Coming Soon';
-      body.textContent = 'The login portal is being built as a separate project. Join the waitlist below and we\'ll notify you the moment it\'s ready.';
-    } else {
-      badge.textContent = 'Founding member access';
-      title.textContent = 'Sign up · Coming Soon';
-      body.textContent = 'Onboarding opens soon for our first founding cohort. We\'re locking employer design partners and founding reviewers now. Join the waitlist to be first in.';
-    }
-    overlay.classList.add('open');
-    overlay.querySelector('.cs-box').focus();
-    document.body.style.overflow = 'hidden';
-  }
-  function closeModal(e) {
-    if (!e || e.target === document.getElementById('csOverlay')) {
-      document.getElementById('csOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  }
-  document.querySelectorAll('[data-modal-target]').forEach(trigger => {
-    trigger.addEventListener('click', e => {
-      e.preventDefault();
-      showModal(trigger.dataset.modalTarget);
-    });
+
+/* ═══════════════════════════════
+   HOW IT WORKS — Carousel
+═══════════════════════════════ */
+const slides   = Array.from(document.querySelectorAll('.step-slide'));
+const dotsWrap = document.getElementById('stepsDots');
+const prevBtn  = document.getElementById('stepsPrev');
+const nextBtn  = document.getElementById('stepsNext');
+let current    = 0;
+let autoTimer;
+
+// Build dots
+const dots = slides.map((_, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'step-dot' + (i === 0 ? ' active' : '');
+  btn.setAttribute('role', 'tab');
+  btn.setAttribute('aria-label', `Step ${i + 1}`);
+  btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+  btn.addEventListener('click', () => goTo(i));
+  if (dotsWrap) dotsWrap.appendChild(btn);
+  return btn;
+});
+
+function goTo(idx) {
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  dots[current].setAttribute('aria-selected', 'false');
+  current = (idx + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+  dots[current].setAttribute('aria-selected', 'true');
+  resetAuto();
+}
+
+function resetAuto() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo(current + 1), 5500);
+}
+
+if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+
+// Touch swipe
+const stepsTrack = document.getElementById('stepsTrack');
+if (stepsTrack) {
+  let startX = 0;
+  stepsTrack.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  stepsTrack.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 48) goTo(dx < 0 ? current + 1 : current - 1);
+  }, { passive: true });
+}
+
+// Keyboard on track
+if (stepsTrack) {
+  stepsTrack.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  goTo(current - 1);
+    if (e.key === 'ArrowRight') goTo(current + 1);
   });
-  document.querySelectorAll('[data-modal-close]').forEach(trigger => {
-    trigger.addEventListener('click', e => {
-      closeModal(trigger.dataset.modalClose === 'overlay' ? e : undefined);
-    });
+}
+
+// Pause on hover
+const stepsWrap = document.querySelector('.steps-wrap');
+if (stepsWrap) {
+  stepsWrap.addEventListener('mouseenter', () => clearInterval(autoTimer));
+  stepsWrap.addEventListener('mouseleave', resetAuto);
+}
+
+resetAuto();
+
+
+/* ═══════════════════════════════
+   MODAL
+═══════════════════════════════ */
+const modalCopy = {
+  login: {
+    badge: 'Coming soon',
+    title: 'Login · Coming Soon',
+    body:  "The login portal is being built. Join the waitlist and we'll notify you the moment it's ready.",
+  },
+  engineer: {
+    badge: 'Founding member access',
+    title: 'Sign up as an Engineer',
+    body:  "Onboarding opens soon for our first cohort of verified engineers. Join the waitlist — your first Tokan task takes 8 minutes and unlocks the platform.",
+  },
+};
+
+function showModal(type) {
+  const overlay = document.getElementById('csOverlay');
+  const copy = modalCopy[type] || modalCopy.engineer;
+  document.getElementById('csBadge').textContent = copy.badge;
+  document.getElementById('csTitle').textContent = copy.title;
+  document.getElementById('csBody').textContent  = copy.body;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.querySelector('.cs-close').focus();
+}
+
+function closeModal(e) {
+  const overlay = document.getElementById('csOverlay');
+  if (!e || e.target === overlay) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+document.querySelectorAll('[data-modal-target]').forEach(trigger => {
+  trigger.addEventListener('click', e => {
+    e.preventDefault();
+    showModal(trigger.dataset.modalTarget);
   });
-  // Escape key handled globally above (closes both mobile nav and modal)
+});
+document.querySelectorAll('[data-modal-close]').forEach(trigger => {
+  trigger.addEventListener('click', e => {
+    if (trigger.dataset.modalClose === 'overlay') closeModal(e);
+    else closeModal();
+  });
+});
+
+
+/* ═══════════════════════════════
+   GLOBAL KEYBOARD
+═══════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeNav(); closeModal(); }
+});
