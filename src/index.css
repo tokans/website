@@ -2,7 +2,13 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
+html { scroll-behavior: smooth; }
+
+/* Scope the dark theme to the React mount points. The marketing page
+   in index.html / public/styles.css uses a light palette and shares
+   the same document, so :root / body rules here would bleed across. */
+#root,
+#react-auth-root {
   --bg:           #08090E;
   --surface:      #0F1019;
   --surface-2:    #161824;
@@ -21,16 +27,19 @@
   --radius:       12px;
   --radius-lg:    18px;
   --radius-xl:    24px;
-}
 
-html { scroll-behavior: smooth; }
-
-body {
   background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Standalone page (React owns the whole document): keep the viewport dark
+   behind #root so there's no white gutter before the app paints. */
+body:has(> #root) {
+  background: #08090E;
+  color: #EAE6DC;
+  min-height: 100vh;
 }
 
 button { font-family: inherit; cursor: pointer; }

@@ -1167,6 +1167,18 @@ footer {
   text-align: center;
   box-shadow: var(--shadow-lg);
 }
+/* When the React auth UI is mounted inside the modal, drop the marketing
+   modal chrome so the auth screen renders edge-to-edge inside the overlay. */
+.cs-box:has(#react-auth-root) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  max-width: none;
+  width: 100%;
+  text-align: left;
+  box-shadow: none;
+}
 .cs-icon { font-size: 2.5rem; margin-bottom: 16px; }
 .cs-badge {
   display: inline-block;
