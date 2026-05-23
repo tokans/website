@@ -4,6 +4,10 @@
   "private": true,
   "scripts": {
     "local": "vercel dev",
+    "local:up": "docker compose up -d",
+    "local:down": "docker compose down",
+    "local:reset": "docker compose down -v",
+    "local:logs": "docker compose logs -f",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"

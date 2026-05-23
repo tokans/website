@@ -1169,6 +1169,15 @@ footer {
 }
 /* When the React auth UI is mounted inside the modal, drop the marketing
    modal chrome so the auth screen renders edge-to-edge inside the overlay. */
+.cs-overlay:has(#react-auth-root) {
+  background: #08090E;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  padding: 0;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow-y: auto;
+}
 .cs-box:has(#react-auth-root) {
   background: transparent;
   border: 0;

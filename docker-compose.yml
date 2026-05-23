@@ -1,0 +1,64 @@
+# Local dev stack — no cloud dependencies.
+# Start with: npm run local:up   (or: docker compose up -d)
+# Tear down: npm run local:down
+#
+#   postgres           5432  — local Postgres, schema auto-loaded from schema.sql
+#   neon-proxy         4444  — Neon-compatible HTTP/SQL API in front of postgres
+#   redis              6379  — local Redis
+#   redis-http         8079  — Upstash-compatible REST API in front of redis
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: main
+    # No host port mapping — only neon-proxy needs to reach it (over the
+    # docker network at postgres:5432). Add `ports: ["5433:5432"]` if you want
+    # to connect via psql from the host. 5432 is intentionally avoided since
+    # native Postgres installs commonly claim it.
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/00-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d main"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  neon-proxy:
+    image: ghcr.io/timowilhelm/local-neon-http-proxy:main
+    restart: unless-stopped
+    environment:
+      PG_CONNECTION_STRING: postgres://postgres:postgres@postgres:5432/main
+    ports:
+      - "4444:4444"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  redis-http:
+    image: hiett/serverless-redis-http:latest
+    restart: unless-stopped
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: local_dev_token
+      SRH_CONNECTION_STRING: redis://redis:6379
+    ports:
+      - "8079:80"
+    depends_on:
+      - redis
+
+volumes:
+  pg_data:
+  redis_data:
