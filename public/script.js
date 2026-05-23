@@ -64,9 +64,9 @@ revealEls.forEach(el => revealObs.observe(el));
 const profileCard = document.querySelector('.profile-card');
 if (profileCard) {
   const barFills = profileCard.querySelectorAll('.pc-bar-fill');
-  // Store target widths, start at 0
+  // Store target widths (from data-pct), start at 0
   barFills.forEach(bar => {
-    bar.dataset.target = bar.style.width;
+    bar.dataset.target = (bar.dataset.pct || '0') + '%';
     bar.style.width = '0%';
   });
   const cardObs = new IntersectionObserver((entries) => {
@@ -178,28 +178,38 @@ resetAuto();
 /* ═══════════════════════════════
    MODAL
 ═══════════════════════════════ */
-const modalCopy = {
-  login: {
-    badge: 'Coming soon',
-    title: 'Login · Coming Soon',
-    body:  "The login portal is being built. Join the waitlist and we'll notify you the moment it's ready.",
-  },
-  engineer: {
-    badge: 'Founding member access',
-    title: 'Sign up as an Engineer',
-    body:  "Onboarding opens soon for our first cohort of verified engineers. Join the waitlist — your first Tokan task takes 8 minutes and unlocks the platform.",
-  },
-};
+
+function _ensureReactAuthMount() {
+  // Create the React mount point inside the modal if it doesn't exist yet.
+  // main.tsx is bundled with the page and mounts lazily on auth:open.
+  let mount = document.getElementById('react-auth-root');
+  if (mount) return;
+
+  mount = document.createElement('div');
+  mount.id = 'react-auth-root';
+
+  // Append into the modal card (first child of the overlay that isn't the backdrop)
+  const card = document.querySelector('#csOverlay .cs-card')
+             ?? document.querySelector('#csOverlay > *:not([data-modal-close])');
+  if (card) card.appendChild(mount);
+  else document.getElementById('csOverlay').appendChild(mount);
+}
 
 function showModal(type) {
   const overlay = document.getElementById('csOverlay');
-  const copy = modalCopy[type] || modalCopy.engineer;
-  document.getElementById('csBadge').textContent = copy.badge;
-  document.getElementById('csTitle').textContent = copy.title;
-  document.getElementById('csBody').textContent  = copy.body;
+
+  _ensureReactAuthMount();
+
+  // Tell the React app which screen to show (login | engineer | …)
+  // The app should listen for this event on window.
+  window.dispatchEvent(new CustomEvent('auth:open', { detail: { type } }));
+
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
-  document.querySelector('.cs-close').focus();
+
+  // Return focus to the close button if present
+  const closeBtn = document.querySelector('.cs-close');
+  if (closeBtn) closeBtn.focus();
 }
 
 function closeModal(e) {
@@ -207,6 +217,8 @@ function closeModal(e) {
   if (!e || e.target === overlay) {
     overlay.classList.remove('open');
     document.body.style.overflow = '';
+    // Notify React so it can reset internal state (e.g. clear form fields)
+    window.dispatchEvent(new CustomEvent('auth:close'));
   }
 }
 

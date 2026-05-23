@@ -36,7 +36,7 @@
     "@type": "Organization",
     "name": "Tokans",
     "url": "https://tokans.org",
-    "logo": "https://tokans.org/logo.png",
+    "logo": "https://tokans.org/images/logo.png",
     "description": "Tokans is a contribution-based professional trust platform. Professionals earn verifiable Tokans through real work, peer review, and employer verification. The platform connects vibe-coded founders with verified engineers and helps AI-displaced professionals prove their value.",
     "foundingDate": "2026",
     "contactPoint": {
@@ -158,7 +158,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
 
@@ -168,7 +168,7 @@
 <!-- ═══════════ NAV ═══════════ -->
 <nav id="navbar" aria-label="Main navigation">
   <a href="/" class="nav-logo" aria-label="Tokans home">
-    <img src="logo.png" alt="" class="nav-logo-img" aria-hidden="true" />Tok<span class="logo-ans"><i><u>ans</u></i></span>
+    <img src="images/logo.png" alt="" class="nav-logo-img" aria-hidden="true" />Tok<span class="logo-ans"><i><u>ans</u></i></span>
   </a>
   <div class="nav-actions">
     <a href="#what-is-tokans" class="nav-link">What are Tokans?</a>
@@ -219,7 +219,7 @@
         <div class="profile-card-wrap">
           <!-- Optional background texture -->
           <div class="profile-card-bg" aria-hidden="true">
-            <img src=""
+            <img src="images/profile.png"
               alt="[AI IMAGE PROMPT: Abstract soft bokeh of a modern open-plan tech office, very blurred and desaturated, cool blue and warm white tones, used as a subtle background texture behind a profile card UI, no people visible, purely atmospheric]"
               loading="eager" width="560" height="420" />
           </div>
@@ -239,28 +239,28 @@
               <div class="pc-bar-row" role="listitem">
                 <span class="pc-bar-label">Build</span>
                 <div class="pc-bar-track" aria-label="260 Build Tokans">
-                  <div class="pc-bar-fill" style="width:83%" data-pct="83"></div>
+                  <div class="pc-bar-fill" data-pct="83"></div>
                 </div>
                 <span class="pc-bar-val">260</span>
               </div>
               <div class="pc-bar-row" role="listitem">
                 <span class="pc-bar-label">Work</span>
                 <div class="pc-bar-track" aria-label="180 Work Tokans, employer verified">
-                  <div class="pc-bar-fill pc-bar-fill--work" style="width:58%" data-pct="58"></div>
+                  <div class="pc-bar-fill pc-bar-fill--work" data-pct="58"></div>
                 </div>
                 <span class="pc-bar-val">180 <span class="pc-tick" title="Employer verified">✓</span></span>
               </div>
               <div class="pc-bar-row" role="listitem">
                 <span class="pc-bar-label">Mentor</span>
                 <div class="pc-bar-track" aria-label="100 Mentor Tokans">
-                  <div class="pc-bar-fill pc-bar-fill--mentor" style="width:32%" data-pct="32"></div>
+                  <div class="pc-bar-fill pc-bar-fill--mentor" data-pct="32"></div>
                 </div>
                 <span class="pc-bar-val">100</span>
               </div>
               <div class="pc-bar-row" role="listitem">
                 <span class="pc-bar-label">Knowledge</span>
                 <div class="pc-bar-track" aria-label="80 Knowledge Tokans">
-                  <div class="pc-bar-fill pc-bar-fill--knowledge" style="width:26%" data-pct="26"></div>
+                  <div class="pc-bar-fill pc-bar-fill--knowledge" data-pct="26"></div>
                 </div>
                 <span class="pc-bar-val">80</span>
               </div>
@@ -277,7 +277,7 @@
           </div>
         </div>
         <div class="hero-ctas">
-          <a href="https://tokans.org/founders"  data-modal-target="login"class="btn btn-primary btn-lg">Get your codebase assessed →</a>
+          <a href="https://tokans.org/founders"  data-modal-target="login" class="btn btn-primary btn-lg">Get your codebase assessed →</a>
         </div>
       </div>
     </div>
@@ -447,7 +447,7 @@
 <section class="section-quote" id="mission" aria-labelledby="mission-heading">
   <div class="container">
     <div class="mission-inner reveal">
-      <p class="eyebrow eyebrow--light" style="justify-content:center; margin-bottom:28px">// Our thesis</p>
+      <p class="eyebrow eyebrow--light eyebrow--center">// Our thesis</p>
       <blockquote id="mission-heading">
         "High Tokans correlates with <em class="text-amber">better real-world performance.</em><br />
         Everything, the scoring engine, peer reviews, employer matching <br />
@@ -584,7 +584,7 @@
 <section id="cta" aria-labelledby="cta-heading">
   <div class="container">
     <div class="cta-inner reveal">
-      <p class="eyebrow" style="justify-content:center; margin-bottom:20px">// Be an early adopter</p>
+      <p class="eyebrow eyebrow--center">// Be an early adopter</p>
       <h2 class="cta-heading" id="cta-heading">
         Your first step takes<br /><em class="cta-em">eight minutes.</em>
       </h2>
@@ -652,7 +652,7 @@
 
 
 <!-- ═══════════ SEO / GEO LAYER (machine-readable, not visible to humans) ═══════════ -->
-<div class="geo-layer" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;" aria-hidden="true">
+<div class="geo-layer" aria-hidden="true">
 
 <section>
   <h2>What is Tokans?</h2>
@@ -771,14 +771,15 @@
 <!-- ═══════════ MODAL ═══════════ -->
 <div class="cs-overlay" id="csOverlay" role="dialog" aria-modal="true" aria-labelledby="csTitle" data-modal-close="overlay">
   <div class="cs-box">
-    <div class="cs-icon" aria-hidden="true">🚀</div>
+    <!-- <div class="cs-icon" aria-hidden="true">🚀</div>
     <div class="cs-badge" id="csBadge">Coming soon</div>
     <h3 class="cs-title" id="csTitle">Almost there</h3>
-    <p class="cs-body" id="csBody">We're in the founding-member phase, onboarding opens soon. Join the waitlist to be among the first and shape how the platform works.</p>
-    <button class="cs-close" data-modal-close="button" aria-label="Close dialog">Got it</button>
+    <p class="cs-body" id="csBody">We're in the founding-member phase, onboarding opens soon. Join the waitlist to be among the first and shape how the platform works.</p> -->
+    <!-- <button class="cs-close" data-modal-close="button" aria-label="Close dialog">Got it</button> -->
   </div>
 </div>
 
-<script src="script.js" defer></script>
+<script type="module" src="/src/main.tsx"></script>
+<script src="/script.js" defer></script>
 </body>
 </html>

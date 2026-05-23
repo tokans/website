@@ -117,6 +117,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .eyebrow--light { color: rgba(255,255,255,0.7); }
 .eyebrow--light::before { background: rgba(255,255,255,0.4); }
+.eyebrow--center { justify-content: center; }
 
 /* Tagline treatment — PRD 3.3 */
 .tag-em {
@@ -472,8 +473,8 @@ nav.scrolled {
   position: relative;
   z-index: 1;
   background: rgba(254,254,254,0.96);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
   padding: 28px;
@@ -557,6 +558,11 @@ nav.scrolled {
   background: var(--sky);
   transition: width 1.2s cubic-bezier(0.22,1,0.36,1);
 }
+/* Default widths from data-pct; script.js overrides 0% → target for the entrance animation */
+.pc-bar-fill[data-pct="83"] { width: 83%; }
+.pc-bar-fill[data-pct="58"] { width: 58%; }
+.pc-bar-fill[data-pct="32"] { width: 32%; }
+.pc-bar-fill[data-pct="26"] { width: 26%; }
 .pc-bar-fill--work     { background: var(--verified); }
 .pc-bar-fill--mentor   { background: #8B5CF6; }
 .pc-bar-fill--knowledge { background: var(--amber); }
@@ -804,6 +810,7 @@ nav.scrolled {
   margin: 0 auto;
   text-align: center;
 }
+.mission-inner .eyebrow { margin-bottom: 28px; }
 blockquote {
   font-family: 'Playfair Display', Georgia, serif;
   font-style: italic;
@@ -997,6 +1004,17 @@ blockquote {
   margin: 0 auto;
   text-align: center;
 }
+.cta-inner .eyebrow { margin-bottom: 20px; }
+
+/* Visually-hidden SEO/GEO content (machine-readable only) */
+.geo-layer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
 .cta-heading {
   font-family: 'Syne', sans-serif;
   font-weight: 700;
@@ -1128,8 +1146,8 @@ footer {
   inset: 0;
   z-index: 200;
   background: rgba(12,25,41,0.7);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1215,12 +1233,12 @@ footer {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
     gap: 14px;
     padding-bottom: 16px;
-    scrollbar-width: none;
+    scrollbar-width: none;       /* Firefox */
+    -ms-overflow-style: none;    /* old Edge / IE */
   }
-  .roles-scroll::-webkit-scrollbar { display: none; }
+  .roles-scroll::-webkit-scrollbar { display: none; }  /* Chromium / Safari */
   .role-card {
     flex: 0 0 300px;
     scroll-snap-align: start;
