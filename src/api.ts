@@ -4,6 +4,9 @@ import type {
   SessionResponse,
   RoleId,
   SubType,
+  ProfessionalStatus,
+  ProfessionalOnboardBody,
+  DownloadGrant,
 } from "./lib/types.js";
 
 const BASE = ""; // same-origin; Vercel routes /api/* automatically
@@ -96,4 +99,17 @@ export const api = {
       method: "POST",
       body:   JSON.stringify(body satisfies OnboardingCompleteBody),
     }),
+
+  // ── Professionals (P0) ──────────────────────────────────────────────────────
+  professionalOnboard: (body: ProfessionalOnboardBody) =>
+    request<ProfessionalStatus>("/api/professionals/onboard", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  professionalStatus: () =>
+    request<ProfessionalStatus>("/api/professionals/status"),
+
+  professionalDownload: () =>
+    request<DownloadGrant>("/api/professionals/download"),
 };

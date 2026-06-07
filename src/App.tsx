@@ -3,6 +3,7 @@ import { api } from "./api.js";
 import AuthScreen from "./screens/AuthScreen.js";
 import Onboarding from "./screens/Onboarding.js";
 import Dashboard  from "./screens/Dashboard.js";
+import Professionals from "./screens/Professionals.js";
 import type { SessionResponse, SessionPayload } from "./lib/types.js";
 
 // ── App state ─────────────────────────────────────────────────────────────────
@@ -45,6 +46,13 @@ interface AppProps {
 export default function App({ mode }: AppProps) {
   const [session,   setSession]   = useState<AppSession>(null);
   const [oauthMsg,  setOauthMsg]  = useState("");
+
+  // Standalone-only entry flows selected via ?flow=… (e.g. ?flow=professionals).
+  const [flow] = useState<string>(() =>
+    typeof window === "undefined"
+      ? ""
+      : new URLSearchParams(window.location.search).get("flow") ?? ""
+  );
 
   // ── React to modal open / close signals ───────────────────────────────────
   useEffect(() => {
@@ -131,6 +139,17 @@ export default function App({ mode }: AppProps) {
         initialView={mode !== undefined ? modeToView(mode) : "login"}
         oauthError={oauthMsg}
         onSuccess={handleAuthSuccess}
+      />
+    );
+  }
+
+  // Professional onboarding + download gate (standalone only; separate from the
+  // talent-role onboarding above, so it renders regardless of onboardingComplete).
+  if (mode === undefined && flow === "professionals") {
+    return (
+      <Professionals
+        user={session.user}
+        onLogout={() => void handleLogout()}
       />
     );
   }

@@ -125,3 +125,36 @@ export interface GoogleProfile {
   name: string;
   picture: string;
 }
+
+// ── Professionals (P0) — mirrors api/lib/backend/contract.ts ──────────────────
+export type RoleCategory =
+  | "Customer"
+  | "Employee"
+  | "Partner"
+  | "Contractor"
+  | "Automaton";
+
+export type ProfessionalStatusKind = "none" | "pending" | "approved";
+
+export interface ProfessionalStatus {
+  onboarded: boolean;
+  profession: string | null;
+  roleName: string | null;
+  category: RoleCategory | null;
+  subType: string | null;
+  status: ProfessionalStatusKind;
+  downloadEligible: boolean;
+}
+
+export interface DownloadGrant {
+  eligible: boolean;
+  url: string | null;
+  token: string | null;
+  reason: string | null;
+}
+
+export interface ProfessionalOnboardBody {
+  profession: string;
+  subType?: string | null;
+  answers?: Record<string, unknown>;
+}
