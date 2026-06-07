@@ -7,6 +7,14 @@ import type {
   ProfessionalStatus,
   ProfessionalOnboardBody,
   DownloadGrant,
+  SubscriptionStatus,
+  AppListing,
+  AppRegisterBody,
+  PartnerListing,
+  ConnectionResult,
+  SeedProfile,
+  TokanTaskAnswers,
+  EmployerBriefBody,
 } from "./lib/types.js";
 
 const BASE = ""; // same-origin; Vercel routes /api/* automatically
@@ -112,4 +120,62 @@ export const api = {
 
   professionalDownload: () =>
     request<DownloadGrant>("/api/professionals/download"),
+
+  // ── Payments (P0) ───────────────────────────────────────────────────────────
+  donateCheckout: (body: { amountMinor: number; currency?: string; email?: string | null }) =>
+    request<{ url: string }>("/api/donate/checkout", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  subscribe: (body: { plan?: string } = {}) =>
+    request<{ url: string }>("/api/professionals/subscribe", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  subscriptionStatus: () =>
+    request<SubscriptionStatus>("/api/professionals/subscription"),
+
+  // ── Apps support directory (P1) ─────────────────────────────────────────────
+  listApps: () =>
+    request<{ apps: AppListing[] }>("/api/apps"),
+
+  registerApp: (body: AppRegisterBody) =>
+    request<AppListing>("/api/apps", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  requestAppSupport: (id: string) =>
+    request<AppListing>(`/api/apps/${id}/request-support`, {
+      method: "POST",
+      body:   JSON.stringify({}),
+    }),
+
+  // ── Partner directory + connections (P1) ────────────────────────────────────
+  listPartners: () =>
+    request<{ partners: PartnerListing[] }>("/api/partners"),
+
+  connect: (body: { professionalUserId: string; message: string }) =>
+    request<ConnectionResult>("/api/connections", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  // ── Employer brief + First Tokan Task (P1) ──────────────────────────────────
+  saveEmployerBrief: (body: EmployerBriefBody) =>
+    request<{ briefId: string | null }>("/api/employer/brief", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  getTokanTask: () =>
+    request<{ profile: SeedProfile | null; remaining: number }>("/api/tokan-task"),
+
+  submitTokanTask: (body: { seedProfileId: string; answers: TokanTaskAnswers }) =>
+    request<{ ok: boolean; tokanAwarded: boolean; remaining: number }>("/api/tokan-task", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
 };

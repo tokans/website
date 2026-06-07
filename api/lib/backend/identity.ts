@@ -2,9 +2,10 @@
  * Identity-forward token (P0).
  *
  * The website edge authenticates the user (Redis session) and must forward a
- * verifiable identity to the gRPC backend (`tokans/backend`). gRPC metadata will
- * carry a short-lived HMAC-signed token minted here. The mock backend can verify
- * it too, so the seam behaves the same whether the adapter is `mock` or `grpc`.
+ * verifiable identity to the backend (`tokans/backend`) over REST. The backend
+ * REST call carries a short-lived HMAC-signed token (HTTP `Authorization` header)
+ * minted here. The mock backend can verify it too, so the seam behaves the same
+ * whether the adapter is `mock` or `rest`.
  *
  * This is NOT the user's auth credential — it is a 2-minute assertion of "the
  * edge says this is user X with roles Y", signed with a secret shared only
@@ -53,7 +54,7 @@ export function identityFromSession(session: SessionWithId): Identity {
   };
 }
 
-/** Mint a short-lived signed identity token (carried as gRPC metadata). */
+/** Mint a short-lived signed identity token (carried as the HTTP Authorization header). */
 export function mintIdentityToken(
   identity: Identity,
   ttlSec: number = DEFAULT_TTL_SEC,

@@ -1,7 +1,9 @@
 import { useState, useEffect, type ChangeEvent, type KeyboardEvent } from "react";
 import { api } from "../api.js";
 import { Wordmark, Card, Field, Input, BtnPrimary, BtnSocial, Divider, FadeIn } from "../components/ui.js";
+import { SiteHeader, SiteFooter, ContextPanel } from "../components/site.js";
 import type { SessionResponse } from "../lib/types.js";
+import type { AuthContext } from "../data/authContexts.js";
 
 function GithubIcon() {
   return (
@@ -42,12 +44,16 @@ export default function AuthScreen({
   initialView = "signup",
   oauthError  = "",
   onSuccess,
+  context,
 }: {
   /** Which tab to open on. Driven by the modal trigger ("login" | "engineer").
    *  Maps to "signin" | "signup" internally. Defaults to "signup". */
   initialView?: "login" | "signup";
   oauthError?:  string;
   onSuccess:    (session: SessionResponse) => void;
+  /** Use-case panel for role-scoped entry points (/professionals, /join, /hire).
+   *  When set, the screen renders split: panel on the left, form on the right. */
+  context?:     AuthContext;
 }) {
   // Map the external "login" / "signup" vocabulary to internal Mode
   const viewToMode = (v: "login" | "signup"): Mode =>
@@ -137,72 +143,94 @@ export default function AuthScreen({
     setServerErr("");
   };
 
+  const formCard = (
+    <Card maxWidth={440}>
+
+      <div className="auth-header">
+        {!context && <Wordmark />}
+        <div className="auth-title">
+          {mode === "signup" ? "Create your account" : "Welcome back"}
+        </div>
+        <div className="auth-subtitle">
+          {mode === "signup"
+            ? "Join professionals navigating the AI era — contribution verified, opportunity matched."
+            : "Sign in to access your Tokan profile and opportunities."}
+        </div>
+      </div>
+
+      <BtnSocial onClick={() => api.githubLogin()} className="u-mb-10">
+        <GithubIcon /> Continue with GitHub
+      </BtnSocial>
+      <BtnSocial onClick={() => api.googleLogin()}>
+        <GoogleIcon /> Continue with Google
+      </BtnSocial>
+
+      <Divider />
+
+      {mode === "signup" && (
+        <Field label="Full Name" error={errors.name}>
+          <Input placeholder="Your name" value={form.name} onChange={set("name")} />
+        </Field>
+      )}
+
+      <Field label="Email Address" error={errors.email}>
+        <Input type="email" placeholder="you@example.com" value={form.email} onChange={set("email")} />
+      </Field>
+
+      <Field label="Password" error={errors.password}>
+        <Input
+          type="password"
+          placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
+          value={form.password}
+          onChange={set("password")}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { if (e.key === "Enter") void submit(); }}
+        />
+      </Field>
+
+      {serverErr && <div className="auth-error">{serverErr}</div>}
+
+      <BtnPrimary onClick={() => void submit()} disabled={loading}>
+        {loading ? "Please wait…" : mode === "signup" ? "Create account →" : "Sign in →"}
+      </BtnPrimary>
+
+      <div className="auth-toggle">
+        {mode === "signup" ? (
+          <>Already have an account?{" "}
+            <button type="button" onClick={toggle} className="auth-toggle-btn">Sign in</button>
+          </>
+        ) : (
+          <>Don't have an account?{" "}
+            <button type="button" onClick={toggle} className="auth-toggle-btn">Sign up</button>
+          </>
+        )}
+      </div>
+
+    </Card>
+  );
+
+  // ── Split layout: use-case panel (left) + form (right) ──────────────────────
+  if (context) {
+    return (
+      <div className="page-shell">
+        <SiteHeader />
+        <div className="auth-split">
+          <ContextPanel content={context} />
+          <main className="auth-split-right">
+            <FadeIn k="auth">{formCard}</FadeIn>
+            <div className="auth-terms">
+              By continuing, you agree to Tokans' Terms of Service and Privacy Policy.
+            </div>
+          </main>
+        </div>
+        <SiteFooter />
+      </div>
+    );
+  }
+
+  // ── Default / modal layout: single centered card ────────────────────────────
   return (
     <div className="auth-wrap">
-      <FadeIn k="auth">
-        <Card maxWidth={440}>
-
-          <div className="auth-header">
-            <Wordmark />
-            <div className="auth-title">
-              {mode === "signup" ? "Create your account" : "Welcome back"}
-            </div>
-            <div className="auth-subtitle">
-              {mode === "signup"
-                ? "Join professionals navigating the AI era — contribution verified, opportunity matched."
-                : "Sign in to access your Tokan profile and opportunities."}
-            </div>
-          </div>
-
-          <BtnSocial onClick={() => api.githubLogin()} className="u-mb-10">
-            <GithubIcon /> Continue with GitHub
-          </BtnSocial>
-          <BtnSocial onClick={() => api.googleLogin()}>
-            <GoogleIcon /> Continue with Google
-          </BtnSocial>
-
-          <Divider />
-
-          {mode === "signup" && (
-            <Field label="Full Name" error={errors.name}>
-              <Input placeholder="Your name" value={form.name} onChange={set("name")} />
-            </Field>
-          )}
-
-          <Field label="Email Address" error={errors.email}>
-            <Input type="email" placeholder="you@example.com" value={form.email} onChange={set("email")} />
-          </Field>
-
-          <Field label="Password" error={errors.password}>
-            <Input
-              type="password"
-              placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
-              value={form.password}
-              onChange={set("password")}
-              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { if (e.key === "Enter") void submit(); }}
-            />
-          </Field>
-
-          {serverErr && <div className="auth-error">{serverErr}</div>}
-
-          <BtnPrimary onClick={() => void submit()} disabled={loading}>
-            {loading ? "Please wait…" : mode === "signup" ? "Create account →" : "Sign in →"}
-          </BtnPrimary>
-
-          <div className="auth-toggle">
-            {mode === "signup" ? (
-              <>Already have an account?{" "}
-                <button type="button" onClick={toggle} className="auth-toggle-btn">Sign in</button>
-              </>
-            ) : (
-              <>Don't have an account?{" "}
-                <button type="button" onClick={toggle} className="auth-toggle-btn">Sign up</button>
-              </>
-            )}
-          </div>
-
-        </Card>
-      </FadeIn>
+      <FadeIn k="auth">{formCard}</FadeIn>
 
       <div className="auth-terms">
         By continuing, you agree to Tokans' Terms of Service and Privacy Policy.

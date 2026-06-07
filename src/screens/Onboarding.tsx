@@ -79,17 +79,20 @@ function DoneScreen({
 
 // ── Main orchestrator ─────────────────────────────────────────────────────────
 export default function Onboarding({
-  user, onComplete, onLogout,
+  user, onComplete, onLogout, initialRole,
 }: {
-  user:       SessionPayload;
-  onComplete: (session: { authenticated: true; user: SessionPayload }) => void;
-  onLogout:   () => void;
+  user:        SessionPayload;
+  onComplete:  (session: { authenticated: true; user: SessionPayload }) => void;
+  onLogout:    () => void;
+  /** Pre-select a role and skip the role picker (e.g. /join → opportunity_seeker, /hire → employer). */
+  initialRole?: RoleId;
 }) {
-  const [role,         setRole]         = useState<RoleId | null>(null);
+  const minStep = initialRole ? 1 : 0;
+  const [role,         setRole]         = useState<RoleId | null>(initialRole ?? null);
   const [subType,      setSubType]      = useState<string | null>(null);
   const [otherSubType, setOtherSubType] = useState("");
   const [context,      setContext]      = useState<ContextValues>({});
-  const [step,         setStep]         = useState(0);
+  const [step,         setStep]         = useState(minStep);
   const [animKey,      setAnimKey]      = useState(0);
   const [done,         setDone]         = useState(false);
   const [saving,       setSaving]       = useState(false);
@@ -126,6 +129,15 @@ export default function Onboarding({
       setServerErr("");
       try {
         await api.completeOnboarding({ role, subType, context });
+        if (role === "employer") {
+          // /hire: persist the (partial) 7-question brief; questions 5–7 come later.
+          await api.saveEmployerBrief({
+            whatTheyOwn:         context["q1"] ?? null,
+            successAt60Days:     context["q2"] ?? null,
+            technicalBottleneck: context["q3"] ?? null,
+            pastHiringAttempts:  context["q4"] ?? null,
+          }).catch(() => undefined);
+        }
         setDone(true);
       } catch (e) {
         setServerErr(e instanceof Error ? e.message : "Something went wrong");
@@ -139,7 +151,7 @@ export default function Onboarding({
   };
 
   const retreat = () => {
-    if (step === 0) return;
+    if (step <= minStep) return;
     setAnimKey((k) => k + 1);
     setStep((s) => s - 1);
   };
@@ -213,7 +225,7 @@ export default function Onboarding({
         )}
 
         <div className="onboard-actions">
-          {step > 0 && (
+          {step > minStep && (
             <button type="button" onClick={retreat} className="onboard-back-btn">
               ← Back
             </button>

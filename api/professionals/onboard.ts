@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { requireSession } from "../lib/session.js";
 import { requireJsonContent, verifyCsrf, ensureCsrfToken } from "../lib/csrf.js";
 import { withErrorHandling } from "../lib/handler.js";
-import { getBackend, identityFromSession } from "../lib/grpc.js";
+import { getBackend, identityFromSession } from "../lib/backend/index.js";
 import { isKnownProfession, professionToRole } from "../lib/professions.js";
 import type { ProfessionalOnboardInput } from "../lib/backend/contract.js";
 

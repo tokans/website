@@ -5,5 +5,19 @@
     "api/**/*.ts": {
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/myWorkAssistant", "destination": "/" },
+    { "source": "/myWorkAssistant/(.*)", "destination": "/" },
+    { "source": "/donate", "destination": "/" },
+    { "source": "/apps", "destination": "/" },
+    { "source": "/founders", "destination": "/" },
+    { "source": "/partners", "destination": "/" },
+    { "source": "/partners/(.*)", "destination": "/" },
+    { "source": "/join", "destination": "/" },
+    { "source": "/hire", "destination": "/" },
+    { "source": "/tokan-task", "destination": "/" },
+    { "source": "/professionals", "destination": "/" },
+    { "source": "/professionals/(.*)", "destination": "/" }
+  ]
 }

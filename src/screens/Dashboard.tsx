@@ -133,6 +133,16 @@ export default function Dashboard({
             </div>
           </div>
 
+          {role === "opportunity_seeker" && (
+            <a
+              href="/?flow=tokan-task"
+              className="ui-btn ui-btn--primary ui-btn--full u-mt-16"
+              style={{ textDecoration: "none", textAlign: "center", display: "block" }}
+            >
+              Start your First Tokan Task →
+            </a>
+          )}
+
           <div className="dash-divider" />
 
           <div className="dash-stats">

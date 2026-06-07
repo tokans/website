@@ -143,7 +143,86 @@ export interface ProfessionalStatus {
   category: RoleCategory | null;
   subType: string | null;
   status: ProfessionalStatusKind;
+  subscribed: boolean;
   downloadEligible: boolean;
+}
+
+export interface SubscriptionStatus {
+  active: boolean;
+  plan: string | null;
+  status: string;
+  currentPeriodEnd: string | null;
+}
+
+// ── Apps support directory (P1) ───────────────────────────────────────────────
+export type AppSupportStatus = "none" | "requested" | "accepted" | "listed";
+
+export interface AppListing {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  repoUrl: string | null;
+  stack: string | null;
+  description: string | null;
+  usesSharedCoreLib: boolean;
+  supportStatus: AppSupportStatus;
+  listed: boolean;
+  isOwner: boolean;
+}
+
+export interface AppRegisterBody {
+  name: string;
+  slug?: string;
+  tagline?: string | null;
+  repoUrl?: string | null;
+  stack?: string | null;
+  description?: string | null;
+  usesSharedCoreLib?: boolean;
+}
+
+// ── Partner directory + connections (P1) ──────────────────────────────────────
+export interface PartnerListing {
+  id: string;
+  professionalUserId: string;
+  name: string | null;
+  headline: string | null;
+  profession: string | null;
+  skills: string[];
+  roleCategory: string;
+}
+
+export interface ConnectionResult {
+  connectionId: string;
+  workItemId: string;
+  status: string;
+}
+
+// ── First Tokan Task + employer brief (P1) ────────────────────────────────────
+export interface SeedProfile {
+  id: string;
+  headline: string;
+  skills: string[];
+  summary: string;
+  claims: string[];
+}
+
+export interface TokanTaskAnswers {
+  strongestSkill: string;
+  unverifiableClaim: string;
+  wouldWorkWith: string;
+  missing: string;
+  confidence: "low" | "medium" | "high";
+}
+
+export interface EmployerBriefBody {
+  whatTheyOwn?: string | null;
+  successAt60Days?: string | null;
+  technicalBottleneck?: string | null;
+  pastHiringAttempts?: string | null;
+  technicalSetup?: string | null;
+  engagementType?: string | null;
+  budgetRange?: string | null;
 }
 
 export interface DownloadGrant {

@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { requireSession } from "../lib/session.js";
 import { withErrorHandling } from "../lib/handler.js";
-import { getBackend, identityFromSession } from "../lib/grpc.js";
+import { getBackend, identityFromSession } from "../lib/backend/index.js";
 
 /**
  * The download gate. Always 200 with `{ eligible, url?, reason? }` so the SPA can

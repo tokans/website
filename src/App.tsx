@@ -4,7 +4,13 @@ import AuthScreen from "./screens/AuthScreen.js";
 import Onboarding from "./screens/Onboarding.js";
 import Dashboard  from "./screens/Dashboard.js";
 import Professionals from "./screens/Professionals.js";
-import type { SessionResponse, SessionPayload } from "./lib/types.js";
+import Donate from "./screens/Donate.js";
+import Apps from "./screens/Apps.js";
+import Partners from "./screens/Partners.js";
+import FirstTokanTask from "./screens/FirstTokanTask.js";
+import MwaMount from "./screens/MwaMount.js";
+import type { SessionResponse, SessionPayload, RoleId } from "./lib/types.js";
+import { getAuthContext } from "./data/authContexts.js";
 
 // ── App state ─────────────────────────────────────────────────────────────────
 type AppSession =
@@ -47,12 +53,35 @@ export default function App({ mode }: AppProps) {
   const [session,   setSession]   = useState<AppSession>(null);
   const [oauthMsg,  setOauthMsg]  = useState("");
 
-  // Standalone-only entry flows selected via ?flow=… (e.g. ?flow=professionals).
-  const [flow] = useState<string>(() =>
-    typeof window === "undefined"
-      ? ""
-      : new URLSearchParams(window.location.search).get("flow") ?? ""
-  );
+  // Standalone-only entry flows selected via the path (/donate, /professionals,
+  // /professionals/subscribe) or a ?flow=… query param.
+  const [flow] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    const path = window.location.pathname;
+    const q = new URLSearchParams(window.location.search).get("flow") ?? "";
+    if (path === "/donate" || q === "donate") return "donate";
+    if (path === "/apps" || q === "apps") return "apps";
+    // /founders is the auth-gated founder entry to list an app (→ Apps screen).
+    if (path === "/founders" || q === "founders") return "founders";
+    if (path === "/partners" || q === "partners") return "partners";
+    if (path === "/join" || q === "join") return "join";   // supply: Opportunity Seeker
+    if (path === "/hire" || q === "hire") return "hire";   // demand: Employer
+    if (path === "/tokan-task" || q === "tokan-task") return "tokan-task";
+    if (path.startsWith("/professionals") || q === "professionals") return "professionals";
+    return q;
+  });
+
+  // /join and /hire are the same onboarding engine with a pre-selected role.
+  const initialRole: RoleId | undefined =
+    flow === "join" ? "opportunity_seeker" : flow === "hire" ? "employer" : undefined;
+
+  // Role-scoped entry points get a split auth screen with a use-case panel on
+  // the left. Standalone only — the modal (mode set) keeps the compact card.
+  const authContext = mode === undefined ? getAuthContext(flow) : undefined;
+
+  // The myWorkAssistant cockpit is served from the /myWorkAssistant path.
+  const isMwaPath =
+    typeof window !== "undefined" && window.location.pathname.startsWith("/myWorkAssistant");
 
   // ── React to modal open / close signals ───────────────────────────────────
   useEffect(() => {
@@ -119,6 +148,21 @@ export default function App({ mode }: AppProps) {
 
   // ── Routing ────────────────────────────────────────────────────────────────
 
+  // Donations are anonymous — render before any auth/session gate (standalone only).
+  if (mode === undefined && flow === "donate") {
+    return <Donate />;
+  }
+
+  // Apps support directory is public — render before the auth gate too.
+  if (mode === undefined && flow === "apps") {
+    return <Apps />;
+  }
+
+  // Partner directory is public — render before the auth gate too.
+  if (mode === undefined && flow === "partners") {
+    return <Partners />;
+  }
+
   // In modal context show the auth screen immediately (no splash while loading)
   if (session === null) {
     if (mode !== undefined) {
@@ -134,13 +178,26 @@ export default function App({ mode }: AppProps) {
   }
 
   if (!session.authenticated) {
+    const initialView =
+      mode !== undefined
+        ? modeToView(mode)
+        : authContext
+          ? authContext.defaultView
+          : "login";
     return (
       <AuthScreen
-        initialView={mode !== undefined ? modeToView(mode) : "login"}
+        initialView={initialView}
         oauthError={oauthMsg}
         onSuccess={handleAuthSuccess}
+        {...(authContext ? { context: authContext } : {})}
       />
     );
+  }
+
+  // myWorkAssistant cockpit (mounted sub-app) — once authenticated, the
+  // /myWorkAssistant path hands the whole viewport to the embedded bundle.
+  if (mode === undefined && isMwaPath) {
+    return <MwaMount user={session.user} />;
   }
 
   // Professional onboarding + download gate (standalone only; separate from the
@@ -154,12 +211,29 @@ export default function App({ mode }: AppProps) {
     );
   }
 
+  // Founders: after sign-in, land on the Apps screen to list their app.
+  // (Signed-out founders hit the split auth screen above via the founders context.)
+  if (mode === undefined && flow === "founders") {
+    return <Apps />;
+  }
+
+  // First Tokan Task (Opportunity Seeker "aha"; reachable after /join or from the dashboard).
+  if (mode === undefined && flow === "tokan-task") {
+    return (
+      <FirstTokanTask
+        user={session.user}
+        onDone={() => { window.location.href = "/"; }}
+      />
+    );
+  }
+
   if (!session.user.onboardingComplete) {
     return (
       <Onboarding
         user={session.user}
         onComplete={handleOnboardingComplete}
         onLogout={() => void handleLogout()}
+        {...(initialRole ? { initialRole } : {})}
       />
     );
   }

@@ -10,17 +10,24 @@ auth + account linking, `onboarding/complete`, and the talent tables (`users`, `
 ---
 
 ## P0 — Foundations
-⬢ `api/lib/grpc.ts` typed gRPC client to BE + identity-forward (short-lived signed token). ⬢
-`/professionals` onboarding skeleton (dynamic-form manifests shared with MWA) + **download-gate stub**.
-- ⟸ **BE P0** proto/types (D1).
-- **Exit:** website calls one BE RPC end-to-end.
+⬢ Backend **REST** client `api/lib/backend/` (`getBackend()` → mock | rest) + identity-forward
+(short-lived signed token in the `Authorization` header). **Web tier is REST-only — no gRPC** (gRPC is
+the desktop↔backend transport). ⬢ `/professionals` onboarding skeleton (dynamic-form manifests shared
+with MWA) + **download-gate stub**.
+- ⟸ **BE P0** REST API contract (D1).
+- **Exit:** website calls one BE endpoint end-to-end (mock by default).
 
 ## P1 — Registry + Partner ads + Connect→Task
-⬢ `projects` table + `/apps` (register vibe-coded apps) + `/founders` (audit booking). ⬢ Partner
+⬢ `apps` table + `/apps` (public directory of apps listed for Tokans support; sharedCoreLib apps
+eligible; owner-initiated acceptance workflow → BE `Workflow.NewTask` is a later TODO) + `/founders`
+(audit booking). ⬢ Partner
 **directory/ads** + public profile pages (privacy-first; no end-user PII to view). ⬢ `POST
 /api/connections` → **BE `Workflow.NewTask`** (end-user registers minimally at connect). ⬢ `/hire`
-`/join` + **First Tokan Task** UI on existing tables. ⬢ `/professionals` complete + **download gate**
-(role assigned by BE). ⬢ Partner-master publish (basic, signed).
+`/join` + **First Tokan Task** UI on existing tables. ⬢ `/professionals` signup/onboarding (role
+assigned by BE). ⬢ **Payments seam** (`PaymentsPort`, mock default; Stripe Checkout to go live):
+`/donate` (anonymous) + `/professionals/subscribe` — an **active subscription gates the
+myWorkAssistant download**. Gateways: **Razorpay (India, primary)** / Stripe (global), mock by default.
+⬢ Partner-master publish (basic, signed).
 - ⟸ **BE P1** Workflow.NewTask (D5) + role assignment (D7).
 - ⟹ Connect creates the inbox tasks MWA consumes (D6); download gate unblocks MWA install (D7);
   partner master feeds other suite apps' ads (D8).

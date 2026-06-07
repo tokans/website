@@ -6,10 +6,17 @@ import {
 import { PROFESSIONS } from "../data/professions.js";
 import type { ProfessionalStatus, SessionPayload } from "../lib/types.js";
 
+const EMPTY: ProfessionalStatus = {
+  onboarded: false, profession: null, roleName: null, category: null,
+  subType: null, status: "none", subscribed: false, downloadEligible: false,
+};
+
 /**
- * Professional onboarding + download gate (P0 skeleton).
- * Profile your profession → backend assigns a Partner role → unlock the gated
- * desktop-app download. Reached standalone at `?flow=professionals`.
+ * Professional onboarding → subscribe → download gate.
+ *   1. signup/onboarding: profile your profession → Partner role assigned.
+ *   2. subscribe: an active subscription unlocks myWorkAssistant + app listing.
+ *   3. download: once approved AND subscribed.
+ * Reached standalone at /professionals (or ?flow=professionals).
  */
 export default function Professionals({
   user, onLogout,
@@ -22,25 +29,17 @@ export default function Professionals({
   const [experience, setExperience] = useState("");
   const [skills,     setSkills]     = useState("");
   const [saving,     setSaving]     = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
   const [err,        setErr]        = useState("");
-
-  const [dlLoading,  setDlLoading]  = useState(false);
   const [dlReason,   setDlReason]   = useState("");
 
-  // ── Load current professional status on mount ──────────────────────────────
   useEffect(() => {
-    api.professionalStatus()
-      .then(setStatus)
-      .catch(() => setStatus({
-        onboarded: false, profession: null, roleName: null, category: null,
-        subType: null, status: "none", downloadEligible: false,
-      }));
+    api.professionalStatus().then(setStatus).catch(() => setStatus({ ...EMPTY }));
   }, []);
 
   const submit = async () => {
     if (!profession) return;
-    setSaving(true);
-    setErr("");
+    setSaving(true); setErr("");
     try {
       const next = await api.professionalOnboard({
         profession,
@@ -49,13 +48,21 @@ export default function Professionals({
       setStatus(next);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Something went wrong");
-    } finally {
-      setSaving(false);
+    } finally { setSaving(false); }
+  };
+
+  const subscribe = async () => {
+    setSubscribing(true); setErr("");
+    try {
+      const { url } = await api.subscribe();
+      window.location.href = url;
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Could not start the subscription");
+      setSubscribing(false);
     }
   };
 
   const download = async () => {
-    setDlLoading(true);
     setDlReason("");
     try {
       const grant = await api.professionalDownload();
@@ -66,13 +73,17 @@ export default function Professionals({
       }
     } catch (e) {
       setDlReason(e instanceof Error ? e.message : "Could not start download");
-    } finally {
-      setDlLoading(false);
     }
   };
 
   const firstName = user.name?.split(" ")[0] ?? "there";
-  const eligible  = status?.downloadEligible ?? false;
+
+  // ── View selection ───────────────────────────────────────────────────────
+  const view: "loading" | "form" | "subscribe" | "download" =
+    status === null ? "loading"
+    : status.downloadEligible ? "download"
+    : status.onboarded && status.status === "approved" ? "subscribe"
+    : "form";
 
   return (
     <div className="onboard-page">
@@ -82,28 +93,43 @@ export default function Professionals({
       </div>
 
       <Card maxWidth={480}>
-        {status === null ? (
-          <StepHeader title="Loading…" />
-        ) : eligible ? (
-          // ── Approved → download gate open ──────────────────────────────────
-          <FadeIn k="done">
+        {view === "loading" && <StepHeader title="Loading…" />}
+
+        {view === "download" && status && (
+          <FadeIn k="download">
             <StepHeader
               eyebrow="PROFESSIONAL ACCESS"
-              title={`You're set up, ${firstName}`}
-              sub="Your professional profile is approved. Download myWorkAssistant to start receiving work."
+              title={`You're all set, ${firstName}`}
+              sub="Your subscription is active. Download myWorkAssistant to start receiving work."
             />
             <InfoBox variant="success" className="u-mt-16">
-              Role: <strong>{status.roleName}</strong> · {status.category}
+              Role: <strong>{status.roleName}</strong> · {status.category} · subscribed
             </InfoBox>
-            <BtnPrimary className="u-mt-24" onClick={() => void download()} disabled={dlLoading}>
-              {dlLoading ? "Preparing…" : "Download myWorkAssistant →"}
+            <BtnPrimary className="u-mt-24" onClick={() => void download()}>
+              Download myWorkAssistant →
             </BtnPrimary>
-            {dlReason && (
-              <InfoBox variant="error" className="u-mt-16">{dlReason}</InfoBox>
-            )}
+            {dlReason && <InfoBox variant="error" className="u-mt-16">{dlReason}</InfoBox>}
           </FadeIn>
-        ) : (
-          // ── Not yet onboarded → profile form ───────────────────────────────
+        )}
+
+        {view === "subscribe" && (
+          <FadeIn k="subscribe">
+            <StepHeader
+              eyebrow="ONE MORE STEP"
+              title="Subscribe to unlock access"
+              sub="Your professional profile is approved. A subscription unlocks the myWorkAssistant desktop app and app-listing features."
+            />
+            <InfoBox variant="gold" className="u-mt-16">
+              Professional — ₹499/month. Cancel anytime.
+            </InfoBox>
+            {err && <InfoBox variant="error" className="u-mt-16">{err}</InfoBox>}
+            <BtnPrimary className="u-mt-24" onClick={() => void subscribe()} disabled={subscribing}>
+              {subscribing ? "Redirecting…" : "Subscribe →"}
+            </BtnPrimary>
+          </FadeIn>
+        )}
+
+        {view === "form" && status && (
           <FadeIn k="form">
             <StepHeader
               eyebrow="PROFESSIONAL ONBOARDING"
