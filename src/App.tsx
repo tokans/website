@@ -211,9 +211,24 @@ export default function App({ mode }: AppProps) {
     );
   }
 
-  // Founders: after sign-in, land on the Apps screen to list their app.
-  // (Signed-out founders hit the split auth screen above via the founders context.)
+  // Per-path journeys run exactly once each. A user who onboarded via one path
+  // (e.g. /join) still gets a different path's journey (e.g. /founders) later,
+  // but never repeats a journey they've already completed.
+  const completedJourneys = session.user.completedJourneys ?? [];
+  const journeyDone = (path: string) => completedJourneys.includes(path);
+
+  // Founders: run the founders journey once, then land on Apps to list the app.
   if (mode === undefined && flow === "founders") {
+    if (!journeyDone("founders")) {
+      return (
+        <Onboarding
+          user={session.user}
+          onComplete={handleOnboardingComplete}
+          onLogout={() => void handleLogout()}
+          entryPath="founders"
+        />
+      );
+    }
     return <Apps />;
   }
 
@@ -227,12 +242,31 @@ export default function App({ mode }: AppProps) {
     );
   }
 
+  // Join / Hire: run that path's journey once, then proceed to the dashboard.
+  if (mode === undefined && (flow === "join" || flow === "hire")) {
+    if (!journeyDone(flow)) {
+      return (
+        <Onboarding
+          user={session.user}
+          onComplete={handleOnboardingComplete}
+          onLogout={() => void handleLogout()}
+          entryPath={flow}
+          {...(initialRole ? { initialRole } : {})}
+        />
+      );
+    }
+    return <Dashboard user={session.user} onLogout={() => void handleLogout()} />;
+  }
+
+  // Default entry (login / no path-specific journey): the generic role-picker
+  // onboarding runs once, gated by the global onboardingComplete flag.
   if (!session.user.onboardingComplete) {
     return (
       <Onboarding
         user={session.user}
         onComplete={handleOnboardingComplete}
         onLogout={() => void handleLogout()}
+        entryPath={flow}
         {...(initialRole ? { initialRole } : {})}
       />
     );

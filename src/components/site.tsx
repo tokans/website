@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { Wordmark } from "./ui.js";
+import { headerHTML, footerHTML } from "../chrome/chrome.js";
 
 /** Shared header/footer/context chrome for every standalone page.
- *  Modelled on the marketing homepage (index.html) so the app feels like one
- *  site: logo links home, a back link sits next to it, a top nav bar carries a
- *  few links, and a footer carries the full sitemap. */
+ *  The header and footer markup come from chrome.ts — the SAME source the
+ *  static HTML shells inject — so React islands and static pages stay identical
+ *  and match the marketing landing. */
 
 interface PanelContent {
   image: string;
@@ -15,16 +15,7 @@ interface PanelContent {
   points?: string[];
 }
 
-// ── Top header bar ──────────────────────────────────────────────────────────
-const NAV_LINKS: { href: string; label: string; cta?: boolean; hideSm?: boolean }[] = [
-  { href: "/apps", label: "Apps", hideSm: true },
-  { href: "/partners", label: "Partners" },
-  { href: "/hire", label: "Hire", hideSm: true },
-  { href: "/join", label: "Join", hideSm: true },
-  { href: "/donate", label: "Donate" },
-  { href: "/?flow=login", label: "Sign in", cta: true },
-];
-
+// ── Top header bar (shared source) ──────────────────────────────────────────
 export function SiteHeader({
   backHref = "/",
   backLabel = "Home",
@@ -32,111 +23,12 @@ export function SiteHeader({
   backHref?: string;
   backLabel?: string;
 }) {
-  return (
-    <header className="site-header">
-      <div className="site-header-left">
-        {/* Logo links home */}
-        <a href="/" className="site-header-logo" aria-label="Tokans home">
-          <Wordmark size={22} />
-        </a>
-        {/* Back link sits right next to the logo */}
-        <a href={backHref} className="site-header-back">← {backLabel}</a>
-      </div>
-      <nav className="site-nav" aria-label="Site">
-        {NAV_LINKS.map((l) => (
-          <a
-            key={l.label}
-            href={l.href}
-            className={[
-              l.cta ? "site-nav-cta" : "",
-              l.hideSm ? "site-nav-hide" : "",
-            ].join(" ").trim()}
-          >
-            {l.label}
-          </a>
-        ))}
-      </nav>
-    </header>
-  );
+  return <div dangerouslySetInnerHTML={{ __html: headerHTML({ backHref, backLabel }) }} />;
 }
 
-// ── Footer with sitemap (templated from the homepage) ───────────────────────
-const SITEMAP: { heading: string; links: { href: string; label: string; ext?: boolean }[] }[] = [
-  {
-    heading: "Platform",
-    links: [
-      { href: "/", label: "Home" },
-      { href: "/#what-is-tokans", label: "What are Tokans?" },
-      { href: "/#how-it-works", label: "How it works" },
-      { href: "/apps", label: "Apps directory" },
-    ],
-  },
-  {
-    heading: "For you",
-    links: [
-      { href: "/join", label: "Engineers — Join" },
-      { href: "/hire", label: "Employers — Hire" },
-      { href: "/founders", label: "Founders — List an app" },
-      { href: "/professionals", label: "Professionals" },
-    ],
-  },
-  {
-    heading: "Network",
-    links: [
-      { href: "/partners", label: "Partner directory" },
-      { href: "/tokan-task", label: "First Tokan Task" },
-      { href: "/donate", label: "Donate" },
-    ],
-  },
-  {
-    heading: "Connect",
-    links: [
-      { href: "https://x.com/TokansOrg", label: "X / Twitter", ext: true },
-      { href: "https://www.linkedin.com/company/tokans", label: "LinkedIn", ext: true },
-      { href: "mailto:hello@tokans.org", label: "hello@tokans.org" },
-    ],
-  },
-];
-
+// ── Footer with sitemap (shared source) ─────────────────────────────────────
 export function SiteFooter() {
-  return (
-    <footer className="site-footer">
-      <div className="site-footer-grid">
-        <div className="site-footer-brand">
-          <a href="/" className="site-footer-logo" aria-label="Tokans home">
-            <Wordmark size={24} />
-          </a>
-          <p className="site-footer-tagline">
-            A pay-it-forward ecosystem for professionals navigating the AI era.
-          </p>
-          <p className="site-footer-tag">
-            AI needs Tokens.<br />Humans need Tokans.
-          </p>
-        </div>
-        {SITEMAP.map((col) => (
-          <div key={col.heading} className="site-footer-col">
-            <h4>{col.heading}</h4>
-            <ul>
-              {col.links.map((l) => (
-                <li key={l.label}>
-                  <a
-                    href={l.href}
-                    {...(l.ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="site-footer-bottom">
-        <span>© 2026 Tokans.org · Not bought. Not transferred. Not gamified.</span>
-        <span>AI needs Tokens. Humans need Tokans.™</span>
-      </div>
-    </footer>
-  );
+  return <div className="contents" dangerouslySetInnerHTML={{ __html: footerHTML() }} />;
 }
 
 // ── Use-case context panel (image + text), reused by auth + content pages ────

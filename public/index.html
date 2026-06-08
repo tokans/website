@@ -158,7 +158,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+
+  <!-- Landing styles loaded as render-blocking <link>s (processed by Vite/Tailwind/PostCSS)
+       so the page paints fully styled on first load. Loading these via the React bundle
+       (src/main.tsx) caused a flash of unstyled content — the skip link and full-size logo
+       appearing before the bundle injected the CSS. Order mirrors the old JS import order. -->
+  <link rel="stylesheet" href="/src/tailwind.css" />
+  <link rel="stylesheet" href="/src/index.css" />
+  <link rel="stylesheet" href="/src/landing.css" />
 </head>
 <body>
 
@@ -580,22 +587,22 @@
 </section>
 
 
-<!-- ═══════════ FINAL CTA ═══════════ -->
-<section id="cta" aria-labelledby="cta-heading">
-  <div class="container">
-    <div class="cta-inner reveal">
-      <p class="eyebrow eyebrow--center">// Be an early adopter</p>
-      <h2 class="cta-heading" id="cta-heading">
-        Your first step takes<br /><em class="cta-em">eight minutes.</em>
+<!-- ═══════════ FINAL CTA ═══════════ (Tailwind utilities) -->
+<section id="cta" class="py-[clamp(4rem,8vw,8rem)] bg-gradient-to-b from-bg to-bg-alt" aria-labelledby="cta-heading">
+  <div class="w-full max-w-container mx-auto px-[var(--container-pad)]">
+    <div class="max-w-[640px] mx-auto text-center reveal">
+      <p class="eyebrow justify-center mb-5">// Be an early adopter</p>
+      <h2 class="font-display font-bold text-[clamp(2.2rem,5vw,3.5rem)] leading-[1.1] tracking-[-0.02em] text-ink mb-5" id="cta-heading">
+        Your first step takes<br /><em class="font-serif italic font-black text-amber">eight minutes.</em>
       </h2>
-      <p class="cta-sub">
+      <p class="text-[1.05rem] text-ink-muted leading-[1.75] max-w-[520px] mx-auto mb-9">
         Whether you're a founder who needs trusted technical help, or a professional proving your real worth in the AI era, join early and shape how Tokans works.
       </p>
-      <div class="cta-buttons">
+      <div class="flex flex-wrap justify-center gap-[14px] mb-6">
         <a href="https://tokans.org/founders"  data-modal-target="login" class="btn btn-primary btn-lg">Get your codebase assessed →</a>
         <a href="https://tokans.org/join" class="btn btn-outline btn-lg" data-modal-target="engineer">I'm an engineer →</a>
       </div>
-      <p class="cta-employers">Employers and companies → <a href="https://tokans.org/hire" class="cta-hire-link">tokans.org/hire</a></p>
+      <p class="text-[0.825rem] text-ink-faint">Employers and companies → <a href="https://tokans.org/hire" class="text-sky underline underline-offset-[3px] hover:text-sky-dark">tokans.org/hire</a></p>
     </div>
   </div>
 </section>
@@ -604,51 +611,9 @@
 
 
 <!-- ═══════════ FOOTER ═══════════ -->
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="/" class="footer-logo">Tok<span class="logo-ans"><i><u>ans</u></i></span></a>
-        <p class="footer-tagline">
-          A pay-it-forward ecosystem for professionals navigating the AI era.
-        </p>
-        <p class="footer-tagline footer-tagline--tag">
-          AI needs Tokens.<br />
-          Hum<em class="tag-em">ans</em> need Tok<em class="tag-em">ans</em>.
-        </p>
-      </div>
-      <div class="footer-col">
-        <h4>Platform</h4>
-        <ul>
-          <li><a href="#what-is-tokans">What are Tokans?</a></li>
-          <li><a href="#roles">Who it's for</a></li>
-          <li><a href="#how-it-works">How it works</a></li>
-          <li><a href="https://tokans.org/founders" data-modal-target="login">Book an assessment</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <ul>
-          <li><a href="https://tokans.org/join" data-modal-target="engineer">Sign up <span class="badge-soon">soon</span></a></li>
-          <li><a href="https://tokans.org/join" data-modal-target="login">Log in <span class="badge-soon">soon</span></a></li>
-          <li><a href="mailto:hello@tokans.org">hello@tokans.org</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Connect</h4>
-        <ul>
-          <li><a href="https://x.com/TokansOrg" rel="noopener noreferrer">X / Twitter</a></li>
-          <li><a href="https://www.linkedin.com/company/tokans" rel="noopener noreferrer">LinkedIn</a></li>
-          <li><a href="https://peerlist.io/tokans" rel="noopener noreferrer">Peerlist</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© 2026 Tokans.org · Not bought. Not transferred. Not gamified.</p>
-      <p class="footer-mission">AI needs Tokens. Hum<em class="tag-em">ans</em> need Tok<em class="tag-em">ans</em>.™</p>
-    </div>
-  </div>
-</footer>
+<!-- Shared footer (single source: src/chrome/chrome.ts), injected by chrome/mount.ts
+     so the landing matches every other page exactly. -->
+<div data-chrome="footer"></div>
 
 
 <!-- ═══════════ SEO / GEO LAYER (machine-readable, not visible to humans) ═══════════ -->

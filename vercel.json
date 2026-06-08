@@ -6,14 +6,14 @@
       "maxDuration": 10
     }
   },
+  "cleanUrls": true,
+  "crons": [
+    { "path": "/api/cron/snapshot", "schedule": "0 3 * * *" }
+  ],
   "rewrites": [
     { "source": "/myWorkAssistant", "destination": "/" },
     { "source": "/myWorkAssistant/(.*)", "destination": "/" },
-    { "source": "/donate", "destination": "/" },
-    { "source": "/apps", "destination": "/" },
     { "source": "/founders", "destination": "/" },
-    { "source": "/partners", "destination": "/" },
-    { "source": "/partners/(.*)", "destination": "/" },
     { "source": "/join", "destination": "/" },
     { "source": "/hire", "destination": "/" },
     { "source": "/tokan-task", "destination": "/" },

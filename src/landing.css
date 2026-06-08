@@ -4,44 +4,9 @@
    PRD v1.0 · May 2026
 ═══════════════════════════════════════ */
 
-/* ── Design Tokens ── */
-:root {
-  /* Base */
-  --bg:            #FEFEFE;
-  --bg-alt:        #F0F7FF;
-  --bg-subtle:     #F8FAFC;
-
-  /* Text */
-  --text-primary:  #0C1929;
-  --text-muted:    #4A6080;
-  --text-faint:    #8AAAC8;
-
-  /* Brand */
-  --sky:           #0EA5E9;
-  --sky-dark:      #0369A1;
-  --sky-light:     #E0F2FE;
-  --amber:         #F59E0B;
-  --amber-light:   #FEF3C7;
-
-  /* Semantic */
-  --verified:      #059669;
-  --verified-bg:   #ECFDF5;
-  --warning:       #DC2626;
-
-  /* Structure */
-  --border:        #E2E8F0;
-  --border-focus:  #0EA5E9;
-  --shadow-sm:     0 1px 3px rgba(12,25,41,0.08);
-  --shadow-md:     0 4px 16px rgba(12,25,41,0.12);
-  --shadow-lg:     0 12px 40px rgba(12,25,41,0.16);
-
-  /* Layout */
-  --container-max: 1200px;
-  --container-pad: clamp(1rem, 4vw, 3rem);
-  --section-gap:   clamp(4rem, 8vw, 8rem);
-  --card-radius:   16px;
-  --btn-radius:    10px;
-}
+/* Design tokens (--bg, --sky, --section-gap, …) are the single source of truth
+   in src/tailwind.css :root, loaded on every page. This file holds only the
+   landing's bespoke component styles. */
 
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -273,7 +238,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ════════════════════════════════
    NAV
 ════════════════════════════════ */
-nav {
+/* Scoped to the landing nav (#navbar) so it never styles the shared chrome's
+   inner <nav> on React/SPA routes that also load this stylesheet. */
+#navbar {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -286,7 +253,7 @@ nav {
   border-bottom: 1px solid transparent;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-nav.scrolled {
+#navbar.scrolled {
   border-bottom-color: var(--border);
   box-shadow: var(--shadow-sm);
 }
@@ -995,16 +962,7 @@ blockquote {
 /* ════════════════════════════════
    FINAL CTA
 ════════════════════════════════ */
-#cta {
-  padding: var(--section-gap) 0;
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
-}
-.cta-inner {
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
-.cta-inner .eyebrow { margin-bottom: 20px; }
+/* The #cta section is authored with Tailwind utilities in index.html. */
 
 /* Visually-hidden SEO/GEO content (machine-readable only) */
 .geo-layer {
@@ -1015,53 +973,15 @@ blockquote {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
 }
-.cta-heading {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  margin-bottom: 20px;
-}
-.cta-em {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-weight: 900;
-  color: var(--amber);
-}
-.cta-sub {
-  font-size: 1.05rem;
-  color: var(--text-muted);
-  line-height: 1.75;
-  margin-bottom: 36px;
-  max-width: 520px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.cta-buttons {
-  display: flex;
-  gap: 14px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-}
-.cta-employers {
-  font-size: 0.825rem;
-  color: var(--text-faint);
-}
-.cta-hire-link {
-  color: var(--sky);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.cta-hire-link:hover { color: var(--sky-dark); }
+/* (.cta-* rules removed — the section now uses Tailwind utilities.) */
 
 
 /* ════════════════════════════════
    FOOTER
 ════════════════════════════════ */
-footer {
+/* Scoped to the landing's own footer so it never collides with the shared
+   chrome <footer> used on React/SPA routes that also load this stylesheet. */
+body > footer {
   background: var(--text-primary);
   padding: 64px 0 32px;
   color: #fff;

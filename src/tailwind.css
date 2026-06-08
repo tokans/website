@@ -1,10 +1,11 @@
 /**
- * Tailwind entry for the Tokans website.
+ * Tailwind entry for the Tokans website — the single styling source of truth.
  *
- * Brings in the shared suite design tokens (same HSL system used by myFinance /
- * myHealth / myWorkAssistant) and the Tailwind utility layers. Preflight is off
- * (see tailwind.config.cjs) so this coexists with the existing custom CSS while
- * screens migrate to Tailwind incrementally.
+ * The :root block below defines the canonical design tokens (light / sky-blue /
+ * amber, mirroring the marketing landing). tailwind.config.cjs maps its colour,
+ * font, radius and shadow scales onto these variables, so static HTML shells and
+ * React islands render identically. Preflight is off (see tailwind.config.cjs);
+ * shared resets and primitives live in the @layer blocks here.
  */
 @tailwind base;
 @tailwind components;
@@ -12,43 +13,145 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 243 75% 59%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 243 75% 96%;
-    --accent-foreground: 243 60% 30%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 243 75% 59%;
-    --radius: 0.5rem;
+    /* Surfaces */
+    --bg:            #FEFEFE;
+    --bg-alt:        #F0F7FF;
+    --bg-subtle:     #F8FAFC;
+
+    /* Text */
+    --text-primary:  #0C1929;
+    --text-muted:    #4A6080;
+    --text-faint:    #8AAAC8;
+
+    /* Brand accents */
+    --sky:           #0EA5E9;
+    --sky-dark:      #0369A1;
+    --sky-light:     #E0F2FE;
+    --amber:         #F59E0B;
+    --amber-light:   #FEF3C7;
+
+    /* Status */
+    --verified:      #059669;
+    --verified-bg:   #ECFDF5;
+    --warning:       #DC2626;
+
+    /* Lines & shadows */
+    --border:        #E2E8F0;
+    --border-focus:  #0EA5E9;
+    --shadow-sm:     0 1px 3px rgba(12,25,41,0.08);
+    --shadow-md:     0 4px 16px rgba(12,25,41,0.12);
+    --shadow-lg:     0 12px 40px rgba(12,25,41,0.16);
+
+    /* Layout */
+    --container-max: 1200px;
+    --container-pad: clamp(1rem, 4vw, 3rem);
+    --section-gap:   clamp(4rem, 8vw, 8rem);
+    --card-radius:   16px;
+    --btn-radius:    10px;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 47% 7%;
-    --card-foreground: 210 40% 98%;
-    --primary: 234 89% 74%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 45%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 234 89% 74%;
+  /* Minimal reset (preflight is off so we cover the essentials ourselves). */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: "DM Sans", "Helvetica Neue", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  /* ── Eyebrow (mono kicker with a short leading rule) ── */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "DM Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sky);
+  }
+  .eyebrow::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--sky);
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* ── Wordmark ── */
+  .wordmark {
+    font-family: "Syne", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    display: inline-flex;
+    text-decoration: none;
+  }
+  .wordmark-ans {
+    font-style: italic;
+    text-decoration: underline;
+    text-decoration-color: var(--amber);
+    text-underline-offset: 3px;
+    color: var(--sky);
+  }
+
+  /* ── Buttons (mirror the landing .btn family) ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: var(--btn-radius);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+  }
+  .btn-lg { padding: 14px 28px; font-size: 0.975rem; }
+  .btn-primary {
+    background: var(--sky);
+    color: #fff;
+    border-color: var(--sky);
+  }
+  .btn-primary:hover {
+    background: var(--sky-dark);
+    border-color: var(--sky-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
+  .btn-outline:hover { border-color: var(--sky); color: var(--sky); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: transparent;
+  }
+  .btn-ghost:hover { color: var(--text-primary); }
+
+  /* ── Surface card ── */
+  .site-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-sm);
   }
 }

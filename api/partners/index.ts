@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getDb } from "../lib/db.js";
 import { withErrorHandling } from "../lib/handler.js";
 import { type PartnerRow, mapPartnerRow } from "../lib/partners.js";
+import { readPartnersSnapshot } from "../lib/snapshot.js";
 
 /** Public partner directory (the listings other suite apps also surface as ads). */
 export default withErrorHandling(async function handler(
@@ -10,6 +11,14 @@ export default withErrorHandling(async function handler(
 ): Promise<void> {
   if (req.method !== "GET") {
     res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  // The directory has no per-viewer data, so serve the daily JSON snapshot to
+  // everyone and only fall back to the DB on a cold cache.
+  const snap = await readPartnersSnapshot();
+  if (snap) {
+    res.status(200).json({ partners: snap.partners });
     return;
   }
 

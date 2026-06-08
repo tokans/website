@@ -1,30 +1,61 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{ts,tsx}"],
-  // Preflight is disabled so Tailwind utilities can be adopted incrementally
-  // alongside the existing custom CSS without resetting current screens.
+  // Scan static HTML shells, the landing page, and all React islands/screens.
+  content: ["./*.html", "./pages/**/*.html", "./src/**/*.{ts,tsx}"],
+  // Preflight stays OFF so Tailwind coexists with the bespoke landing widgets
+  // (carousels, marquee, profile card) in public/styles.css and the existing
+  // screen CSS while markup migrates to utilities. Shared resets live in the
+  // @layer base block of src/tailwind.css instead.
   corePlugins: { preflight: false },
   theme: {
-    container: { center: true, padding: "1rem" },
+    container: { center: true, padding: "var(--container-pad)" },
     extend: {
+      // All colours resolve to the CSS variables defined in src/tailwind.css
+      // :root — the single source of truth shared by static HTML + React.
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
-        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
-        destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
-        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
-        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
-        card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+        bg: {
+          DEFAULT: "var(--bg)",
+          alt: "var(--bg-alt)",
+          subtle: "var(--bg-subtle)",
+        },
+        ink: {
+          DEFAULT: "var(--text-primary)",
+          muted: "var(--text-muted)",
+          faint: "var(--text-faint)",
+        },
+        sky: {
+          DEFAULT: "var(--sky)",
+          dark: "var(--sky-dark)",
+          light: "var(--sky-light)",
+        },
+        amber: {
+          DEFAULT: "var(--amber)",
+          light: "var(--amber-light)",
+        },
+        verified: "var(--verified)",
+        warning: "var(--warning)",
+        border: "var(--border)",
+      },
+      fontFamily: {
+        sans: ["DM Sans", "Helvetica Neue", "system-ui", "sans-serif"],
+        display: ["Syne", "Helvetica Neue", "sans-serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
+        mono: ["DM Mono", "ui-monospace", "monospace"],
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        btn: "var(--btn-radius)",
+        card: "var(--card-radius)",
+        lg: "var(--card-radius)",
+        md: "calc(var(--card-radius) - 6px)",
+        sm: "calc(var(--card-radius) - 10px)",
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
+      },
+      maxWidth: {
+        container: "var(--container-max)",
       },
     },
   },

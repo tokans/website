@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donate · Tokans</title>
+  <meta name="description" content="Pay it forward. Fund access and support for professionals rebuilding their careers in the AI era. Anonymous-friendly — no account required." />
+  <link rel="canonical" href="https://tokans.org/donate" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="min-h-screen flex flex-col bg-bg text-ink font-sans">
+
+    <!-- Shared header (injected from chrome.ts) -->
+    <div data-chrome="header" data-back-href="/" data-back-label="Home"></div>
+
+    <!-- Two-column: static use-case panel + dynamic form island -->
+    <div class="flex-1 grid lg:grid-cols-[1.05fr_0.95fr]">
+
+      <!-- Static use-case panel -->
+      <aside class="relative flex flex-col overflow-hidden border-b lg:border-b-0 lg:border-r border-border bg-bg-alt p-7 sm:p-16">
+        <div class="relative z-10 mt-7 lg:mt-12 max-w-[30rem]">
+          <div class="eyebrow">Support the mission</div>
+          <h1 class="mt-3.5 font-display text-[clamp(30px,4vw,46px)] font-bold leading-[1.05]">Pay it forward</h1>
+          <p class="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-ink-muted">
+            Fund access and support for professionals rebuilding their careers in the AI era. AI needs Tokens. Humans need Tokans.
+          </p>
+          <ul class="mt-6 grid gap-3.5 list-none p-0">
+            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
+              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
+              <span>Anonymous-friendly — no account required</span>
+            </li>
+            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
+              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
+              <span>Funds professional access and support</span>
+            </li>
+            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
+              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
+              <span>Every contribution is pay-it-forward</span>
+            </li>
+          </ul>
+        </div>
+        <img class="relative z-10 mt-auto w-full max-w-[380px] self-center object-contain pt-8" src="/images/profile.png" alt="Pay-it-forward support for professionals" />
+      </aside>
+
+      <!-- Dynamic form island -->
+      <main class="flex flex-col items-center justify-start p-6 sm:p-14">
+        <div id="donate-island" class="w-full max-w-[480px]"></div>
+      </main>
+    </div>
+
+    <!-- Shared footer (injected from chrome.ts) -->
+    <div data-chrome="footer"></div>
+  </div>
+
+  <script type="module" src="/src/islands/donate.tsx"></script>
+</body>
+</html>

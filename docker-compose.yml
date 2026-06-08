@@ -21,7 +21,16 @@ services:
     # native Postgres installs commonly claim it.
     volumes:
       - pg_data:/var/lib/postgresql/data
+      # Init scripts run once, on a fresh volume, in filename order. The base
+      # schema loads first; the append-only migrations follow. Keep these in
+      # sync with any new schema.*.sql file. After adding one, recreate the
+      # volume to apply it locally: npm run local:reset && npm run local:up
       - ./schema.sql:/docker-entrypoint-initdb.d/00-schema.sql:ro
+      - ./schema.professionals.sql:/docker-entrypoint-initdb.d/01-professionals.sql:ro
+      - ./schema.partners.sql:/docker-entrypoint-initdb.d/02-partners.sql:ro
+      - ./schema.payments.sql:/docker-entrypoint-initdb.d/03-payments.sql:ro
+      - ./schema.apps.sql:/docker-entrypoint-initdb.d/04-apps.sql:ro
+      - ./schema.tokan_task.sql:/docker-entrypoint-initdb.d/05-tokan_task.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d main"]
       interval: 5s

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { api } from "../api.js";
 import { Wordmark, Card, BtnPrimary, ProgressBar, FadeIn, InfoBox } from "../components/ui.js";
 import { RoleStep, SubTypeStep, ContextStep, BarrierStep, type ContextValues } from "./OnboardingSteps.js";
+import JourneyFlow from "./JourneyFlow.js";
 import { HAS_SUBTYPE, HAS_BARRIER, getStepCount } from "../data/roles.js";
+import { getJourney } from "../data/journeys.js";
 import type { RoleId, SessionPayload } from "../lib/types.js";
 
 // ── What-happens-next items per role ─────────────────────────────────────────
@@ -79,14 +81,31 @@ function DoneScreen({
 
 // ── Main orchestrator ─────────────────────────────────────────────────────────
 export default function Onboarding({
-  user, onComplete, onLogout, initialRole,
+  user, onComplete, onLogout, initialRole, entryPath,
 }: {
   user:        SessionPayload;
   onComplete:  (session: { authenticated: true; user: SessionPayload }) => void;
   onLogout:    () => void;
   /** Pre-select a role and skip the role picker (e.g. /join → opportunity_seeker, /hire → employer). */
   initialRole?: RoleId;
+  /** The path the journey started from (App `flow`). Selects a tailored,
+   *  path-specific question set when one is defined in data/journeys.ts. */
+  entryPath?:   string;
 }) {
+  // Entry-path journeys (e.g. /join, /hire, /founders) drive their own,
+  // path-specific questions. Everything else uses the generic role picker below.
+  const journey = getJourney(entryPath);
+  if (journey) {
+    return (
+      <JourneyFlow
+        journey={journey}
+        user={user}
+        onComplete={onComplete}
+        onLogout={onLogout}
+      />
+    );
+  }
+
   const minStep = initialRole ? 1 : 0;
   const [role,         setRole]         = useState<RoleId | null>(initialRole ?? null);
   const [subType,      setSubType]      = useState<string | null>(null);
@@ -205,7 +224,7 @@ export default function Onboarding({
     <div className={pageCls}>
 
       <div className="onboard-nav-row">
-        <Wordmark />
+        <a href="/" aria-label="Tokans home" className="site-header-logo"><Wordmark /></a>
         <button type="button" onClick={onLogout} className="onboard-text-btn">Sign out</button>
       </div>
 

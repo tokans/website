@@ -99,9 +99,10 @@ export const api = {
 
   // Onboarding
   completeOnboarding: (body: {
-    role:     RoleId;
-    subType?: SubType | null;
-    context?: Record<string, unknown>;
+    role:       RoleId;
+    subType?:   SubType | null;
+    context?:   Record<string, unknown>;
+    entryPath?: string | null;
   }) =>
     request<{ ok: boolean }>("/api/onboarding/complete", {
       method: "POST",

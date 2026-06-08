@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apps · Tokans</title>
+  <meta name="description" content="Apps supported by professionals on the Tokans network. Any app built on sharedCoreLib is eligible to be listed. Browse the directory, or list your own." />
+  <link rel="canonical" href="https://tokans.org/apps" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="min-h-screen flex flex-col bg-bg text-ink font-sans">
+
+    <div data-chrome="header" data-back-href="/" data-back-label="Home"></div>
+
+    <div class="flex-1 grid lg:grid-cols-[1fr_1.1fr]">
+
+      <!-- Static use-case panel -->
+      <aside class="relative flex flex-col overflow-hidden border-b lg:border-b-0 lg:border-r border-border bg-bg-alt p-7 sm:p-16">
+        <div class="relative z-10 mt-7 lg:mt-12 max-w-[30rem]">
+          <div class="eyebrow">Apps on the Tokans network</div>
+          <h1 class="mt-3.5 font-display text-[clamp(30px,4vw,46px)] font-bold leading-[1.05]">Apps supported by professionals</h1>
+          <p class="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-ink-muted">
+            Apps built on sharedCoreLib can be listed here so the partner network can support them. Browse the directory, or list your own.
+          </p>
+          <ul class="mt-6 grid gap-3.5 list-none p-0">
+            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
+              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
+              <span>Every sharedCoreLib app is eligible to be listed</span>
+            </li>
+            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
+              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
+              <span>Owners initiate an acceptance workflow to get listed</span>
+            </li>
+            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
+              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
+              <span>Supported by verified professionals on the network</span>
+            </li>
+          </ul>
+        </div>
+        <img class="relative z-10 mt-auto w-full max-w-[380px] self-center object-contain pt-8" src="/images/dev.png" alt="Apps built on sharedCoreLib" />
+      </aside>
+
+      <!-- Dynamic directory island -->
+      <main class="flex flex-col items-center justify-start p-6 sm:p-14">
+        <div id="apps-island" class="w-full max-w-[760px]"></div>
+      </main>
+    </div>
+
+    <div data-chrome="footer"></div>
+  </div>
+
+  <script type="module" src="/src/islands/apps.tsx"></script>
+</body>
+</html>

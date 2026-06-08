@@ -51,6 +51,21 @@ CREATE TABLE IF NOT EXISTS onboarding_data (
 
 CREATE INDEX IF NOT EXISTS idx_onboarding_user ON onboarding_data (user_id);
 
+-- ── Onboarding Journeys (per entry-path, completed once each) ────────────────────
+-- A user may arrive from several paths over time (/join, /founders, …). Each
+-- path's onboarding journey runs exactly once; this records which are done.
+CREATE TABLE IF NOT EXISTS user_journeys (
+  user_id      UUID        NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  entry_path   TEXT        NOT NULL,   -- join | hire | founders | …
+  role         TEXT        NOT NULL,
+  sub_type     TEXT,
+  context      JSONB       NOT NULL DEFAULT '{}',
+  completed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, entry_path)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_journeys_user ON user_journeys (user_id);
+
 -- ── Activities ────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS activities (
   id                 UUID        PRIMARY KEY DEFAULT gen_random_uuid(),

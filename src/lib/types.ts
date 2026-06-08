@@ -61,6 +61,8 @@ export interface SessionPayload {
   onboardingComplete: boolean;
   role?: RoleId;
   subType?: SubType | null;
+  /** Entry paths whose onboarding journey this user has completed (run once each). */
+  completedJourneys?: string[];
 }
 
 export interface SessionWithId extends SessionPayload {
@@ -88,6 +90,8 @@ export interface OnboardingCompleteBody {
   role: RoleId;
   subType?: SubType | null;
   context?: Record<string, unknown>;
+  /** The entry path this journey ran from — recorded so it runs only once. */
+  entryPath?: string | null;
 }
 
 // ── GitHub OAuth API shapes ────────────────────────────────────────────────────

@@ -4,6 +4,7 @@ import { getSession, getSessionId, requireSession } from "../lib/session.js";
 import { requireJsonContent, verifyCsrf, ensureCsrfToken } from "../lib/csrf.js";
 import { withErrorHandling } from "../lib/handler.js";
 import { type AppRow, mapAppRow, slugify } from "../lib/apps.js";
+import { readAppsSnapshot } from "../lib/snapshot.js";
 
 interface RegisterBody {
   name?: string;
@@ -25,6 +26,18 @@ export default withErrorHandling(async function handler(
   if (req.method === "GET") {
     const session = await getSession(getSessionId(req));
     const viewer = session?.userId ?? null;
+
+    // Pre-login (anonymous) traffic is served from the daily JSON snapshot to
+    // keep steady-state reads off the DB. Logged-in viewers hit the DB so the
+    // per-viewer isOwner flag is correct. Cold cache → DB fallback.
+    if (!viewer) {
+      const snap = await readAppsSnapshot();
+      if (snap) {
+        res.status(200).json({ apps: snap.apps });
+        return;
+      }
+    }
+
     const rows = (await sql`
       SELECT id, slug, name, tagline, repo_url, stack, description,
              uses_sharedcorelib, support_status, listed, owner_user_id

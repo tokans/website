@@ -24,7 +24,7 @@ export default withErrorHandling(async function handler(
   const session = await requireSession(req, res);
   if (!session) return;
 
-  const { role, subType, context } = (req.body ?? {}) as OnboardingCompleteBody;
+  const { role, subType, context, entryPath } = (req.body ?? {}) as OnboardingCompleteBody;
 
   if (!role) {
     res.status(400).json({ error: "Role is required" });
@@ -34,6 +34,7 @@ export default withErrorHandling(async function handler(
   const sql            = getDb();
   const contextJson    = JSON.stringify(context ?? {});
   const subTypeOrNull  = subType ?? null;
+  const entryPathOrNull = entryPath ?? null;
 
   await sql`
     INSERT INTO onboarding_data (user_id, role, sub_type, context)
@@ -53,6 +54,25 @@ export default withErrorHandling(async function handler(
     DO UPDATE SET sub_type = EXCLUDED.sub_type
   `;
 
+  // Record this entry-path journey as completed (run once per path).
+  if (entryPathOrNull) {
+    await sql`
+      INSERT INTO user_journeys (user_id, entry_path, role, sub_type, context)
+      VALUES (${session.userId}, ${entryPathOrNull}, ${role}, ${subTypeOrNull}, ${contextJson})
+      ON CONFLICT (user_id, entry_path)
+      DO UPDATE SET
+        role         = EXCLUDED.role,
+        sub_type     = EXCLUDED.sub_type,
+        context      = EXCLUDED.context,
+        completed_at = NOW()
+    `;
+  }
+
+  const journeyRows = await sql`
+    SELECT entry_path FROM user_journeys WHERE user_id = ${session.userId}
+  `;
+  const completedJourneys = journeyRows.map((r) => r["entry_path"] as string);
+
   // Rotate session: drop the old one, mint a new ID with refreshed payload.
   await getRedis().del(`session:${session.sessionId}`);
 
@@ -63,6 +83,7 @@ export default withErrorHandling(async function handler(
     onboardingComplete: true,
     role,
     subType:            subTypeOrNull,
+    completedJourneys,
   });
 
   setSessionCookie(res, newSessionId, req);

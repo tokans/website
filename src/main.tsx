@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import App from "./App.js";
-import "./tailwind.css";
-import "./index.css";
+// Inject the shared footer (single source: src/chrome/chrome.ts) into the
+// landing's <div data-chrome="footer">, so it matches every other page. Same
+// side-effect import the island entries use.
+import "./chrome/mount.js";
+// Stylesheets (tailwind.css, index.css, landing.css) are loaded as render-blocking
+// <link>s in index.html so the page paints styled before this bundle arrives —
+// importing them here previously caused a flash of unstyled content on first load.
 
 /* ─── Standalone mode (own pages) ───────────────────────────────────────────
    The marketing index.html is served for every path (Vercel rewrites

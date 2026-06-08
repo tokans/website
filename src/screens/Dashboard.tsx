@@ -82,7 +82,7 @@ export default function Dashboard({
       <div className="dash-bg" />
 
       <nav className="dash-nav">
-        <Wordmark size={22} />
+        <a href="/" aria-label="Tokans home" className="site-header-logo"><Wordmark size={22} /></a>
         <div className="dash-nav-right">
           <div className="dash-user">
             {user.name ?? user.email}

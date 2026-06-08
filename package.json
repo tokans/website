@@ -14,7 +14,13 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "seed:apps": "node scripts/seed-apps.mjs"
+    "seed:apps": "node scripts/seed-apps.mjs",
+    "validate:readme": "node scripts/validate-app-readme.mjs",
+    "db:schema": "node scripts/apply-schema.mjs",
+    "db:schema:local": "node scripts/apply-schema.mjs --local",
+    "snapshot:rebuild": "node scripts/rebuild-snapshot.mjs",
+    "deploy": "node scripts/deploy.mjs",
+    "deploy:dry": "node scripts/deploy.mjs --dry-run"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
