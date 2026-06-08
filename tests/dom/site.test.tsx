@@ -6,9 +6,9 @@ import { PAGE_CONTEXTS } from "../../src/data/pageContexts.js";
 describe("SiteHeader", () => {
   it("links the logo to home and shows a back link next to it", () => {
     const { container } = render(<SiteHeader />);
-    const logo = container.querySelector(".site-header-logo") as HTMLAnchorElement;
+    const logo = container.querySelector('a[aria-label="Tokans home"]') as HTMLAnchorElement;
     expect(logo.getAttribute("href")).toBe("/");
-    const back = container.querySelector(".site-header-back") as HTMLAnchorElement;
+    const back = screen.getByText("← Home") as HTMLAnchorElement;
     expect(back).toBeTruthy();
     expect(back.getAttribute("href")).toBe("/");
   });
@@ -34,7 +34,7 @@ describe("SiteFooter sitemap", () => {
     render(<SiteFooter />);
     expect(screen.getByText("Partner directory")).toBeInTheDocument();
     expect(screen.getByText("Apps directory")).toBeInTheDocument();
-    expect(screen.getByText("First Tokan Task")).toBeInTheDocument();
+    expect(screen.getByText("Founders — List an app")).toBeInTheDocument();
   });
 });
 
@@ -45,9 +45,9 @@ describe("PageLayout", () => {
         <div>page body here</div>
       </PageLayout>
     );
-    // Header + footer chrome present
-    expect(container.querySelector(".site-header")).toBeTruthy();
-    expect(container.querySelector(".site-footer")).toBeTruthy();
+    // Header + footer chrome present (shared markup from chrome.ts)
+    expect(container.querySelector("header")).toBeTruthy();
+    expect(container.querySelector("footer")).toBeTruthy();
     // Context panel image + copy
     const img = screen.getByAltText(PAGE_CONTEXTS["partners"]!.imageAlt) as HTMLImageElement;
     expect(img.getAttribute("src")).toBe(PAGE_CONTEXTS["partners"]!.image);

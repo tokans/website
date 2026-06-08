@@ -1,15 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 
-// A permissive api mock — every screen App can route to pulls from this module.
-// Built in vi.hoisted so it exists before the hoisted vi.mock factory runs.
+// Permissive api mock — App checks the session on mount and routes from there.
 const { api } = vi.hoisted(() => ({
   api: {
     initCsrf: vi.fn().mockResolvedValue(null),
     session: vi.fn().mockResolvedValue({ authenticated: false }),
-    listApps: vi.fn().mockResolvedValue({ apps: [] }),
-    listPartners: vi.fn().mockResolvedValue({ partners: [] }),
-    donateCheckout: vi.fn(),
     logout: vi.fn().mockResolvedValue({ ok: true }),
   },
 }));
@@ -17,45 +13,39 @@ vi.mock("../../src/api.js", () => ({ api }));
 
 import App from "../../src/App.js";
 
+// jsdom can't navigate; model window.location as a plain writable object so
+// App's redirect (window.location.href = …) is observable and accepts a
+// relative URL (a real Location.href setter would reject "/login").
+function setLocation(path: string) {
+  const url = new URL(`http://localhost${path}`);
+  Object.defineProperty(window, "location", {
+    configurable: true,
+    writable: true,
+    value: { pathname: url.pathname, search: url.search, href: `http://localhost${path}` },
+  });
+}
+
 beforeEach(() => {
   Object.values(api).forEach((f) => "mockClear" in f && f.mockClear());
   api.session.mockResolvedValue({ authenticated: false });
+  setLocation("/app");
 });
 
-describe("App standalone routing", () => {
-  it("renders the Donate screen on /donate (public, pre-auth)", async () => {
-    window.history.replaceState({}, "", "/donate");
-    render(<App />);
-    // findBy lets React flush the mounted effects (initCsrf/session) under act.
-    expect(await screen.findByText("Pay it forward")).toBeInTheDocument();
-  });
-
-  it("renders the Apps directory on /apps (public)", async () => {
-    window.history.replaceState({}, "", "/apps");
-    render(<App />);
-    expect(
-      await screen.findByText("Apps supported by professionals")
-    ).toBeInTheDocument();
-  });
-
-  it("renders the Partner directory on /partners (public)", async () => {
-    window.history.replaceState({}, "", "/partners");
-    render(<App />);
-    expect(
-      await screen.findByText("Connect with a professional")
-    ).toBeInTheDocument();
-  });
-
-  it("shows the founders use-case auth panel on /founders when signed out", async () => {
-    window.history.replaceState({}, "", "/founders");
-    render(<App />);
-    expect(await screen.findByText("FOR FOUNDERS")).toBeInTheDocument();
-    expect(screen.getByText("Take your AI-built app further")).toBeInTheDocument();
-  });
-
-  it("checks the existing session for a non-public route", async () => {
-    window.history.replaceState({}, "", "/");
+describe("App (post-login host)", () => {
+  it("checks the session on mount", async () => {
     render(<App />);
     await waitFor(() => expect(api.session).toHaveBeenCalled());
+  });
+
+  it("redirects an unauthenticated visitor to /login", async () => {
+    setLocation("/app");
+    render(<App />);
+    await waitFor(() => expect(window.location.href).toBe("/login"));
+  });
+
+  it("sends an unauthenticated /join visitor to the static /join auth page", async () => {
+    setLocation("/app?flow=join");
+    render(<App />);
+    await waitFor(() => expect(window.location.href).toBe("/join"));
   });
 });

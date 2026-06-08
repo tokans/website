@@ -11,13 +11,14 @@
     { "path": "/api/cron/snapshot", "schedule": "0 3 * * *" }
   ],
   "rewrites": [
-    { "source": "/myWorkAssistant", "destination": "/" },
-    { "source": "/myWorkAssistant/(.*)", "destination": "/" },
-    { "source": "/founders", "destination": "/" },
-    { "source": "/join", "destination": "/" },
-    { "source": "/hire", "destination": "/" },
-    { "source": "/tokan-task", "destination": "/" },
-    { "source": "/professionals", "destination": "/" },
-    { "source": "/professionals/(.*)", "destination": "/" }
+    { "source": "/founders", "destination": "/auth" },
+    { "source": "/join", "destination": "/auth" },
+    { "source": "/hire", "destination": "/auth" },
+    { "source": "/login", "destination": "/auth" },
+    { "source": "/professionals", "destination": "/auth" },
+    { "source": "/professionals/(.*)", "destination": "/app" },
+    { "source": "/tokan-task", "destination": "/app" },
+    { "source": "/myWorkAssistant", "destination": "/app" },
+    { "source": "/myWorkAssistant/(.*)", "destination": "/app" }
   ]
 }

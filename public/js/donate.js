@@ -1,21 +1,18 @@
 /**
- * /donate island — vanilla-TS donation widget (amount + email + checkout
- * redirect) rendered into the static donate.html shell. Replaces the former
- * React DonateForm; the surrounding chrome and use-case copy are static HTML.
+ * /donate island — vanilla-JS donation widget (amount + email + checkout
+ * redirect) rendered into the static donate.html shell. Ported from the former
+ * src/prelogin/islands/donate.ts; chrome + CSS are loaded by the page.
  */
-import "../tailwind.css";
-import "../index.css";
-import "../chrome/mount.js";
-import { api } from "../api.js";
+import { api } from "./api.js";
 import { escapeHtml, qs, onReady } from "./html.js";
 
 const PRESETS_RUPEES = [500, 1000, 2500, 5000];
 const MIN_RUPEES = 50;
 
-const inr = (n: number) => n.toLocaleString("en-IN");
+const inr = (n) => n.toLocaleString("en-IN");
 
 // ── Pure render (exported for tests) ───────────────────────────────────────────
-export function donateFormHTML(outcome: "" | "cancel" = ""): string {
+export function donateFormHTML(outcome = "") {
   const presets = PRESETS_RUPEES.map(
     (p) => `<button type="button" class="ui-btn ui-btn--ghost" data-preset="${p}">₹${escapeHtml(inr(p))}</button>`,
   ).join("");
@@ -55,7 +52,7 @@ export function donateFormHTML(outcome: "" | "cancel" = ""): string {
 </div>`.trim();
 }
 
-export function donateSuccessHTML(): string {
+export function donateSuccessHTML() {
   return `
 <div class="ui-card" style="--ui-card-max-w:480px">
   <div class="ui-fade-in">
@@ -70,7 +67,7 @@ export function donateSuccessHTML(): string {
 }
 
 // ── Mount + wiring ──────────────────────────────────────────────────────────────
-function mount(): void {
+export function mount() {
   const root = document.getElementById("donate-island");
   if (!root) return;
 
@@ -80,7 +77,7 @@ function mount(): void {
 
   if (status === "success") {
     root.innerHTML = donateSuccessHTML();
-    qs<HTMLButtonElement>(root, "#donate-home")?.addEventListener("click", () => {
+    qs(root, "#donate-home")?.addEventListener("click", () => {
       window.location.href = "/";
     });
     return;
@@ -88,10 +85,10 @@ function mount(): void {
 
   root.innerHTML = donateFormHTML(status === "cancel" ? "cancel" : "");
 
-  const amountEl = qs<HTMLInputElement>(root, "#donate-amount");
-  const emailEl = qs<HTMLInputElement>(root, "#donate-email");
-  const submitEl = qs<HTMLButtonElement>(root, "#donate-submit");
-  const errorEl = qs<HTMLDivElement>(root, "#donate-error");
+  const amountEl = qs(root, "#donate-amount");
+  const emailEl = qs(root, "#donate-email");
+  const submitEl = qs(root, "#donate-submit");
+  const errorEl = qs(root, "#donate-error");
   if (!amountEl || !submitEl) return;
 
   const rupees = () => Number(amountEl.value);
@@ -103,7 +100,7 @@ function mount(): void {
   };
 
   // Preset buttons set the amount.
-  for (const btn of root.querySelectorAll<HTMLButtonElement>("button[data-preset]")) {
+  for (const btn of root.querySelectorAll("button[data-preset]")) {
     btn.addEventListener("click", () => {
       amountEl.value = btn.dataset.preset ?? "";
       syncButton();
@@ -125,7 +122,7 @@ function mount(): void {
       .then(({ url }) => {
         window.location.href = url;
       })
-      .catch((e: unknown) => {
+      .catch((e) => {
         if (errorEl) {
           errorEl.innerHTML = `<div class="ui-info ui-info--error u-mt-16">${escapeHtml(
             e instanceof Error ? e.message : "Could not start the donation",

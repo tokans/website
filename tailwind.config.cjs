@@ -1,7 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // Scan static HTML shells, the landing page, and all React islands/screens.
-  content: ["./*.html", "./pages/**/*.html", "./src/**/*.{ts,tsx}"],
+  // Scan the static prelogin pages (public/), the React host (app.html) and all
+  // React screens. public/**/*.js is included so utility classes used inside the
+  // vanilla-JS template strings (apps/partners/donate islands) are generated.
+  content: [
+    "./*.html",
+    "./public/**/*.html",
+    "./public/**/*.js",
+    "./src/**/*.{ts,tsx}",
+  ],
   // Preflight stays OFF so Tailwind coexists with the bespoke landing widgets
   // (carousels, marquee, profile card) in public/styles.css and the existing
   // screen CSS while markup migrates to utilities. Shared resets live in the

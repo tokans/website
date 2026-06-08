@@ -38,3 +38,6 @@ yarn-error.log*
 next-env.d.ts
 
 dist
+
+# generated stylesheet (compiled from src/static.css by `npm run build:css`)
+/public/css/site.css

@@ -1,17 +1,14 @@
 /**
- * /apps island — vanilla-TS apps directory (browse listed apps + owner
- * registration) rendered into the static apps.html shell. Replaces the former
- * React AppsDirectory; chrome and use-case copy are static HTML.
+ * /apps island — vanilla-JS apps directory (browse listed apps + owner
+ * registration) rendered into the static apps.html shell. Ported from the former
+ * src/prelogin/islands/apps.ts; chrome (/js/chrome.js) and CSS (/css/site.css)
+ * are loaded by the page, the use-case copy is static HTML.
  */
-import "../tailwind.css";
-import "../index.css";
-import "../chrome/mount.js";
-import { api } from "../api.js";
-import type { AppListing } from "../lib/types.js";
+import { api } from "./api.js";
 import { escapeHtml, safeUrl, qs, onReady } from "./html.js";
 
 // ── Pure render (exported for tests) ───────────────────────────────────────────
-export function appRowHTML(a: AppListing): string {
+export function appRowHTML(a) {
   const pill = a.listed ? "SUPPORTED" : escapeHtml(a.supportStatus.toUpperCase());
   const repo = a.repoUrl && safeUrl(a.repoUrl)
     ? ` · <a href="${safeUrl(a.repoUrl)}" target="_blank" rel="noopener noreferrer">repo ↗</a>`
@@ -27,14 +24,14 @@ export function appRowHTML(a: AppListing): string {
 </div>`.trim();
 }
 
-export function appsListHTML(apps: AppListing[] | null): string {
+export function appsListHTML(apps) {
   if (apps === null) return `<div class="ui-step-sub u-mt-16">Loading…</div>`;
   if (apps.length === 0)
     return `<div class="ui-info ui-info--neutral u-mt-16">No apps listed yet.</div>`;
   return `<div class="u-mt-16" style="display:grid;gap:12px">${apps.map(appRowHTML).join("")}</div>`;
 }
 
-function ownerFormHTML(): string {
+function ownerFormHTML() {
   return `
 <div class="ui-field u-mt-16">
   <label class="ui-field-label">App name</label>
@@ -54,7 +51,7 @@ function ownerFormHTML(): string {
 <div id="app-mine"></div>`.trim();
 }
 
-function mineRowHTML(a: AppListing): string {
+function mineRowHTML(a) {
   const action =
     a.supportStatus === "none"
       ? `<button type="button" class="ui-btn ui-btn--primary ui-btn--full u-mt-8" data-request="${escapeHtml(a.id)}">Request support →</button>`
@@ -71,12 +68,12 @@ function mineRowHTML(a: AppListing): string {
 </div>`.trim();
 }
 
-function signInHTML(): string {
-  return `<div class="ui-info ui-info--gold u-mt-16"><a href="/?flow=login">Sign in</a> to list your app for Tokans support.</div>`;
+function signInHTML() {
+  return `<div class="ui-info ui-info--gold u-mt-16"><a href="/login">Sign in</a> to list your app for Tokans support.</div>`;
 }
 
 // ── Mount + wiring ──────────────────────────────────────────────────────────────
-function mount(): void {
+export function mount() {
   const root = document.getElementById("apps-island");
   if (!root) return;
 
@@ -110,16 +107,16 @@ function mount(): void {
     .catch(() => { if (ownerEl) ownerEl.innerHTML = signInHTML(); });
 }
 
-function wireOwnerForm(ownerEl: Element): void {
-  const nameEl = qs<HTMLInputElement>(ownerEl, "#app-name");
-  const repoEl = qs<HTMLInputElement>(ownerEl, "#app-repo");
-  const stackEl = qs<HTMLTextAreaElement>(ownerEl, "#app-stack");
-  const registerEl = qs<HTMLButtonElement>(ownerEl, "#app-register");
+function wireOwnerForm(ownerEl) {
+  const nameEl = qs(ownerEl, "#app-name");
+  const repoEl = qs(ownerEl, "#app-repo");
+  const stackEl = qs(ownerEl, "#app-stack");
+  const registerEl = qs(ownerEl, "#app-register");
   const errEl = qs(ownerEl, "#app-reg-error");
   const mineEl = qs(ownerEl, "#app-mine");
   if (!nameEl || !registerEl || !mineEl) return;
 
-  const mine: AppListing[] = [];
+  const mine = [];
   const renderMine = () => {
     mineEl.innerHTML = mine.length
       ? `<div class="u-mt-24" style="display:grid;gap:12px"><div class="done-next-eyebrow">YOUR APPS</div>${mine.map(mineRowHTML).join("")}</div>`
@@ -145,7 +142,7 @@ function wireOwnerForm(ownerEl: Element): void {
         nameEl.value = ""; if (repoEl) repoEl.value = ""; if (stackEl) stackEl.value = "";
         renderMine();
       })
-      .catch((e: unknown) => {
+      .catch((e) => {
         if (errEl) errEl.innerHTML = `<div class="ui-info ui-info--error u-mt-16">${escapeHtml(e instanceof Error ? e.message : "Could not register the app")}</div>`;
       })
       .finally(() => { registerEl.textContent = "Register app →"; sync(); });
@@ -153,7 +150,7 @@ function wireOwnerForm(ownerEl: Element): void {
 
   // Delegated request-support clicks (rows are re-rendered).
   mineEl.addEventListener("click", (ev) => {
-    const target = (ev.target as HTMLElement).closest<HTMLButtonElement>("button[data-request]");
+    const target = ev.target.closest("button[data-request]");
     if (!target) return;
     const id = target.dataset.request;
     if (!id) return;
@@ -165,7 +162,7 @@ function wireOwnerForm(ownerEl: Element): void {
         if (i >= 0) mine[i] = updated;
         renderMine();
       })
-      .catch((e: unknown) => {
+      .catch((e) => {
         target.disabled = false;
         if (errEl) errEl.innerHTML = `<div class="ui-info ui-info--error u-mt-16">${escapeHtml(e instanceof Error ? e.message : "Could not request support")}</div>`;
       });

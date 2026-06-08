@@ -150,20 +150,6 @@ export function BtnPrimary({
   );
 }
 
-export function BtnGhost({
-  children, className = "", onClick,
-}: {
-  children:   ReactNode;
-  className?: string;
-  onClick?:   () => void;
-}) {
-  return (
-    <button type="button" onClick={onClick} className={`ui-btn ui-btn--ghost ${className}`.trim()}>
-      {children}
-    </button>
-  );
-}
-
 export function BtnSocial({
   children, onClick, className = "",
 }: {

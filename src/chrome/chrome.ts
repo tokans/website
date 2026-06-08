@@ -1,12 +1,12 @@
 /**
- * Shared site chrome — the SINGLE source of truth for the header and footer.
+ * Shared chrome for the React post-login app — the header and footer as
+ * framework-agnostic HTML strings, wrapped by SiteHeader / SiteFooter in
+ * components/site.tsx.
  *
- * Rendered as framework-agnostic HTML strings so the exact same markup powers:
- *   • static HTML shells   → injected by src/chrome/mount.ts into [data-chrome]
- *   • React island pages   → wrapped by SiteHeader / SiteFooter in components/site.tsx
+ * The static prelogin pages (public/) have their own vanilla-JS port in
+ * public/js/chrome.js — keep the NAV_LINKS / SITEMAP link lists here in sync.
  *
- * Styling uses the shared Tailwind tokens/classes defined in src/tailwind.css,
- * so chrome looks identical to the marketing landing on every page.
+ * Styling uses the shared Tailwind tokens/classes defined in src/tailwind.css.
  */
 
 export interface HeaderOptions {
@@ -31,7 +31,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/hire", label: "Hire", hideSm: true },
   { href: "/join", label: "Join", hideSm: true },
   { href: "/donate", label: "Donate" },
-  { href: "/?flow=login", label: "Sign in", cta: true },
+  { href: "/login", label: "Sign in", cta: true },
 ];
 
 export const SITEMAP: {
@@ -60,7 +60,6 @@ export const SITEMAP: {
     heading: "Network",
     links: [
       { href: "/partners", label: "Partner directory" },
-      { href: "/tokan-task", label: "First Tokan Task" },
       { href: "/donate", label: "Donate" },
     ],
   },

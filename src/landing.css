@@ -92,13 +92,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   text-underline-offset: 3px;
   color: var(--sky);
 }
-.logo-ans {
-  font-style: italic;
-  text-decoration: underline;
-  text-decoration-color: var(--amber);
-  text-underline-offset: 3px;
-  color: var(--sky);
-}
+/* .logo-ans (navbar logo accent) moved to src/chrome/chrome.css (shared header). */
 .text-amber { color: var(--amber); }
 
 /* ── Container ── */
@@ -236,138 +230,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 
 /* ════════════════════════════════
-   NAV
+   NAV — moved to src/chrome/chrome.css (shared header, single source).
+   Markup: src/chrome/chrome.ts navbarHTML · wiring: src/chrome/mount.ts
 ════════════════════════════════ */
-/* Scoped to the landing nav (#navbar) so it never styles the shared chrome's
-   inner <nav> on React/SPA routes that also load this stylesheet. */
-#navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  height: 64px;
-  padding: 0 var(--container-pad);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bg);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-#navbar.scrolled {
-  border-bottom-color: var(--border);
-  box-shadow: var(--shadow-sm);
-}
-.nav-logo {
-  font-family: 'Syne', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 900;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  letter-spacing: -0.02em;
-  flex-shrink: 0;
-}
-.nav-logo-img { width: 40px; height: auto; object-fit: contain; }
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.nav-link {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color 0.2s;
-  padding: 4px 0;
-}
-.nav-link:hover { color: var(--text-primary); }
-.nav-link--engineers {
-  color: var(--sky);
-  font-weight: 500;
-}
-.nav-link--engineers:hover { color: var(--sky-dark); }
-.nav-cta { font-size: 0.85rem; padding: 9px 18px; }
-
-/* Hamburger */
-.nav-hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 40px;
-  height: 40px;
-  background: transparent;
-  border: 1.5px solid var(--border);
-  border-radius: var(--btn-radius);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: border-color 0.2s;
-}
-.nav-hamburger:hover { border-color: var(--sky); }
-.nav-hamburger span {
-  display: block;
-  width: 18px;
-  height: 1.5px;
-  background: var(--text-primary);
-  border-radius: 2px;
-  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), opacity 0.2s, width 0.2s;
-  transform-origin: center;
-}
-.nav-hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-.nav-hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
-.nav-hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-
-/* Mobile menu */
-.nav-mobile-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
-  flex-direction: column;
-  padding: 12px var(--container-pad) 28px;
-  gap: 2px;
-  opacity: 0;
-  transform: translateY(-8px);
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22,1,0.36,1);
-}
-.nav-mobile-menu.open {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-.nav-mobile-link {
-  display: block;
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-  transition: color 0.2s;
-}
-.nav-mobile-link:hover { color: var(--sky); }
-.nav-mobile-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-.nav-mobile-actions .btn { width: 100%; justify-content: center; }
-.nav-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  top: 64px;
-  z-index: 99;
-}
-.nav-backdrop.active { display: block; }
 
 
 /* ════════════════════════════════
@@ -1188,15 +1053,8 @@ body > footer {
   .roles-hint { display: block; }
 }
 
-/* 768px — hamburger, stack hero */
+/* 768px — stack hero (nav responsive rules now in src/chrome/chrome.css) */
 @media (max-width: 768px) {
-  nav { padding: 0 20px; }
-  .nav-link { display: none; }
-  .nav-cta { display: none; }
-  .nav-hamburger { display: flex; }
-  .nav-mobile-menu { display: flex; }
-  .nav-backdrop { top: 64px; }
-
   #hero { padding: 1rem 0 2.5rem; }
   .hero-grid { grid-template-columns: 1fr; gap: 44px; }
   .hero-lead { max-width: 100%; }
@@ -1257,8 +1115,7 @@ body > footer {
   .role-card { flex: 0 0 88vw; }
 }
 
-/* Landscape short phone */
+/* Landscape short phone (nav-mobile-menu rule now in src/chrome/chrome.css) */
 @media (max-height: 500px) and (max-width: 900px) {
   #hero { padding: 1rem 0; }
-  .nav-mobile-menu { max-height: calc(100svh - 64px); overflow-y: auto; }
 }

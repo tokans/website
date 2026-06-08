@@ -1,30 +1,26 @@
 import { useState, useEffect } from "react";
 import { api } from "./api.js";
-import AuthScreen from "./screens/AuthScreen.js";
 import Onboarding from "./screens/Onboarding.js";
 import Dashboard  from "./screens/Dashboard.js";
 import Professionals from "./screens/Professionals.js";
-import Donate from "./screens/Donate.js";
-import Apps from "./screens/Apps.js";
-import Partners from "./screens/Partners.js";
 import FirstTokanTask from "./screens/FirstTokanTask.js";
 import MwaMount from "./screens/MwaMount.js";
 import type { SessionResponse, SessionPayload, RoleId } from "./lib/types.js";
-import { getAuthContext } from "./data/authContexts.js";
 
 // ── App state ─────────────────────────────────────────────────────────────────
 type AppSession =
   | null                                   // loading
-  | { authenticated: false }               // not logged in
+  | { authenticated: false }               // not logged in (→ redirect to auth)
   | { authenticated: true; user: SessionPayload }; // logged in
 
-// Maps the modal trigger type to the view AuthScreen should open on.
-// "engineer" → signup tab; "login" → login tab; anything else → default.
-type AuthView = "login" | "signup";
-function modeToView(mode: string): AuthView {
-  if (mode === "login") return "login";
-  return "signup"; // "engineer" and any future types default to signup
-}
+// Where to send an unauthenticated visitor. Flow entry points have their own
+// static auth landing (with a use-case panel); everything else → generic /login.
+const AUTH_PAGE_BY_FLOW: Record<string, string> = {
+  founders: "/founders",
+  join: "/join",
+  hire: "/hire",
+  professionals: "/professionals",
+};
 
 function Splash() {
   return (
@@ -39,31 +35,16 @@ function Splash() {
   );
 }
 
-// ── Props ─────────────────────────────────────────────────────────────────────
-interface AppProps {
-  /** Passed by main.tsx when rendering inside the site modal.
-   *  "login"    → open on the login tab
-   *  "engineer" → open on the sign-up tab
-   *  ""         → modal was closed; reset auth state so forms clear on reopen
-   *  Omit entirely when rendering standalone (dev / own page). */
-  mode?: string;
-}
+export default function App() {
+  const [session, setSession] = useState<AppSession>(null);
 
-export default function App({ mode }: AppProps) {
-  const [session,   setSession]   = useState<AppSession>(null);
-  const [oauthMsg,  setOauthMsg]  = useState("");
-
-  // Standalone-only entry flows selected via the path (/donate, /professionals,
-  // /professionals/subscribe) or a ?flow=… query param.
+  // Entry flow selected via the path (/professionals, rewritten /tokan-task,
+  // /myWorkAssistant) or a ?flow=… query param (set by the static auth redirect).
   const [flow] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     const path = window.location.pathname;
     const q = new URLSearchParams(window.location.search).get("flow") ?? "";
-    if (path === "/donate" || q === "donate") return "donate";
-    if (path === "/apps" || q === "apps") return "apps";
-    // /founders is the auth-gated founder entry to list an app (→ Apps screen).
     if (path === "/founders" || q === "founders") return "founders";
-    if (path === "/partners" || q === "partners") return "partners";
     if (path === "/join" || q === "join") return "join";   // supply: Opportunity Seeker
     if (path === "/hire" || q === "hire") return "hire";   // demand: Employer
     if (path === "/tokan-task" || q === "tokan-task") return "tokan-task";
@@ -75,134 +56,57 @@ export default function App({ mode }: AppProps) {
   const initialRole: RoleId | undefined =
     flow === "join" ? "opportunity_seeker" : flow === "hire" ? "employer" : undefined;
 
-  // Role-scoped entry points get a split auth screen with a use-case panel on
-  // the left. Standalone only — the modal (mode set) keeps the compact card.
-  const authContext = mode === undefined ? getAuthContext(flow) : undefined;
-
-  // The myWorkAssistant cockpit is served from the /myWorkAssistant path.
+  // The myWorkAssistant cockpit is served (via rewrite) from /myWorkAssistant.
   const isMwaPath =
     typeof window !== "undefined" && window.location.pathname.startsWith("/myWorkAssistant");
-
-  // ── React to modal open / close signals ───────────────────────────────────
-  useEffect(() => {
-    // mode === "" means auth:close fired — reset so forms are fresh on reopen
-    if (mode === "") {
-      setSession({ authenticated: false });
-      setOauthMsg("");
-      return;
-    }
-
-    // A real mode arrived (login / engineer / …): drop back to the auth screen
-    // so the correct tab is shown, even if the user was already browsing the app.
-    if (mode !== undefined) {
-      setSession({ authenticated: false });
-    }
-  }, [mode]);
 
   // ── Prime the CSRF cookie before any mutating request ────────────────────
   useEffect(() => {
     void api.initCsrf();
   }, []);
 
-  // ── Detect OAuth redirect result from URL params ───────────────────────────
+  // ── Check the session on mount; bounce to the static auth page if absent ──
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const oauthResult = params.get("oauth");
-    const oauthError  = params.get("oauth_error");
-
-    if (oauthError === "github")   setOauthMsg("GitHub sign-in failed. Please try again.");
-    if (oauthError === "google")   setOauthMsg("Google sign-in failed. Please try again.");
-    if (oauthError === "state")    setOauthMsg("Authentication failed (state mismatch). Please try again.");
-    if (oauthError === "no_email") setOauthMsg("We couldn't retrieve a verified email from your account. Please sign up with email instead.");
-    if (oauthResult || oauthError) {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-  }, []);
-
-  // ── Check existing session on mount (standalone only) ─────────────────────
-  // Skip the session check when running inside the modal; the user will
-  // authenticate through the modal flow rather than a pre-existing cookie.
-  useEffect(() => {
-    if (mode !== undefined) return; // modal context — don't check session
-
     api.session()
       .then((data) => {
         if ("authenticated" in data && data.authenticated) {
           setSession(data as SessionResponse);
         } else {
-          setSession({ authenticated: false });
+          redirectToAuth();
         }
       })
-      .catch(() => setSession({ authenticated: false }));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+      .catch(() => redirectToAuth());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleAuthSuccess = (s: SessionResponse) => setSession(s);
+  function redirectToAuth() {
+    setSession({ authenticated: false });
+    if (typeof window !== "undefined") {
+      window.location.href = AUTH_PAGE_BY_FLOW[flow] ?? "/login";
+    }
+  }
 
   const handleOnboardingComplete = (s: { authenticated: true; user: SessionPayload }) =>
     setSession(s);
 
   const handleLogout = async () => {
     await api.logout().catch(() => undefined);
-    setSession({ authenticated: false });
+    if (typeof window !== "undefined") window.location.href = "/";
   };
 
-  // ── Routing ────────────────────────────────────────────────────────────────
-
-  // Donations are anonymous — render before any auth/session gate (standalone only).
-  if (mode === undefined && flow === "donate") {
-    return <Donate />;
-  }
-
-  // Apps support directory is public — render before the auth gate too.
-  if (mode === undefined && flow === "apps") {
-    return <Apps />;
-  }
-
-  // Partner directory is public — render before the auth gate too.
-  if (mode === undefined && flow === "partners") {
-    return <Partners />;
-  }
-
-  // In modal context show the auth screen immediately (no splash while loading)
-  if (session === null) {
-    if (mode !== undefined) {
-      return (
-        <AuthScreen
-          initialView={modeToView(mode)}
-          oauthError={oauthMsg}
-          onSuccess={handleAuthSuccess}
-        />
-      );
-    }
+  // ── Loading / unauthenticated (redirect in flight) ─────────────────────────
+  if (session === null || !session.authenticated) {
     return <Splash />;
   }
 
-  if (!session.authenticated) {
-    const initialView =
-      mode !== undefined
-        ? modeToView(mode)
-        : authContext
-          ? authContext.defaultView
-          : "login";
-    return (
-      <AuthScreen
-        initialView={initialView}
-        oauthError={oauthMsg}
-        onSuccess={handleAuthSuccess}
-        {...(authContext ? { context: authContext } : {})}
-      />
-    );
-  }
-
-  // myWorkAssistant cockpit (mounted sub-app) — once authenticated, the
-  // /myWorkAssistant path hands the whole viewport to the embedded bundle.
-  if (mode === undefined && isMwaPath) {
+  // myWorkAssistant cockpit (mounted sub-app).
+  if (isMwaPath) {
     return <MwaMount user={session.user} />;
   }
 
-  // Professional onboarding + download gate (standalone only; separate from the
-  // talent-role onboarding above, so it renders regardless of onboardingComplete).
-  if (mode === undefined && flow === "professionals") {
+  // Professional onboarding + download gate (separate from the talent-role
+  // onboarding, so it renders regardless of onboardingComplete).
+  if (flow === "professionals") {
     return (
       <Professionals
         user={session.user}
@@ -211,14 +115,12 @@ export default function App({ mode }: AppProps) {
     );
   }
 
-  // Per-path journeys run exactly once each. A user who onboarded via one path
-  // (e.g. /join) still gets a different path's journey (e.g. /founders) later,
-  // but never repeats a journey they've already completed.
+  // Per-path journeys run exactly once each.
   const completedJourneys = session.user.completedJourneys ?? [];
   const journeyDone = (path: string) => completedJourneys.includes(path);
 
-  // Founders: run the founders journey once, then land on Apps to list the app.
-  if (mode === undefined && flow === "founders") {
+  // Founders: run the founders journey once, then land on the static /apps page.
+  if (flow === "founders") {
     if (!journeyDone("founders")) {
       return (
         <Onboarding
@@ -229,11 +131,12 @@ export default function App({ mode }: AppProps) {
         />
       );
     }
-    return <Apps />;
+    window.location.href = "/apps";
+    return <Splash />;
   }
 
-  // First Tokan Task (Opportunity Seeker "aha"; reachable after /join or from the dashboard).
-  if (mode === undefined && flow === "tokan-task") {
+  // First Tokan Task (reachable after /join or from the dashboard).
+  if (flow === "tokan-task") {
     return (
       <FirstTokanTask
         user={session.user}
@@ -243,7 +146,7 @@ export default function App({ mode }: AppProps) {
   }
 
   // Join / Hire: run that path's journey once, then proceed to the dashboard.
-  if (mode === undefined && (flow === "join" || flow === "hire")) {
+  if (flow === "join" || flow === "hire") {
     if (!journeyDone(flow)) {
       return (
         <Onboarding
@@ -258,8 +161,8 @@ export default function App({ mode }: AppProps) {
     return <Dashboard user={session.user} onLogout={() => void handleLogout()} />;
   }
 
-  // Default entry (login / no path-specific journey): the generic role-picker
-  // onboarding runs once, gated by the global onboardingComplete flag.
+  // Default entry: the generic role-picker onboarding runs once, gated by the
+  // global onboardingComplete flag.
   if (!session.user.onboardingComplete) {
     return (
       <Onboarding

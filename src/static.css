@@ -1,0 +1,15 @@
+/*
+ * Static-page stylesheet SOURCE — compiled to public/css/site.css by
+ * `npm run build:css` (postcss-import inlines the @imports, Tailwind generates
+ * the utilities scanned from ./public + ./src, autoprefixer finishes).
+ *
+ * The prelogin pages live in public/ and are served raw (no Vite/Tailwind
+ * transform), so they link the prebuilt /css/site.css directly. The React
+ * post-login app (app.html) links the same file, so both halves share one
+ * source of truth. Keep this import order: Tailwind first (base/components/
+ * utilities + design tokens), then the bespoke component layers.
+ */
+@import "./tailwind.css";
+@import "./index.css";
+@import "./landing.css";
+@import "./chrome/chrome.css";

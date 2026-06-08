@@ -1,7 +1,9 @@
 /**
- * Use-case panels for the public content pages (/partners, /apps, /donate,
- * /tokan-task). Same shape as the auth panels — an image + context text shown
- * beside the page's content/CTA. Keyed by the App `flow` value.
+ * Use-case panels for React content pages that use PageLayout (/tokan-task; the
+ * partners entry is also exercised by site.test). Same shape as the auth panels —
+ * an image + context text shown beside the page's content/CTA. Keyed by `flow`.
+ * Note: /apps, /partners and /donate are now standalone static HTML pages whose
+ * use-case copy lives directly in their shells, not here.
  */
 export interface PageContext {
   image: string;
@@ -27,34 +29,6 @@ export const PAGE_CONTEXTS: Record<string, PageContext> = {
     ],
   },
 
-  apps: {
-    image: "/images/dev.png",
-    imageAlt: "Apps built on sharedCoreLib",
-    eyebrow: "APPS ON THE TOKANS NETWORK",
-    title: "Apps supported by professionals",
-    subtitle:
-      "Apps built on sharedCoreLib can be listed here so the partner network can support them. Browse the directory, or list your own.",
-    points: [
-      "Every sharedCoreLib app is eligible to be listed",
-      "Owners initiate an acceptance workflow to get listed",
-      "Supported by verified professionals on the network",
-    ],
-  },
-
-  donate: {
-    image: "/images/profile.png",
-    imageAlt: "Pay-it-forward support for professionals",
-    eyebrow: "SUPPORT THE MISSION",
-    title: "Pay it forward",
-    subtitle:
-      "Fund access and support for professionals rebuilding their careers in the AI era. AI needs Tokens. Humans need Tokans.",
-    points: [
-      "Anonymous-friendly — no account required",
-      "Funds professional access and support",
-      "Every contribution is pay-it-forward",
-    ],
-  },
-
   "tokan-task": {
     image: "/images/phone.png",
     imageAlt: "Review a profile and earn your first Tokan",
@@ -69,8 +43,3 @@ export const PAGE_CONTEXTS: Record<string, PageContext> = {
     ],
   },
 };
-
-export function getPageContext(flow: string | undefined): PageContext | undefined {
-  if (!flow) return undefined;
-  return PAGE_CONTEXTS[flow];
-}

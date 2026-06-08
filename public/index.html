@@ -159,13 +159,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
 
-  <!-- Landing styles loaded as render-blocking <link>s (processed by Vite/Tailwind/PostCSS)
-       so the page paints fully styled on first load. Loading these via the React bundle
-       (src/main.tsx) caused a flash of unstyled content — the skip link and full-size logo
-       appearing before the bundle injected the CSS. Order mirrors the old JS import order. -->
-  <link rel="stylesheet" href="/src/tailwind.css" />
-  <link rel="stylesheet" href="/src/index.css" />
-  <link rel="stylesheet" href="/src/landing.css" />
+  <!-- Single prebuilt stylesheet (Tailwind + landing + chrome + auth/ui),
+       compiled from src/static.css by `npm run build:css` → /css/site.css. -->
+  <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body>
 
@@ -173,29 +169,9 @@
 <a href="#main" class="skip-link">Skip to main content</a>
 
 <!-- ═══════════ NAV ═══════════ -->
-<nav id="navbar" aria-label="Main navigation">
-  <a href="/" class="nav-logo" aria-label="Tokans home">
-    <img src="images/logo.png" alt="" class="nav-logo-img" aria-hidden="true" />Tok<span class="logo-ans"><i><u>ans</u></i></span>
-  </a>
-  <div class="nav-actions">
-    <a href="#what-is-tokans" class="nav-link">What are Tokans?</a>
-    <a href="https://tokans.org/join"  data-modal-target="login" class="btn btn-primary nav-cta">SignIn/SignUp</a>
-    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobileMenu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-  <div class="nav-mobile-menu" id="navMobileMenu" aria-hidden="true" role="dialog" aria-label="Navigation menu">
-    <a href="#what-is-tokans" class="nav-mobile-link">What are Tokans?</a>
-    <a href="#roles" class="nav-mobile-link">Who it's for</a>
-    <a href="#how-it-works" class="nav-mobile-link">How it works</a>
-    <a href="#audit-strip" class="nav-mobile-link">Book an assessment</a>
-    <div class="nav-mobile-actions">
-      <a href="https://tokans.org/founders"  data-modal-target="login" class="btn btn-primary">Get your codebase assessed</a>
-      <a href="https://tokans.org/join"  data-modal-target="engineer" class="btn btn-outline">I'm an engineer →</a>
-    </div>
-  </div>
-</nav>
-<div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+<!-- Shared marketing navbar (single source: /js/chrome.js navbarHTML),
+     injected + wired by /js/chrome.js so it matches every page. -->
+<div data-chrome="header"></div>
 
 
 <!-- ═══════════ MAIN ═══════════ -->
@@ -284,7 +260,7 @@
           </div>
         </div>
         <div class="hero-ctas">
-          <a href="https://tokans.org/founders"  data-modal-target="login" class="btn btn-primary btn-lg">Get your codebase assessed →</a>
+          <a href="/founders" class="btn btn-primary btn-lg">Get your codebase assessed →</a>
         </div>
       </div>
     </div>
@@ -391,7 +367,7 @@
         <div class="role-sub">Vibe-coded founder</div>
         <p class="role-desc">Built v1 with Cursor or Claude and have traction? Tokans connects you with verified engineers who can own your codebase, not just add features.</p>
         <div class="role-barrier">↳ Describe your build + codebase assessment</div>
-        <a href="https://tokans.org/founders"  data-modal-target="login" class="role-cta btn btn-primary">Get assessed →</a>
+        <a href="/founders" class="role-cta btn btn-primary">Get assessed →</a>
       </div>
 
       <!-- Card 2: Contributor -->
@@ -401,7 +377,7 @@
         <div class="role-sub">Engineer · PM · Designer</div>
         <p class="role-desc">Prove what you've actually built. Earn Tokans through real work, peer reviews, and verified delivery, not a résumé that any AI could have written.</p>        
         <div class="role-barrier">↳ Complete first task (~8 min)</div>
-          <a href="https://tokans.org/join"  data-modal-target="engineer" class="role-cta btn btn-primary">Join →</a>
+          <a href="/join" class="role-cta btn btn-primary">Join →</a>
       </div>
 
       <!-- Card 3: Mentor -->
@@ -411,7 +387,7 @@
         <div class="role-sub">500+ Tokans required</div>
         <p class="role-desc">Guide others, earn Mentor Tokans, be listed in the directory. Mentoring is a status you earn through contribution, not a button you click.</p>
         <div class="role-barrier">↳ Earn 500 Tokans first</div>
-        <a href="https://tokans.org/join"  data-modal-target="engineer" class="role-cta btn btn-primary">Build Profile →</a>
+        <a href="/join" class="role-cta btn btn-primary">Build Profile →</a>
       </div>
 
       <!-- Card 4: Employer -->
@@ -421,7 +397,7 @@
         <div class="role-sub">Startup · Enterprises · Recruiters</div>
         <p class="role-desc">Stop guessing. A curated shortlist of max 5 verified candidates. Every profile explains the match. Every hire becomes evidence that improves the system.</p>
         <div class="role-barrier">↳ 7-question brief (10 min)</div>
-        <a href="https://tokans.org/hire" class="role-cta btn btn-primary">Hire →</a>
+        <a href="/hire" class="role-cta btn btn-primary">Hire →</a>
       </div>
 
       <!-- Card 5: Mission Backer -->
@@ -579,7 +555,7 @@
       </ol>
 
       <div class="audit-cta-row">
-        <a href="https://tokans.org/founders"  data-modal-target="login" class="btn btn-primary btn-lg">Book a codebase assessment →</a>
+        <a href="/founders" class="btn btn-primary btn-lg">Book a codebase assessment →</a>
         <p class="audit-note">Assessment takes 2–3 business days. Conducted by a senior engineer, not AI.</p>
       </div>
     </div>
@@ -599,10 +575,10 @@
         Whether you're a founder who needs trusted technical help, or a professional proving your real worth in the AI era, join early and shape how Tokans works.
       </p>
       <div class="flex flex-wrap justify-center gap-[14px] mb-6">
-        <a href="https://tokans.org/founders"  data-modal-target="login" class="btn btn-primary btn-lg">Get your codebase assessed →</a>
-        <a href="https://tokans.org/join" class="btn btn-outline btn-lg" data-modal-target="engineer">I'm an engineer →</a>
+        <a href="/founders" class="btn btn-primary btn-lg">Get your codebase assessed →</a>
+        <a href="/join" class="btn btn-outline btn-lg">I'm an engineer →</a>
       </div>
-      <p class="text-[0.825rem] text-ink-faint">Employers and companies → <a href="https://tokans.org/hire" class="text-sky underline underline-offset-[3px] hover:text-sky-dark">tokans.org/hire</a></p>
+      <p class="text-[0.825rem] text-ink-faint">Employers and companies → <a href="/hire" class="text-sky underline underline-offset-[3px] hover:text-sky-dark">tokans.org/hire</a></p>
     </div>
   </div>
 </section>
@@ -611,7 +587,7 @@
 
 
 <!-- ═══════════ FOOTER ═══════════ -->
-<!-- Shared footer (single source: src/chrome/chrome.ts), injected by chrome/mount.ts
+<!-- Shared footer (single source: /js/chrome.js), injected by /js/chrome.js
      so the landing matches every other page exactly. -->
 <div data-chrome="footer"></div>
 
@@ -733,18 +709,10 @@
 <!-- end .geo-layer -->
 
 
-<!-- ═══════════ MODAL ═══════════ -->
-<div class="cs-overlay" id="csOverlay" role="dialog" aria-modal="true" aria-labelledby="csTitle" data-modal-close="overlay">
-  <div class="cs-box">
-    <!-- <div class="cs-icon" aria-hidden="true">🚀</div>
-    <div class="cs-badge" id="csBadge">Coming soon</div>
-    <h3 class="cs-title" id="csTitle">Almost there</h3>
-    <p class="cs-body" id="csBody">We're in the founding-member phase, onboarding opens soon. Join the waitlist to be among the first and shape how the platform works.</p> -->
-    <!-- <button class="cs-close" data-modal-close="button" aria-label="Close dialog">Got it</button> -->
-  </div>
-</div>
-
-<script type="module" src="/src/main.tsx"></script>
-<script src="/script.js" defer></script>
+<!-- Shared chrome (navbar + footer) injected by /js/chrome.js; landing-only
+     animations in /js/landing.js. No React on this page — the sign-in / sign-up
+     CTAs are plain links to the static /login and /join pages. -->
+<script type="module" src="/js/chrome.js"></script>
+<script src="/js/landing.js" defer></script>
 </body>
 </html>

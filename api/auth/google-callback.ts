@@ -25,12 +25,12 @@ export default withErrorHandling(async function handler(
   const state = req.query["state"] as string | undefined;
 
   if (error || !code) {
-    res.redirect(302, `${appUrl}/?oauth_error=google`);
+    res.redirect(302, `${appUrl}/login?oauth_error=google`);
     return;
   }
 
   if (!verifyOAuthState(req, res, "google", state)) {
-    res.redirect(302, `${appUrl}/?oauth_error=state`);
+    res.redirect(302, `${appUrl}/login?oauth_error=state`);
     return;
   }
 
@@ -49,7 +49,7 @@ export default withErrorHandling(async function handler(
 
   const tokens = (await tokenRes.json()) as GoogleTokenResponse;
   if (!tokens.access_token) {
-    res.redirect(302, `${appUrl}/?oauth_error=google`);
+    res.redirect(302, `${appUrl}/login?oauth_error=google`);
     return;
   }
 
@@ -61,7 +61,7 @@ export default withErrorHandling(async function handler(
   const profile = (await profileRes.json()) as GoogleProfile;
 
   if (!profile.email || !profile.verified_email) {
-    res.redirect(302, `${appUrl}/?oauth_error=no_email`);
+    res.redirect(302, `${appUrl}/login?oauth_error=no_email`);
     return;
   }
 
@@ -100,7 +100,7 @@ export default withErrorHandling(async function handler(
         RETURNING id, name, email
       ` as UserIdentity[];
       if (!created) {
-        res.redirect(302, `${appUrl}/?oauth_error=google`);
+        res.redirect(302, `${appUrl}/login?oauth_error=google`);
         return;
       }
       user = created;
@@ -121,5 +121,5 @@ export default withErrorHandling(async function handler(
 
   setSessionCookie(res, sessionId, req);
   ensureCsrfToken(req, res);
-  res.redirect(302, `${appUrl}/?oauth=success`);
+  res.redirect(302, `${appUrl}/app?oauth=success`);
 });

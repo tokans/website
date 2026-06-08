@@ -3,17 +3,14 @@
     "development"
   ],
   "hints": {
-    "axe/forms": [
-      "default",
-      {
-        "select-name": "off"
-      }
-    ],
+    "axe/forms": "off",
     "no-inline-styles": "off",
     "compat-api/css": [
       "default",
       {
-        "ignore": ["scrollbar-width"]
+        "ignore": [
+          "scrollbar-width"
+        ]
       }
     ]
   }

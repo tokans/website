@@ -1,46 +1,9 @@
 'use strict';
 
-/* ═══════════════════════════════
-   NAV — scroll state
-═══════════════════════════════ */
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 10);
-}, { passive: true });
-
-
-/* ═══════════════════════════════
-   NAV — hamburger
-═══════════════════════════════ */
-const hamburger  = document.getElementById('navHamburger');
-const mobileMenu = document.getElementById('navMobileMenu');
-const backdrop   = document.getElementById('navBackdrop');
-
-function openNav() {
-  mobileMenu.classList.add('open');
-  mobileMenu.setAttribute('aria-hidden', 'false');
-  hamburger.classList.add('active');
-  hamburger.setAttribute('aria-expanded', 'true');
-  backdrop.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-function closeNav() {
-  mobileMenu.classList.remove('open');
-  mobileMenu.setAttribute('aria-hidden', 'true');
-  hamburger.classList.remove('active');
-  hamburger.setAttribute('aria-expanded', 'false');
-  backdrop.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-hamburger.addEventListener('click', () =>
-  mobileMenu.classList.contains('open') ? closeNav() : openNav()
-);
-backdrop.addEventListener('click', closeNav);
-mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
-window.addEventListener('resize', () => {
-  if (window.innerWidth > 768) closeNav();
-}, { passive: true });
+/* Landing-only behaviour: scroll reveal, profile-card bar animation, marquee
+   and the "how it works" carousel. (The former auth modal lived here too; the
+   landing now links to the static /login + /join pages instead, so it's gone.)
+   The shared navbar is injected + wired by /js/chrome.js. */
 
 
 /* ═══════════════════════════════
@@ -172,73 +135,4 @@ if (stepsWrap) {
   stepsWrap.addEventListener('mouseleave', resetAuto);
 }
 
-resetAuto();
-
-
-/* ═══════════════════════════════
-   MODAL
-═══════════════════════════════ */
-
-function _ensureReactAuthMount() {
-  // Create the React mount point inside the modal if it doesn't exist yet.
-  // main.tsx is bundled with the page and mounts lazily on auth:open.
-  let mount = document.getElementById('react-auth-root');
-  if (mount) return;
-
-  mount = document.createElement('div');
-  mount.id = 'react-auth-root';
-
-  // Append into the modal card (first child of the overlay that isn't the backdrop)
-  const card = document.querySelector('#csOverlay .cs-card')
-             ?? document.querySelector('#csOverlay > *:not([data-modal-close])');
-  if (card) card.appendChild(mount);
-  else document.getElementById('csOverlay').appendChild(mount);
-}
-
-function showModal(type) {
-  const overlay = document.getElementById('csOverlay');
-
-  _ensureReactAuthMount();
-
-  // Tell the React app which screen to show (login | engineer | …)
-  // The app should listen for this event on window.
-  window.dispatchEvent(new CustomEvent('auth:open', { detail: { type } }));
-
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  // Return focus to the close button if present
-  const closeBtn = document.querySelector('.cs-close');
-  if (closeBtn) closeBtn.focus();
-}
-
-function closeModal(e) {
-  const overlay = document.getElementById('csOverlay');
-  if (!e || e.target === overlay) {
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-    // Notify React so it can reset internal state (e.g. clear form fields)
-    window.dispatchEvent(new CustomEvent('auth:close'));
-  }
-}
-
-document.querySelectorAll('[data-modal-target]').forEach(trigger => {
-  trigger.addEventListener('click', e => {
-    e.preventDefault();
-    showModal(trigger.dataset.modalTarget);
-  });
-});
-document.querySelectorAll('[data-modal-close]').forEach(trigger => {
-  trigger.addEventListener('click', e => {
-    if (trigger.dataset.modalClose === 'overlay') closeModal(e);
-    else closeModal();
-  });
-});
-
-
-/* ═══════════════════════════════
-   GLOBAL KEYBOARD
-═══════════════════════════════ */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeNav(); closeModal(); }
-});
+if (slides.length) resetAuto();

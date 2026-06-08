@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in · Tokans</title>
+  <meta name="description" content="Sign in or create your Tokans account — contribution verified, opportunity matched." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+  <div id="auth-root" class="page-shell">
+
+    <div data-chrome="header"></div>
+
+    <div class="auth-split" id="auth-split">
+
+      <!-- Use-case panel — filled from /data/authContexts.json for flow pages,
+           hidden on /login (auth.js). -->
+      <aside class="auth-split-left" id="auth-panel" hidden>
+        <div class="auth-pane-body">
+          <div class="auth-pane-eyebrow" id="pane-eyebrow"></div>
+          <h1 class="auth-pane-title" id="pane-title"></h1>
+          <p class="auth-pane-subtitle" id="pane-subtitle"></p>
+          <ul class="auth-pane-points" id="pane-points"></ul>
+        </div>
+        <img class="auth-pane-img" id="pane-img" src="" alt="" />
+      </aside>
+
+      <main class="auth-split-right">
+        <div class="ui-fade-in">
+          <div class="ui-card" style="--ui-card-max-w:440px">
+
+            <div class="auth-header">
+              <span class="wordmark" id="auth-wordmark" style="font-size:26px">Tok<span class="wordmark-ans">ans</span></span>
+              <div class="auth-title" id="auth-title">Create your account</div>
+              <div class="auth-subtitle" id="auth-subtitle"></div>
+            </div>
+
+            <button type="button" class="ui-btn ui-btn--social ui-btn--full u-mb-10" id="auth-github">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
+              Continue with GitHub
+            </button>
+            <button type="button" class="ui-btn ui-btn--social ui-btn--full" id="auth-google">
+              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M15.68 8.18c0-.57-.05-1.11-.14-1.64H8v3.1h4.3a3.67 3.67 0 01-1.6 2.41v2h2.59c1.52-1.4 2.4-3.46 2.4-5.87z" fill="#4285F4" /><path d="M8 16c2.16 0 3.97-.72 5.3-1.95l-2.6-2a4.8 4.8 0 01-2.7.75 4.79 4.79 0 01-4.5-3.32H.82v2.07A8 8 0 008 16z" fill="#34A853" /><path d="M3.5 9.48A4.83 4.83 0 013.25 8c0-.52.09-1.02.25-1.48V4.45H.82A8 8 0 000 8c0 1.29.31 2.51.82 3.55l2.68-2.07z" fill="#FBBC05" /><path d="M8 3.2c1.21 0 2.3.42 3.16 1.24l2.37-2.37A8 8 0 00.82 4.45L3.5 6.52A4.79 4.79 0 018 3.2z" fill="#EA4335" /></svg>
+              Continue with Google
+            </button>
+
+            <div class="ui-divider"><div class="ui-divider-line"></div>or<div class="ui-divider-line"></div></div>
+
+            <form id="auth-form" novalidate>
+              <div class="ui-field" id="field-name">
+                <label class="ui-field-label">Full Name</label>
+                <input class="ui-input" id="auth-name" placeholder="Your name" autocomplete="name" />
+                <div class="ui-field-error" id="err-name"></div>
+              </div>
+              <div class="ui-field">
+                <label class="ui-field-label">Email Address</label>
+                <input class="ui-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
+                <div class="ui-field-error" id="err-email"></div>
+              </div>
+              <div class="ui-field">
+                <label class="ui-field-label">Password</label>
+                <input class="ui-input" type="password" id="auth-password" placeholder="At least 8 characters" autocomplete="current-password" />
+                <div class="ui-field-error" id="err-password"></div>
+              </div>
+
+              <div class="auth-error" id="auth-error" hidden></div>
+
+              <button type="submit" class="ui-btn ui-btn--primary ui-btn--full" id="auth-submit">Create account →</button>
+            </form>
+
+            <div class="auth-toggle" id="auth-toggle"></div>
+
+          </div>
+          <div class="auth-terms">
+            By continuing, you agree to Tokans' Terms of Service and Privacy Policy.
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div data-chrome="footer"></div>
+  </div>
+
+  <script type="module" src="/js/chrome.js"></script>
+  <script type="module" src="/js/auth.js"></script>
+</body>
+</html>
