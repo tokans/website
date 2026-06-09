@@ -2,13 +2,25 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Make the `hidden` attribute reliably hide elements. Author `display` rules
+   (e.g. `.split-media { display: flex }`) beat the UA `[hidden] { display: none }`
+   rule, so without this an element toggled hidden in JS (the /login media panel,
+   whose empty <img> then shows as a broken image) stays visible. */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
-/* Scope the dark theme to the React mount points. The marketing page
-   in index.html / public/styles.css uses a light palette and shares
-   the same document, so :root / body rules here would bleed across. */
+/* Component design tokens for the app surfaces. Defined on the React mount
+   points (#root, #react-auth-root) AND the static page shells (.static-stage —
+   auth/apps/donate/partners), since those static pages reuse the same .ui-*
+   components (e.g. .ui-btn--primary { background: var(--gold) }). Without
+   .static-stage here, tokens like --gold are undefined on the static auth page
+   and the primary button renders as invisible white text on a transparent fill.
+   We intentionally do NOT define these at :root so they don't bleed into the
+   index.html landing, which carries its own palette via public/styles.css. */
 #root,
-#react-auth-root {
+#react-auth-root,
+.static-stage {
   /* Re-themed to the marketing landing palette (light / sky-blue / amber) so
      every React page shares ONE colour scheme with index.html. Variable names
      are kept (e.g. --gold now resolves to sky) so existing rules re-skin in

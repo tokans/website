@@ -24,6 +24,7 @@
     "db:schema": "node scripts/apply-schema.mjs",
     "db:schema:local": "node scripts/apply-schema.mjs --local",
     "snapshot:rebuild": "node scripts/rebuild-snapshot.mjs",
+    "setup:oauth": "node scripts/setup-oauth.mjs",
     "deploy": "node scripts/deploy.mjs",
     "deploy:dry": "node scripts/deploy.mjs --dry-run"
   },
