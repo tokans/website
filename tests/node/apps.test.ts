@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugify, mapAppRow, type AppRow } from "../../api/lib/apps.js";
+import { slugify, mapAppRow, type AppRow } from "../../server/lib/apps.js";
 
 const ROW: AppRow = {
   id: "app_1",

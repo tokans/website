@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { baseUrl, readRawBody } from "../../api/lib/http.js";
+import { baseUrl, readRawBody } from "../../server/lib/http.js";
 import { mockReq } from "./helpers.js";
 
 describe("baseUrl", () => {

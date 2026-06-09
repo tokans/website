@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseSkills, mapPartnerRow, type PartnerRow } from "../../api/lib/partners.js";
+import { parseSkills, mapPartnerRow, type PartnerRow } from "../../server/lib/partners.js";
 
 describe("parseSkills", () => {
   it("splits, trims and drops empties", () => {

@@ -3,7 +3,7 @@ import {
   PROFESSIONS,
   isKnownProfession,
   professionToRole,
-} from "../../api/lib/professions.js";
+} from "../../server/lib/professions.js";
 
 describe("professions catalogue", () => {
   it("recognises a catalogued profession", () => {

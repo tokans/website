@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { RestBackend } from "../../api/lib/backend/rest.js";
-import { BackendUnavailableError } from "../../api/lib/backend/contract.js";
-import type { Identity } from "../../api/lib/backend/identity.js";
+import { RestBackend } from "../../server/lib/backend/rest.js";
+import { BackendUnavailableError } from "../../server/lib/backend/contract.js";
+import type { Identity } from "../../server/lib/backend/identity.js";
 
 const ID: Identity = { userId: "u1", email: "a@b.c", name: "Ada", roles: ["partner"] };
 

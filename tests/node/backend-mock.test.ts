@@ -3,10 +3,10 @@ import { makeFakeSql, type FakeSql } from "./helpers.js";
 
 // Hoisted holder so the vi.mock factory and the tests share one mutable sql ref.
 const h = vi.hoisted(() => ({ sql: null as FakeSql | null }));
-vi.mock("../../api/lib/db.js", () => ({ getDb: () => h.sql }));
+vi.mock("../../server/lib/db.js", () => ({ getDb: () => h.sql }));
 
-import { MockBackend } from "../../api/lib/backend/mock.js";
-import type { Identity } from "../../api/lib/backend/identity.js";
+import { MockBackend } from "../../server/lib/backend/mock.js";
+import type { Identity } from "../../server/lib/backend/identity.js";
 
 const ID: Identity = { userId: "u1", email: "a@b.c", name: "Ada", roles: [] };
 

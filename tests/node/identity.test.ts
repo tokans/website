@@ -4,8 +4,8 @@ import {
   verifyIdentityToken,
   identityFromSession,
   type Identity,
-} from "../../api/lib/backend/identity.js";
-import type { SessionWithId } from "../../api/lib/types.js";
+} from "../../server/lib/backend/identity.js";
+import type { SessionWithId } from "../../server/lib/types.js";
 
 const IDENTITY: Identity = {
   userId: "u_123",

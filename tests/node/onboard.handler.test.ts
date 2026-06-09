@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mockReq, mockRes } from "./helpers.js";
-import type { SessionWithId } from "../../api/lib/types.js";
+import type { SessionWithId } from "../../server/lib/types.js";
 
 // ── Mock the endpoint's collaborators so we test the wiring/validation only ──
 const h = vi.hoisted(() => ({
@@ -8,7 +8,7 @@ const h = vi.hoisted(() => ({
   onboard: vi.fn(),
 }));
 
-vi.mock("../../api/lib/session.js", () => ({
+vi.mock("../../server/lib/session.js", () => ({
   requireSession: vi.fn(async (_req, res) => {
     if (!h.session) {
       res.status(401).json({ error: "Unauthorised" });
@@ -18,13 +18,13 @@ vi.mock("../../api/lib/session.js", () => ({
   }),
 }));
 
-vi.mock("../../api/lib/csrf.js", () => ({
+vi.mock("../../server/lib/csrf.js", () => ({
   requireJsonContent: () => true,
   verifyCsrf: () => true,
   ensureCsrfToken: () => "csrf",
 }));
 
-vi.mock("../../api/lib/backend/index.js", () => ({
+vi.mock("../../server/lib/backend/index.js", () => ({
   getBackend: () => ({ onboardProfessional: h.onboard }),
   identityFromSession: (s: SessionWithId) => ({
     userId: s.userId,
@@ -34,7 +34,7 @@ vi.mock("../../api/lib/backend/index.js", () => ({
   }),
 }));
 
-import handler from "../../api/professionals/onboard.js";
+import handler from "../../server/professionals/onboard.js";
 
 const SESSION: SessionWithId = {
   sessionId: "s1",

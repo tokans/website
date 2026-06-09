@@ -14,7 +14,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reportsDirectory: "coverage",
-      include: ["api/lib/**/*.ts", "src/**/*.{ts,tsx}"],
+      include: ["server/lib/**/*.ts", "src/**/*.{ts,tsx}"],
       exclude: ["**/*.d.ts", "src/main.tsx", "src/vite-env.d.ts"],
     },
     projects: [

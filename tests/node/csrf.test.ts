@@ -5,7 +5,7 @@ import {
   ensureCsrfToken,
   CSRF_COOKIE,
   CSRF_HEADER,
-} from "../../api/lib/csrf.js";
+} from "../../server/lib/csrf.js";
 import { mockReq, mockRes } from "./helpers.js";
 
 describe("verifyCsrf", () => {

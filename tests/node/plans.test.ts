@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { PLANS, DEFAULT_PLAN_ID, isKnownPlan, getPlan } from "../../api/lib/plans.js";
+import { PLANS, DEFAULT_PLAN_ID, isKnownPlan, getPlan } from "../../server/lib/plans.js";
 
 describe("subscription plans", () => {
   it("exposes the monthly + yearly plans", () => {

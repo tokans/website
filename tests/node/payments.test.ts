@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createHmac } from "crypto";
-import { MockPayments } from "../../api/lib/payments/mock.js";
-import { StripePayments } from "../../api/lib/payments/stripe.js";
-import { PaymentsUnavailableError } from "../../api/lib/payments/types.js";
-import { getPayments } from "../../api/lib/payments/index.js";
-import { getPlan } from "../../api/lib/plans.js";
+import { MockPayments } from "../../server/lib/payments/mock.js";
+import { StripePayments } from "../../server/lib/payments/stripe.js";
+import { PaymentsUnavailableError } from "../../server/lib/payments/types.js";
+import { getPayments } from "../../server/lib/payments/index.js";
+import { getPlan } from "../../server/lib/plans.js";
 
 describe("MockPayments", () => {
   const mock = new MockPayments();
@@ -102,7 +102,7 @@ describe("getPayments adapter selection", () => {
   it("defaults to the mock adapter", async () => {
     delete process.env["PAYMENTS_MODE"];
     vi.resetModules();
-    const { getPayments: fresh } = await import("../../api/lib/payments/index.js");
+    const { getPayments: fresh } = await import("../../server/lib/payments/index.js");
     // resetModules gives a fresh class identity, so compare by constructor name.
     expect(fresh().constructor.name).toBe("MockPayments");
   });
@@ -114,8 +114,8 @@ describe("getPayments adapter selection", () => {
   it("selects Stripe when PAYMENTS_MODE=stripe", async () => {
     process.env["PAYMENTS_MODE"] = "stripe";
     vi.resetModules();
-    const { getPayments: fresh } = await import("../../api/lib/payments/index.js");
-    const { StripePayments: FreshStripe } = await import("../../api/lib/payments/stripe.js");
+    const { getPayments: fresh } = await import("../../server/lib/payments/index.js");
+    const { StripePayments: FreshStripe } = await import("../../server/lib/payments/stripe.js");
     expect(fresh()).toBeInstanceOf(FreshStripe);
   });
 });

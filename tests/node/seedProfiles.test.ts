@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { SEED_PROFILES, getSeedProfile } from "../../api/lib/seedProfiles.js";
+import { SEED_PROFILES, getSeedProfile } from "../../server/lib/seedProfiles.js";
 
 describe("seed profiles", () => {
   it("ships a non-empty library with unique ids", () => {
