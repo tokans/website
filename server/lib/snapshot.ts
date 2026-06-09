@@ -2,7 +2,7 @@
  * Daily JSON snapshots for the public, pre-login directories (apps, partners).
  *
  * These pages are read-heavy and anonymous, so hitting Postgres on every view
- * is wasteful. A daily cron (api/cron/snapshot.ts) rebuilds the snapshots and
+ * is wasteful. A daily cron (server/cron/snapshot.ts) rebuilds the snapshots and
  * stores them as JSON in Redis; the public GET endpoints serve from the snapshot
  * and only fall back to the DB on a cold cache. This keeps steady-state read
  * load off the database.

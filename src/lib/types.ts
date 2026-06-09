@@ -130,7 +130,7 @@ export interface GoogleProfile {
   picture: string;
 }
 
-// ── Professionals (P0) — mirrors api/lib/backend/contract.ts ──────────────────
+// ── Professionals (P0) — mirrors server/lib/backend/contract.ts ──────────────────
 export type RoleCategory =
   | "Customer"
   | "Employee"

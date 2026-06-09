@@ -1,7 +1,7 @@
 /**
  * Apps support-directory row mapping (P1). The `apps` table is a public
  * projection; the authoritative acceptance workflow lives in the backend
- * (BE Workflow.NewTask) — see api/lib/backend + docs/BUILD-PLAN.md §2.1.
+ * (BE Workflow.NewTask) — see server/lib/backend + docs/BUILD-PLAN.md §2.1.
  */
 import type { AppListing, AppSupportStatus } from "./backend/contract.js";
 

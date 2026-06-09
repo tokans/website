@@ -2,7 +2,7 @@
 /**
  * Rebuild the public directory JSON snapshots (apps, partners) on demand.
  *
- * This is the same job the daily Vercel cron runs (api/cron/snapshot.ts) — it
+ * This is the same job the daily Vercel cron runs (server/cron/snapshot.ts) — it
  * triggers that endpoint over HTTP so the snapshot logic lives in exactly one
  * place. Useful after seeding data locally, or to refresh prod between cron runs.
  *

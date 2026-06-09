@@ -1,7 +1,7 @@
 # Payments setup (donations + professional subscriptions)
 
 Both `tokans.org/donate` and `tokans.org/professionals/subscribe` go through one
-payments seam (`api/lib/payments/`). It runs in **mock mode by default** (no setup,
+payments seam (`server/lib/payments/`). It runs in **mock mode by default** (no setup,
 settles instantly) so the flows work end-to-end locally. To take real money you
 must complete the external steps below and set `PAYMENTS_MODE=stripe`.
 
@@ -37,7 +37,7 @@ with no caller changes.
 
 ## External TODOs to go live (Razorpay — India)
 1. **Create a Razorpay account** and complete KYC/business activation.
-2. **Create subscription Plans** (one per plan in `api/lib/plans.ts`); copy the Plan
+2. **Create subscription Plans** (one per plan in `server/lib/plans.ts`); copy the Plan
    ids into `RAZORPAY_PLAN_PRO_MONTHLY` / `RAZORPAY_PLAN_PRO_YEARLY`. Set
    `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`.
 3. **INR recurring needs an e-mandate** (UPI Autopay / cards / netbanking) per RBI
@@ -54,7 +54,7 @@ with no caller changes.
 1. **Create a Stripe account** and activate it (business/KYC). For India, note the
    export/registered-business constraints and INR recurring (RBI e-mandate) rules —
    if these block you, switch to a Razorpay adapter.
-2. **Create Products + recurring Prices** for each plan in `api/lib/plans.ts`; copy
+2. **Create Products + recurring Prices** for each plan in `server/lib/plans.ts`; copy
    the Price ids into `STRIPE_PRICE_PRO_MONTHLY` / `STRIPE_PRICE_PRO_YEARLY`.
 3. **Add a webhook endpoint** in the Stripe dashboard → `https://tokans.org/api/payments/webhook`,
    subscribed to at least `checkout.session.completed` (and `customer.subscription.deleted`
@@ -77,7 +77,7 @@ with no caller changes.
 ## DB
 Run the migration: `psql $DATABASE_URL -f schema.payments.sql` (tables `donations`,
 `subscriptions`). An **active subscription is what unlocks the myWorkAssistant
-download** — see `api/lib/backend/mock.ts` (`getProfessionalStatus` / `grantDownload`).
+download** — see `server/lib/backend/mock.ts` (`getProfessionalStatus` / `grantDownload`).
 
 ## Flows
 - `POST /api/donate/checkout` → `{ url }` (anonymous OK) → redirect to gateway → `/donate?status=success`.

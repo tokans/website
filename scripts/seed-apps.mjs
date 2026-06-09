@@ -34,7 +34,7 @@ if (!url) {
   process.exit(1);
 }
 
-// Mirror api/lib/db.ts: when LOCAL_DB=1 the DATABASE_URL points at the local
+// Mirror server/lib/db.ts: when LOCAL_DB=1 the DATABASE_URL points at the local
 // neon-proxy container (localhost:4444). Reroute the serverless driver at it
 // over plain HTTP, otherwise it defaults to https://<host>/sql (port 443) and
 // fails with ECONNREFUSED. Requires the docker stack: npm run local:up

@@ -10,7 +10,7 @@ auth + account linking, `onboarding/complete`, and the talent tables (`users`, `
 ---
 
 ## P0 — Foundations
-⬢ Backend **REST** client `api/lib/backend/` (`getBackend()` → mock | rest) + identity-forward
+⬢ Backend **REST** client `server/lib/backend/` (`getBackend()` → mock | rest) + identity-forward
 (short-lived signed token in the `Authorization` header). **Web tier is REST-only — no gRPC** (gRPC is
 the desktop↔backend transport). ⬢ `/professionals` onboarding skeleton (dynamic-form manifests shared
 with MWA) + **download-gate stub**.

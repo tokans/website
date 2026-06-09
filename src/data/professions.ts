@@ -1,4 +1,4 @@
-// Profession catalogue (frontend mirror of api/lib/professions.ts).
+// Profession catalogue (frontend mirror of server/lib/professions.ts).
 // Keep in sync — the backend validates the id on submit.
 
 export interface ProfessionDef {

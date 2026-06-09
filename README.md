@@ -11,6 +11,10 @@ Full signup / signin / onboarding system built for Vercel Hobby (free tier).
 ```
 tokans/website/
 ├── api/
+│   └── router.ts                # SINGLE serverless function — dispatches /api/* to server/
+│                                #   (keeps Vercel Hobby's 12-function limit; see vercel.json rewrite)
+├── server/                      # API handlers + helpers. NOT under api/, so Vercel
+│   │                            #   doesn't turn each file into its own function.
 │   ├── auth/
 │   │   ├── signup.ts            # POST — email/password signup
 │   │   ├── signin.ts            # POST — email/password signin
@@ -20,12 +24,12 @@ tokans/website/
 │   │   ├── github-callback.ts   # GET  — GitHub OAuth callback
 │   │   ├── google.ts            # GET  — Google OAuth redirect
 │   │   └── google-callback.ts   # GET  — Google OAuth callback
-│   └── onboarding/
-│       └── complete.ts          # POST — save role + context, refresh session
-├── lib/
-│   ├── types.ts                 # Shared domain types (roles, DB rows, API shapes)
-│   ├── db.ts                    # Neon SQL client singleton
-│   └── session.ts               # Vercel KV session helpers
+│   ├── onboarding/
+│   │   └── complete.ts          # POST — save role + context, refresh session
+│   └── lib/
+│       ├── types.ts             # Shared domain types (roles, DB rows, API shapes)
+│       ├── db.ts                # Neon SQL client singleton
+│       └── session.ts           # Vercel KV session helpers
 ├── src/
 │   ├── App.tsx                  # Root — auth state, typed routing
 │   ├── api.ts                   # Typed fetch wrapper
@@ -149,7 +153,7 @@ You have two equivalent options — both end up as Upstash Redis under the hood.
 3. Click **Connect Project** — Vercel will auto-inject these env vars on every deployment:
    - `KV_URL`, `KV_REST_API_URL`, `KV_REST_API_TOKEN`, `KV_REST_API_READ_ONLY_TOKEN`
    - `REDIS_URL`
-   - The code in [api/lib/redis.ts](api/lib/redis.ts) picks these up automatically.
+   - The code in [server/lib/redis.ts](server/lib/redis.ts) picks these up automatically.
 
 **Option B — Upstash directly:**
 1. Sign in at [console.upstash.com](https://console.upstash.com) → **Create Database** → Redis.
@@ -160,7 +164,7 @@ You have two equivalent options — both end up as Upstash Redis under the hood.
    - **UPSTASH_REDIS_REST_TOKEN**
 5. You'll paste these into Vercel env vars as `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`.
 
-> Sessions are stored under `session:<uuid>` keys with a 7-day TTL (see [api/lib/session.ts](api/lib/session.ts)). The free tier's 256 MB / 10 k requests-per-day is plenty for early traffic.
+> Sessions are stored under `session:<uuid>` keys with a 7-day TTL (see [server/lib/session.ts](server/lib/session.ts)). The free tier's 256 MB / 10 k requests-per-day is plenty for early traffic.
 
 ### 3. Production OAuth credentials
 
@@ -236,7 +240,7 @@ vercel --prod
 
 Or push to the `main` branch if you connected the GitHub integration in step 4 — Vercel deploys automatically.
 
-The build runs `vite build` (per `vercel.json`'s `framework: vite`). Serverless functions in `api/**/*.ts` are bundled individually with a 10s `maxDuration`.
+The build runs `vite build` (per `vercel.json`'s `framework: vite`). The entire API ships as a **single** serverless function, [api/router.ts](api/router.ts) (10s `maxDuration`): Vercel functionizes every file under `api/`, so all handlers live in `server/` and a `vercel.json` rewrite funnels every `/api/*` request into the one router — keeping the function count at 1 under Hobby's 12-function limit.
 
 ### 8. Post-deploy verification
 

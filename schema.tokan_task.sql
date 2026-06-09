@@ -4,7 +4,7 @@
 -- An Opportunity Seeker's first contribution: review an anonymised seed profile
 -- and answer 5 structured questions. Submitting awards the first Tokan (via the
 -- existing `activities` + `tokan_entries` tables). Seed profiles are synthetic
--- (api/lib/seedProfiles.ts), so reviewee identity is a text id, not a user FK.
+-- (server/lib/seedProfiles.ts), so reviewee identity is a text id, not a user FK.
 
 CREATE TABLE IF NOT EXISTS tokan_task_submissions (
   id              UUID        PRIMARY KEY DEFAULT gen_random_uuid(),

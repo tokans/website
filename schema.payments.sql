@@ -4,7 +4,7 @@
 --
 -- Donations (tokans.org/donate; anonymous-friendly) and professional
 -- subscriptions (tokans.org/professionals/subscribe). An active subscription is
--- what unlocks the myWorkAssistant download (see api/lib/backend/mock.ts).
+-- what unlocks the myWorkAssistant download (see server/lib/backend/mock.ts).
 
 CREATE TABLE IF NOT EXISTS donations (
   id            UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -25,7 +25,7 @@ CREATE INDEX IF NOT EXISTS idx_donations_ref  ON donations (provider_ref);
 CREATE TABLE IF NOT EXISTS subscriptions (
   id                  UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id             UUID        UNIQUE NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-  plan                TEXT        NOT NULL,                  -- plan id (see api/lib/plans.ts)
+  plan                TEXT        NOT NULL,                  -- plan id (see server/lib/plans.ts)
   status              TEXT        NOT NULL DEFAULT 'incomplete', -- incomplete | active | past_due | canceled
   provider            TEXT        NOT NULL DEFAULT 'mock',   -- mock | stripe
   provider_ref        TEXT,                                  -- gateway session/subscription id

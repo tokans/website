@@ -118,11 +118,11 @@ myWorkAssistant app talking to the backend directly — **the web tier never use
 - `GET  /api/feed/*` → **signed feeds** for `sharedcorelib` suite updater: `masters` (incl. partner
   master + `common:app` registry), `runtime` bundle, `timestamp`/`snapshot` (TUF-style). Keys stay
   **offline**; the function serves pre-signed artifacts only.
-- Reuse existing auth/session/CSRF; the backend REST client lives in `api/lib/backend/` (`getBackend()`
+- Reuse existing auth/session/CSRF; the backend REST client lives in `server/lib/backend/` (`getBackend()`
   → `MockBackend` default | `RestBackend`). **No gRPC on the web tier.**
 
 ### 2.3 Backend REST client (the web tier is REST-only)
-- `api/lib/backend/` — typed `BackendPort` client: `getBackend()` → `MockBackend` (Neon-backed, default)
+- `server/lib/backend/` — typed `BackendPort` client: `getBackend()` → `MockBackend` (Neon-backed, default)
   | `RestBackend` (HTTP to `tokans/backend`'s REST API, env `BACKEND_REST_URL`). The browser calls the
   Vercel functions; the functions call the backend over **REST**. **No gRPC anywhere on the web tier** —
   gRPC is the desktop↔backend transport only. Auth: forward the session identity as a short-lived
@@ -220,7 +220,7 @@ Append-only migrations. New tables (names indicative):
 ---
 
 ## 7. Build order (commit per step)
-1. Backend REST client (`api/lib/backend/`) + identity-forwarding token. 2. `/professionals` onboarding + download gate +
+1. Backend REST client (`server/lib/backend/`) + identity-forwarding token. 2. `/professionals` onboarding + download gate +
 partner-master publish. 3. `projects` registry + `/apps` + `/founders`. 4. Partner directory (ads) +
 public profile pages. 5. `connections` → backend `NewTask` bridge. 6. `/hire` `/join` + First Tokan
 Task UI on existing tables. 7. Skill marketplace publish. 8. Signed feed endpoints for the suite
