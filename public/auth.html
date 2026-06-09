@@ -15,26 +15,26 @@
   <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body>
-  <div id="auth-root" class="page-shell">
+  <div id="auth-root" class="static-stage">
 
     <div data-chrome="header"></div>
 
-    <div class="auth-split" id="auth-split">
+    <div class="split" id="auth-split">
 
-      <!-- Use-case panel — filled from /data/authContexts.json for flow pages,
-           hidden on /login (auth.js). -->
-      <aside class="auth-split-left" id="auth-panel" hidden>
-        <div class="auth-pane-body">
-          <div class="auth-pane-eyebrow" id="pane-eyebrow"></div>
-          <h1 class="auth-pane-title" id="pane-title"></h1>
-          <p class="auth-pane-subtitle" id="pane-subtitle"></p>
-          <ul class="auth-pane-points" id="pane-points"></ul>
+      <!-- Use-case media panel — filled from /data/authContexts.json for flow
+           pages, hidden on /login (auth.js adds .split--solo). -->
+      <aside class="split-media" id="auth-panel" hidden>
+        <img class="split-media-img" id="pane-img" src="" alt="" aria-hidden="true" />
+        <div class="split-media-body">
+          <div class="split-eyebrow" id="pane-eyebrow"></div>
+          <h1 class="split-title" id="pane-title"></h1>
+          <p class="split-sub" id="pane-subtitle"></p>
+          <ul class="split-points" id="pane-points"></ul>
         </div>
-        <img class="auth-pane-img" id="pane-img" src="" alt="" />
       </aside>
 
-      <main class="auth-split-right">
-        <div class="ui-fade-in">
+      <main class="split-panel">
+        <div class="split-panel-inner ui-fade-in" style="--split-panel-max-w:440px">
           <div class="ui-card" style="--ui-card-max-w:440px">
 
             <div class="auth-header">
@@ -85,9 +85,9 @@
         </div>
       </main>
     </div>
-
-    <div data-chrome="footer"></div>
   </div>
+
+  <div data-chrome="footer"></div>
 
   <script type="module" src="/js/chrome.js"></script>
   <script type="module" src="/js/auth.js"></script>

@@ -7,6 +7,7 @@
  */
 import { api } from "./api.js";
 import { escapeHtml, qs, onReady, fetchJson } from "./html.js";
+import { deckHTML, initDeck } from "./carousel.js";
 
 // Populated from /data/professions.json on mount; empty until then (rows fall
 // back to the partner's roleCategory for the pill label).
@@ -64,13 +65,17 @@ export function mount() {
   if (!root) return;
 
   void api.initCsrf();
-  root.innerHTML = `<div class="ui-card" id="partners-card">${partnersListHTML(null, () => ({ authed: false, sent: false, open: false }))}</div>`;
+  // Carousel (the card) with a "list your own" CTA pinned below it (→ /professionals).
+  root.innerHTML = `
+<div class="ui-card" id="partners-card">${partnersListHTML(null, () => ({ authed: false, sent: false, open: false }))}</div>
+<div class="dir-cta">Are you a professional? <a href="/professionals">Get listed →</a></div>`.trim();
   const card = qs(root, "#partners-card");
   if (!card) return;
 
   let partners = null;
   let authed = false;
   let openId = null;
+  let deckIndex = 0;
   const sentTo = new Set();
   const errors = new Map();
 
@@ -83,7 +88,17 @@ export function mount() {
       ...(err !== undefined ? { err } : {}),
     };
   };
-  const render = () => { card.innerHTML = partnersListHTML(partners, rowState); };
+  // One professional per slide so the directory fits without scrolling; the
+  // carousel position is preserved across re-renders (connect/send/cancel).
+  const render = () => {
+    if (!partners || partners.length === 0) {
+      card.innerHTML = partnersListHTML(partners, rowState);
+      return;
+    }
+    const slides = partners.map((p) => partnerRowHTML(p, rowState(p)));
+    card.innerHTML = deckHTML(slides);
+    initDeck(card, { index: deckIndex, onChange: (i) => { deckIndex = i; } });
+  };
 
   // Profession label lookup (for the pills) — repaint once it lands.
   fetchJson("/data/professions.json", []).then((profs) => {

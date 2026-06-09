@@ -13,6 +13,7 @@ export interface AppRow {
   repo_url: string | null;
   stack: string | null;
   description: string | null;
+  icon_url: string | null;
   uses_sharedcorelib: boolean;
   support_status: string;
   listed: boolean;
@@ -35,6 +36,7 @@ export function mapAppRow(row: AppRow, viewerUserId: string | null): AppListing 
     repoUrl: row.repo_url,
     stack: row.stack,
     description: row.description,
+    iconUrl: row.icon_url,
     usesSharedCoreLib: row.uses_sharedcorelib,
     supportStatus,
     listed: row.listed,

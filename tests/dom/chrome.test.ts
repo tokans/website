@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { mount, navbarHTML } from "../../public/js/chrome.js";
+import { mount, navbarHTML, footerHTML } from "../../public/js/chrome.js";
 
 beforeEach(() => {
   document.body.innerHTML = "";
@@ -31,6 +31,10 @@ describe("static chrome — mount()", () => {
     expect(document.querySelector('[data-chrome="footer"]')).toBeNull();
     expect(document.getElementById("navbar")).not.toBeNull();
     expect(document.querySelector("footer")).not.toBeNull();
+  });
+
+  it("footerHTML returns the shared footer markup", () => {
+    expect(footerHTML()).toContain("<footer");
   });
 
   it("wires the hamburger to toggle the mobile menu", () => {

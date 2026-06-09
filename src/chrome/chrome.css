@@ -1,8 +1,8 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    Shared site navbar styles — the SINGLE source for the header on every page.
 
-   The markup comes from src/chrome/chrome.ts (navbarHTML) and is injected by
-   src/chrome/mount.ts, which also imports this stylesheet. The static landing,
+   The markup comes from the hand-editable partial public/partials/header-prelogin.html
+   and is injected by public/js/chrome.js, which also imports this stylesheet. The static landing,
    the static pre-login pages (apps/partners/donate) and the SPA therefore all
    render the same header. (Moved here from src/landing.css so it is no longer
    landing-only.) Design tokens (--bg, --sky, …) come from src/tailwind.css.

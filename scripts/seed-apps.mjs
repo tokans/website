@@ -9,8 +9,8 @@
  * Usage:  npm run seed:apps        (needs DATABASE_URL + filesystem access)
  * Override the scan root with WORKSPACE_ROOT=/path npm run seed:apps
  */
-import { readdirSync, existsSync, readFileSync } from "node:fs";
-import { resolve, join, dirname } from "node:path";
+import { readdirSync, existsSync, readFileSync, mkdirSync, copyFileSync } from "node:fs";
+import { resolve, join, dirname, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { config } from "dotenv";
 import { neon, neonConfig } from "@neondatabase/serverless";
@@ -54,6 +54,39 @@ function slugify(name) {
     .slice(0, 48);
 }
 
+// Where seeded icons are copied to. Served by the static site at /app-icons/<slug>.
+const ICON_OUT_DIR = join(websiteRoot, "public", "app-icons");
+
+// Candidate icon files inside an app, most-preferred first: a real square app
+// icon beats a favicon. Tauri apps keep theirs in src-tauri/icons/.
+const ICON_CANDIDATES = [
+  "src-tauri/icons/icon.png",
+  "src-tauri/app-icon.png",
+  "src-tauri/icons/128x128@2x.png",
+  "src-tauri/icons/128x128.png",
+  "public/logo.png",
+  "public/logo.svg",
+  "public/icon.png",
+  "public/icon.svg",
+  "public/favicon.svg",
+  "public/favicon.png",
+  "assets/logo.png",
+];
+
+/**
+ * Find an app's icon, copy it into public/app-icons/<slug><ext>, and return the
+ * site-relative URL (or null if the app has no usable icon — e.g. a toolkit pkg).
+ */
+function seedIcon(appDir, slug) {
+  const rel = ICON_CANDIDATES.find((c) => existsSync(join(appDir, c)));
+  if (!rel) return null;
+  const src = join(appDir, rel);
+  const ext = (extname(src) || ".png").toLowerCase();
+  mkdirSync(ICON_OUT_DIR, { recursive: true });
+  copyFileSync(src, join(ICON_OUT_DIR, `${slug}${ext}`));
+  return `/app-icons/${slug}${ext}`;
+}
+
 const dirs = readdirSync(workspaceRoot, { withFileTypes: true }).filter(
   (d) => d.isDirectory() && d.name.toLowerCase().startsWith("my")
 );
@@ -93,17 +126,20 @@ for (const d of dirs) {
     console.warn(`note ${d.name}: no README purpose found (run validate-app-readme)`);
   }
 
+  const iconUrl = seedIcon(appDir, slug);
+
   await sql`
-    INSERT INTO apps (slug, name, tagline, description, uses_sharedcorelib, support_status, listed)
-    VALUES (${slug}, ${d.name}, ${tagline}, ${description}, TRUE, 'listed', TRUE)
+    INSERT INTO apps (slug, name, tagline, description, icon_url, uses_sharedcorelib, support_status, listed)
+    VALUES (${slug}, ${d.name}, ${tagline}, ${description}, ${iconUrl}, TRUE, 'listed', TRUE)
     ON CONFLICT (slug) DO UPDATE SET
       tagline     = COALESCE(EXCLUDED.tagline, apps.tagline),
       description = COALESCE(EXCLUDED.description, apps.description),
+      icon_url    = COALESCE(EXCLUDED.icon_url, apps.icon_url),
       listed      = TRUE,
       updated_at  = NOW()
   `;
   seeded++;
-  console.log(`seeded ${d.name} → ${slug}${tagline ? ` — ${tagline}` : ""}`);
+  console.log(`seeded ${d.name} → ${slug}${iconUrl ? " [icon]" : ""}${tagline ? ` — ${tagline}` : ""}`);
 }
 
 console.log(`Done: ${seeded} app(s) from ${workspaceRoot}`);

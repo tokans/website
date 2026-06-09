@@ -63,6 +63,16 @@ describe("partners island — mounted behaviour", () => {
     await vi.waitFor(() => expect(root.textContent).toContain("Designer (UI/UX)"));
   });
 
+  it("renders a 'get listed' CTA to /professionals below the carousel", async () => {
+    listPartners.mockResolvedValue({ partners: [] });
+    const root = island();
+    mount();
+    await vi.waitFor(() => expect(root.textContent).toContain(SAMPLE_PARTNERS[0]!.name!));
+    const cta = root.querySelector<HTMLAnchorElement>(".dir-cta a");
+    expect(cta?.getAttribute("href")).toBe("/professionals");
+    expect(cta?.textContent).toContain("Get listed");
+  });
+
   it("prompts signed-out visitors to sign in instead of showing Connect", async () => {
     listPartners.mockResolvedValue({ partners: [] });
     const root = island();

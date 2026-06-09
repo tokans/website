@@ -9,6 +9,7 @@ const ROW: AppRow = {
   repo_url: "https://github.com/x/myjournal",
   stack: "Tauri",
   description: "desc",
+  icon_url: null,
   uses_sharedcorelib: true,
   support_status: "requested",
   listed: false,

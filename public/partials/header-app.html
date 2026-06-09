@@ -1,0 +1,22 @@
+<!--
+  POST-LOGIN app header — shown on the React app pages (app.html / /app).
+  Single source of truth; edit by hand.
+
+  Consumed by src/chrome/chrome.ts via Vite `?raw` (inlined at build time, so it
+  renders synchronously with no flash at the top of the page). The back link
+  below is static ("← Home" → "/"); change it here if you want a different target.
+-->
+<header class="sticky top-0 z-30 flex items-center justify-between gap-4 px-4 sm:px-10 py-3 border-b border-border" style="background:rgba(254,254,254,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+  <div class="flex items-center gap-[18px]">
+    <a href="/" aria-label="Tokans home" class="inline-flex"><span class="wordmark" style="font-size:22px">Tok<span class="wordmark-ans">ans</span></span></a>
+    <a href="/" class="text-[13px] text-ink-muted hover:text-ink whitespace-nowrap transition-colors">← Home</a>
+  </div>
+  <nav class="flex items-center gap-[14px] sm:gap-6" aria-label="Site">
+    <a href="/apps" class="hidden sm:inline text-[14px] text-ink-muted hover:text-ink transition-colors">Apps</a>
+    <a href="/partners" class="text-[14px] text-ink-muted hover:text-ink transition-colors">Partners</a>
+    <a href="/hire" class="hidden sm:inline text-[14px] text-ink-muted hover:text-ink transition-colors">Hire</a>
+    <a href="/join" class="hidden sm:inline text-[14px] text-ink-muted hover:text-ink transition-colors">Join</a>
+    <a href="/donate" class="text-[14px] text-ink-muted hover:text-ink transition-colors">Donate</a>
+    <a href="/login" class="btn btn-primary !py-2 !px-4 !rounded-full text-[13px]">Sign in</a>
+  </nav>
+</header>

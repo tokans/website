@@ -23,7 +23,7 @@ export default withErrorHandling(async function handler(
   const sql = getDb();
   const rows = (await sql`
     SELECT id, slug, name, tagline, repo_url, stack, description,
-           uses_sharedcorelib, support_status, listed, owner_user_id
+           icon_url, uses_sharedcorelib, support_status, listed, owner_user_id
     FROM apps WHERE id = ${id} LIMIT 1
   `) as AppRow[];
 

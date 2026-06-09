@@ -1,0 +1,54 @@
+<!--
+  Shared site footer — the SINGLE source of truth for both the pre-login static
+  pages and the post-login React app. Edit this file by hand.
+
+  Consumers:
+    • public/js/chrome.js    fetches /partials/footer.html at page load (live)
+    • src/chrome/chrome.ts   inlines it at build time via `?raw` (Vite)
+
+  It's plain HTML with Tailwind utility classes (compiled into /css/site.css and
+  src/tailwind.css). No build step needed for the static side — just refresh.
+-->
+<footer class="mt-auto bg-ink text-white px-4 sm:px-10 pt-12 sm:pt-16 pb-8">
+  <div class="grid grid-cols-2 sm:grid-cols-[1.5fr_1fr_1fr_1fr] gap-8 sm:gap-12 max-w-[1100px] mx-auto">
+    <div class="col-span-2 sm:col-span-1">
+      <a href="/" aria-label="Tokans home" class="inline-flex mb-[18px]"><span class="wordmark text-white" style="font-size:24px">Tok<span class="wordmark-ans">ans</span></span></a>
+      <p class="text-[14px] text-white/50 leading-relaxed max-w-[30ch]">A <a href="/patrons" class="text-[14px] text-white/65 hover:text-sky transition-colors">pay-it-forward</a> ecosystem for professionals navigating the AI era.</p>
+      <p class="mt-4 font-serif italic text-[17px] text-white/60 leading-snug">AI needs Tokens.<br/>Humans need Tokans.</p>
+    </div>
+
+    <div>
+      <h4 class="text-[12px] tracking-[0.1em] uppercase text-white/40 mb-[14px]">Platform</h4>
+      <ul class="grid gap-[10px] list-none p-0 m-0">
+        <li><a href="/#what-is-tokans" class="text-[14px] text-white/65 hover:text-sky transition-colors">What are Tokans?</a></li>
+        <li><a href="/#how-it-works" class="text-[14px] text-white/65 hover:text-sky transition-colors">How it works</a></li>
+        <li><a href="/apps" class="text-[14px] text-white/65 hover:text-sky transition-colors">Apps directory</a></li>
+        <li><a href="/partners" class="text-[14px] text-white/65 hover:text-sky transition-colors">Partner directory</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-[12px] tracking-[0.1em] uppercase text-white/40 mb-[14px]">Find</h4>
+      <ul class="grid gap-[10px] list-none p-0 m-0">
+        <li><a href="/join" class="text-[14px] text-white/65 hover:text-sky transition-colors">Engineers — Join</a></li>
+        <li><a href="/hire" class="text-[14px] text-white/65 hover:text-sky transition-colors">Employers — Hire</a></li>
+        <li><a href="/founders" class="text-[14px] text-white/65 hover:text-sky transition-colors">Founders — List app</a></li>
+        <li><a href="/professionals" class="text-[14px] text-white/65 hover:text-sky transition-colors">Professionals — List service</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="text-[12px] tracking-[0.1em] uppercase text-white/40 mb-[14px]">Connect</h4>
+      <ul class="grid gap-[10px] list-none p-0 m-0">
+        <li><a href="https://x.com/TokansOrg" target="_blank" rel="noopener noreferrer" class="text-[14px] text-white/65 hover:text-sky transition-colors">X / Twitter</a></li>
+        <li><a href="https://www.linkedin.com/company/tokans" target="_blank" rel="noopener noreferrer" class="text-[14px] text-white/65 hover:text-sky transition-colors">LinkedIn</a></li>
+        <li><a href="mailto:hello@tokans.org" class="text-[14px] text-white/65 hover:text-sky transition-colors">hello@tokans.org</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="max-w-[1100px] mx-auto mt-12 pt-6 border-t border-white/10 flex flex-wrap justify-between gap-3 text-[12px] text-white/40">
+    <span>© 2026 Tokans.org · Not bought. Not transferred. Not gamified.</span>
+    <span>AI needs Tokens. Humans need Tokans.™</span>
+  </div>
+</footer>

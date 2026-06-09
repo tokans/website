@@ -16,14 +16,9 @@ interface PanelContent {
 }
 
 // ── Top header bar (shared source) ──────────────────────────────────────────
-export function SiteHeader({
-  backHref = "/",
-  backLabel = "Home",
-}: {
-  backHref?: string;
-  backLabel?: string;
-}) {
-  return <div dangerouslySetInnerHTML={{ __html: headerHTML({ backHref, backLabel }) }} />;
+// Markup is the hand-editable public/partials/header-app.html (back link baked in).
+export function SiteHeader() {
+  return <div dangerouslySetInnerHTML={{ __html: headerHTML() }} />;
 }
 
 // ── Footer with sitemap (shared source) ─────────────────────────────────────

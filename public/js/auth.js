@@ -101,7 +101,7 @@ function init() {
     });
   } else {
     els.panel?.setAttribute("hidden", "");
-    if (els.split) els.split.style.gridTemplateColumns = "1fr";
+    els.split?.classList.add("split--solo");
   }
 
   // ── OAuth redirect error (from /api/auth/*-callback → /login?oauth_error=…).

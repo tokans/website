@@ -25,7 +25,7 @@ describe("SiteHeader", () => {
 describe("SiteFooter sitemap", () => {
   it("renders every sitemap column heading", () => {
     render(<SiteFooter />);
-    for (const heading of ["Platform", "For you", "Network", "Connect"]) {
+    for (const heading of ["Platform", "Find", "Connect"]) {
       expect(screen.getByText(heading)).toBeInTheDocument();
     }
   });
@@ -34,7 +34,7 @@ describe("SiteFooter sitemap", () => {
     render(<SiteFooter />);
     expect(screen.getByText("Partner directory")).toBeInTheDocument();
     expect(screen.getByText("Apps directory")).toBeInTheDocument();
-    expect(screen.getByText("Founders — List an app")).toBeInTheDocument();
+    expect(screen.getByText("Founders — List app")).toBeInTheDocument();
   });
 });
 

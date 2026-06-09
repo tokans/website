@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS apps (
   repo_url           TEXT,
   stack              TEXT,
   description        TEXT,
+  icon_url           TEXT,                     -- site-relative path, e.g. /app-icons/myfinance.png
   uses_sharedcorelib BOOLEAN     NOT NULL DEFAULT TRUE,
   support_status     TEXT        NOT NULL DEFAULT 'none',  -- none | requested | accepted | listed
   listed             BOOLEAN     NOT NULL DEFAULT FALSE,
@@ -22,6 +23,9 @@ CREATE TABLE IF NOT EXISTS apps (
 );
 
 CREATE INDEX IF NOT EXISTS idx_apps_listed ON apps (listed);
+
+-- Added after the table shipped — keep idempotent for already-created DBs.
+ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_url TEXT;
 
 -- Seed data is NOT hardcoded here. The seed vibe-coded apps are the local
 -- projects in C:\workspace\ whose name starts with 'my' (myFinance, myHealth,

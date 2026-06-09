@@ -1,15 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { AppListing } from "../../src/lib/types.js";
 
-const { listApps, session, registerApp, requestAppSupport, initCsrf } = vi.hoisted(() => ({
+const { listApps } = vi.hoisted(() => ({
   listApps: vi.fn(),
-  session: vi.fn(),
-  registerApp: vi.fn(),
-  requestAppSupport: vi.fn(),
-  initCsrf: vi.fn().mockResolvedValue(null),
 }));
 vi.mock("../../public/js/api.js", () => ({
-  api: { listApps, session, registerApp, requestAppSupport, initCsrf },
+  api: { listApps },
 }));
 
 import { mount, appRowHTML, appsListHTML } from "../../public/js/apps.js";
@@ -22,6 +18,7 @@ const app = (over: Partial<AppListing> = {}): AppListing => ({
   repoUrl: null,
   stack: null,
   description: null,
+  iconUrl: null,
   usesSharedCoreLib: true,
   supportStatus: "none",
   listed: false,
@@ -36,7 +33,6 @@ function island(): HTMLElement {
 
 beforeEach(() => {
   listApps.mockReset();
-  session.mockReset().mockResolvedValue({ authenticated: false });
 });
 
 describe("apps island — pure render", () => {
@@ -54,26 +50,46 @@ describe("apps island — pure render", () => {
     expect(html).toContain("repo ↗");
   });
 
+  it("renders the app icon when iconUrl is a safe same-origin path", () => {
+    const html = appRowHTML(app({ iconUrl: "/app-icons/myjournal.png" }));
+    expect(html).toContain('src="/app-icons/myjournal.png"');
+  });
+
+  it("falls back to a letter badge when there is no icon", () => {
+    const html = appRowHTML(app({ name: "Zephyr", iconUrl: null }));
+    expect(html).not.toContain("<img");
+    expect(html).toContain(">Z<");
+  });
+
+  it("ignores an off-origin or malformed iconUrl", () => {
+    const html = appRowHTML(app({ iconUrl: "https://evil.example/x.png" }));
+    expect(html).not.toContain("evil.example");
+    expect(html).not.toContain("<img");
+  });
+
   it("shows the empty state", () => {
     expect(appsListHTML([])).toContain("No apps listed yet");
   });
 });
 
 describe("apps island — mounted behaviour", () => {
-  it("renders the directory and a sign-in prompt for signed-out visitors", async () => {
+  it("renders the directory and a 'list your app' CTA to /founders", async () => {
     listApps.mockResolvedValue({ apps: [app({ name: "DirApp" })] });
     const root = island();
     mount();
     await vi.waitFor(() => expect(root.textContent).toContain("DirApp"));
-    await vi.waitFor(() => expect(root.textContent).toContain("Sign in"));
+    const cta = root.querySelector<HTMLAnchorElement>(".dir-cta a");
+    expect(cta?.getAttribute("href")).toBe("/founders");
+    expect(cta?.textContent).toContain("List your app");
+    // The in-deck owner registration form is gone — listing is the CTA now.
     expect(root.querySelector("#app-register")).toBeNull();
   });
 
-  it("shows the owner registration form when signed in", async () => {
-    session.mockResolvedValue({ authenticated: true, user: { id: "me" } });
+  it("shows the empty state when no apps are listed, CTA still present", async () => {
     listApps.mockResolvedValue({ apps: [] });
     const root = island();
     mount();
-    await vi.waitFor(() => expect(root.querySelector("#app-register")).not.toBeNull());
+    await vi.waitFor(() => expect(root.textContent).toContain("No apps listed yet"));
+    expect(root.querySelector<HTMLAnchorElement>(".dir-cta a")?.getAttribute("href")).toBe("/founders");
   });
 });

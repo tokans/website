@@ -12,6 +12,7 @@ function staticRouting(): PluginOption {
   // Pre-login pretty routes → the static page that serves them.
   const rewrites: [RegExp, string][] = [
     [/^\/(founders|join|hire|login|professionals)\/?$/, "/auth.html"],
+    [/^\/patrons\/?$/, "/donate.html"],
     [/^\/professionals\/.+/, "/app.html"],
     [/^\/tokan-task\/?$/, "/app.html"],
     [/^\/myWorkAssistant(?:\/.*)?$/, "/app.html"],

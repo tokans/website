@@ -169,6 +169,8 @@ export interface AppListing {
   repoUrl: string | null;
   stack: string | null;
   description: string | null;
+  /** Site-relative path to the app's icon, e.g. /app-icons/myfinance.png. */
+  iconUrl: string | null;
   usesSharedCoreLib: boolean;
   supportStatus: AppSupportStatus;
   listed: boolean;

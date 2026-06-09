@@ -40,7 +40,7 @@ export default withErrorHandling(async function handler(
 
     const rows = (await sql`
       SELECT id, slug, name, tagline, repo_url, stack, description,
-             uses_sharedcorelib, support_status, listed, owner_user_id
+             icon_url, uses_sharedcorelib, support_status, listed, owner_user_id
       FROM apps WHERE listed = TRUE ORDER BY name
     `) as AppRow[];
     res.status(200).json({ apps: rows.map((r) => mapAppRow(r, viewer)) });
@@ -72,7 +72,7 @@ export default withErrorHandling(async function handler(
               ${body.stack ?? null}, ${body.description ?? null}, ${body.usesSharedCoreLib ?? true})
       ON CONFLICT (slug) DO NOTHING
       RETURNING id, slug, name, tagline, repo_url, stack, description,
-                uses_sharedcorelib, support_status, listed, owner_user_id
+                icon_url, uses_sharedcorelib, support_status, listed, owner_user_id
     `) as AppRow[];
 
     const row = rows[0];

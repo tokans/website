@@ -15,46 +15,37 @@
   <link rel="stylesheet" href="/css/site.css" />
 </head>
 <body>
-  <div class="min-h-screen flex flex-col bg-bg text-ink font-sans">
+  <div class="static-stage">
 
     <div data-chrome="header" data-back-href="/" data-back-label="Home"></div>
 
-    <div class="flex-1 grid lg:grid-cols-[1fr_1.1fr]">
+    <div class="split">
 
-      <!-- Static use-case panel -->
-      <aside class="relative flex flex-col overflow-hidden border-b lg:border-b-0 lg:border-r border-border bg-bg-alt p-7 sm:p-16">
-        <div class="relative z-10 mt-7 lg:mt-12 max-w-[30rem]">
-          <div class="eyebrow">Apps on the Tokans network</div>
-          <h1 class="mt-3.5 font-display text-[clamp(30px,4vw,46px)] font-bold leading-[1.05]">Apps supported by professionals</h1>
-          <p class="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-ink-muted">
-            Apps built on sharedCoreLib can be listed here so the partner network can support them. Browse the directory, or list your own.
+      <!-- Left: image-backed use-case panel -->
+      <aside class="split-media">
+        <img class="split-media-img" src="/images/dev.png" alt="" aria-hidden="true" />
+        <div class="split-media-body">
+          <div class="split-eyebrow">Apps on the Tokans network</div>
+          <h1 class="split-title">Apps supported by professionals</h1>
+          <p class="split-sub">
+            Browse the directory, or list your own.
           </p>
-          <ul class="mt-6 grid gap-3.5 list-none p-0">
-            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
-              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
-              <span>Every sharedCoreLib app is eligible to be listed</span>
-            </li>
-            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
-              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
-              <span>Owners initiate an acceptance workflow to get listed</span>
-            </li>
-            <li class="flex items-start gap-3 text-[14px] leading-snug text-ink">
-              <span class="mt-px grid h-[22px] w-[22px] flex-none place-items-center rounded-full border border-sky-dark bg-sky-light text-[12px] font-bold text-sky-dark" aria-hidden="true">✓</span>
-              <span>Supported by verified professionals on the network</span>
-            </li>
+          <ul class="split-points">
+            <li class="split-point"><span class="split-check" aria-hidden="true">✓</span><span>Every app built using <a href="https://www.github.com/tokans/sharedCoreLib" target="_blank">sharedCoreLib</a> is automatically eligible to be listed</span></li>
+            <li class="split-point"><span class="split-check" aria-hidden="true">✓</span><span>Owners initiate an acceptance workflow to get listed</span></li>
+            <li class="split-point"><span class="split-check" aria-hidden="true">✓</span><span>Supported by verified professionals on the network</span></li>
           </ul>
         </div>
-        <img class="relative z-10 mt-auto w-full max-w-[380px] self-center object-contain pt-8" src="/images/dev.png" alt="Apps built on sharedCoreLib" />
       </aside>
 
-      <!-- Dynamic directory island -->
-      <main class="flex flex-col items-center justify-start p-6 sm:p-14">
-        <div id="apps-island" class="w-full max-w-[760px]"></div>
+      <!-- Right: dynamic directory carousel -->
+      <main class="split-panel">
+        <div id="apps-island" class="split-panel-inner split-panel-inner--top" style="--split-panel-max-w:560px"></div>
       </main>
     </div>
-
-    <div data-chrome="footer"></div>
   </div>
+
+  <div data-chrome="footer"></div>
 
   <script type="module" src="/js/chrome.js"></script>
   <script type="module" src="/js/apps.js"></script>

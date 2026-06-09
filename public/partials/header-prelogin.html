@@ -1,0 +1,36 @@
+<!--
+  PRE-LOGIN marketing navbar — shown on the static public/*.html pages.
+  Single source of truth; edit by hand.
+
+  Because the static pages load with NO build step, this header is consumed via
+  build-time codegen: `npm run build:partials` reads this file into
+  public/js/partials.generated.js, which public/js/chrome.js imports
+  synchronously (so the top of the page never flashes empty). After editing,
+  re-run `npm run build:partials` (it also runs as part of `prelocal` / `build`).
+
+  The hamburger / mobile-menu / scroll behaviour is wired by chrome.js — keep the
+  element ids (navbar, navHamburger, navMobileMenu, navBackdrop) in sync with it.
+-->
+<nav id="navbar" aria-label="Main navigation">
+  <a href="/" class="nav-logo" aria-label="Tokans home">
+    <img src="/images/logo.png" alt="" class="nav-logo-img" aria-hidden="true" />Tok<span class="logo-ans"><i><u>ans</u></i></span>
+  </a>
+  <div class="nav-actions">
+    <a href="/#what-is-tokans" class="nav-link">What are Tokans?</a>
+    <a href="/login" class="btn btn-primary nav-cta">Sign In / Sign Up</a>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobileMenu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav-mobile-menu" id="navMobileMenu" aria-hidden="true" role="dialog" aria-label="Navigation menu">
+    <a href="/#what-is-tokans" class="nav-mobile-link">What are Tokans?</a>
+    <a href="/#roles" class="nav-mobile-link">Who it's for</a>
+    <a href="/#how-it-works" class="nav-mobile-link">How it works</a>
+    <a href="/#audit-strip" class="nav-mobile-link">Book an assessment</a>
+    <div class="nav-mobile-actions">
+      <a href="/founders" class="btn btn-primary">Get your codebase assessed</a>
+      <a href="/join" class="btn btn-outline">I'm an engineer →</a>
+    </div>
+  </div>
+  <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+</nav>

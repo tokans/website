@@ -16,6 +16,7 @@
     { "source": "/hire", "destination": "/auth" },
     { "source": "/login", "destination": "/auth" },
     { "source": "/professionals", "destination": "/auth" },
+    { "source": "/patrons", "destination": "/donate" },
     { "source": "/professionals/(.*)", "destination": "/app" },
     { "source": "/tokan-task", "destination": "/app" },
     { "source": "/myWorkAssistant", "destination": "/app" },
