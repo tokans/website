@@ -18,6 +18,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
+    "sync:mwa": "node scripts/sync-mwa.mjs",
     "seed:apps": "node scripts/seed-apps.mjs",
     "validate:readme": "node scripts/validate-app-readme.mjs",
     "db:schema": "node scripts/apply-schema.mjs",
@@ -31,7 +32,6 @@
     "@upstash/redis": "^1.37.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
-    "myworkassistant": "file:../../myWorkAssistant",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },
