@@ -50,6 +50,8 @@ import mwaInboxActions from "../server/mwa/inbox/[id]/actions.js";
 import mwaInboxComments from "../server/mwa/inbox/[id]/comments.js";
 import onboardingComplete from "../server/onboarding/complete.js";
 import onboardingSendVerify from "../server/onboarding/send-verify.js";
+import onboardingTemplate from "../server/onboarding/template.js";
+import adminTemplates from "../server/admin/templates.js";
 import partnersIndex from "../server/partners/index.js";
 import partnersById from "../server/partners/[id].js";
 import paymentsWebhook from "../server/payments/webhook.js";
@@ -100,6 +102,8 @@ const ROUTES: Route[] = [
   { segs: ["mwa", "inbox", ":id"], handler: mwaInboxById },
   { segs: ["onboarding", "complete"], handler: onboardingComplete },
   { segs: ["onboarding", "send-verify"], handler: onboardingSendVerify },
+  { segs: ["onboarding", "template"], handler: onboardingTemplate },
+  { segs: ["admin", "templates"], handler: adminTemplates },
   { segs: ["partners"], handler: partnersIndex },
   { segs: ["partners", ":id"], handler: partnersById },
   { segs: ["payments", "webhook"], handler: paymentsWebhook },

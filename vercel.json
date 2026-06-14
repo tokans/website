@@ -22,6 +22,9 @@
     { "source": "/patrons", "destination": "/donate" },
     { "source": "/professionals/(.*)", "destination": "/app" },
     { "source": "/tokan-task", "destination": "/app" },
+    { "source": "/onboard", "destination": "/app" },
+    { "source": "/admin", "destination": "/app" },
+    { "source": "/admin/(.*)", "destination": "/app" },
     { "source": "/myWorkAssistant", "destination": "/app" },
     { "source": "/myWorkAssistant/(.*)", "destination": "/app" }
   ]

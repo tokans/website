@@ -211,20 +211,40 @@ function DoneScreen({
   );
 }
 
+// ── Context pre-fill check (for template skip logic) ─────────────────────────
+function contextIsFilled(role: RoleId, subType: string | null, ctx: Record<string, string>): boolean {
+  if (role === "opportunity_seeker") return !!(ctx["displacement"]?.trim() && ctx["next"]?.trim());
+  if (role === "builder" && subType === "idea_stage") return !!(ctx["buildDesc"]?.trim() && ctx["websiteUrl"]?.trim());
+  if (role === "builder" && subType === "vibe_founder") return !!(ctx["bottleneck"]?.trim() && ctx["problem"]?.trim() && ctx["websiteUrl"]?.trim());
+  if (role === "builder" && subType === "service_provider_company") return !!(ctx["websiteUrl"]?.trim());
+  if (role === "employer") return !!(ctx["q1"]?.trim() && ctx["q2"]?.trim() && ctx["q3"]?.trim() && ctx["q4"]?.trim());
+  if (role === "mentor") return !!ctx["existingUser"];
+  if (role === "angel") return !!(ctx["investorUrl"]?.trim() && ctx["investmentFocus"]?.trim());
+  return true;
+}
+
 // ── Main orchestrator ─────────────────────────────────────────────────────────
 export default function Onboarding({
-  user, onComplete, onLogout, initialRole, entryPath, reOnboarding,
+  user, onComplete, onLogout, initialRole, initialSubType, entryPath, reOnboarding,
+  templateContext, templateId, templateRef,
 }: {
   user:        SessionPayload;
   onComplete:  (session: { authenticated: true; user: SessionPayload }) => void;
   onLogout:    () => void;
-  /** Pre-select a role and skip the role picker (e.g. /join → opportunity_seeker, /hire → employer). */
+  /** Pre-select a role and skip the role picker. */
   initialRole?: RoleId;
-  /** The path the journey started from (App `flow`). Selects a tailored,
-   *  path-specific question set when one is defined in data/journeys.ts. */
+  /** Pre-select a sub-type (implies initialRole is also set). */
+  initialSubType?: string;
+  /** The path the journey started from. */
   entryPath?:   string;
   /** true when the user is changing their profile after initial onboarding. */
   reOnboarding?: boolean;
+  /** Pre-filled context values from a template. */
+  templateContext?: ContextValues;
+  /** Template ID for attribution tracking. */
+  templateId?: string;
+  /** Referrer label from ?ref= param. */
+  templateRef?: string;
 }) {
   // Entry-path journeys (e.g. /join, /hire) drive their own,
   // path-specific questions. Everything else uses the generic role picker below.
@@ -240,11 +260,23 @@ export default function Onboarding({
     );
   }
 
-  const minStep = initialRole ? 1 : 0;
+  // Compute how far into the flow the template pre-fills let us skip.
+  const computeMinStep = (): number => {
+    if (!initialRole) return 0;
+    const hasSubtypeForRole = HAS_SUBTYPE.has(initialRole);
+    if (!initialSubType && hasSubtypeForRole) return 1; // show subtype picker
+    // Both role and sub-type known — check if context is also pre-filled
+    const merged = templateContext ?? {};
+    const filled = contextIsFilled(initialRole, initialSubType ?? null, merged);
+    if (filled) return hasSubtypeForRole ? 3 : 2; // skip to barrier (or done if no barrier)
+    return hasSubtypeForRole ? 2 : 1; // show context step
+  };
+  const minStep = computeMinStep();
+
   const [role,         setRole]         = useState<RoleId | null>(initialRole ?? null);
-  const [subType,      setSubType]      = useState<string | null>(null);
+  const [subType,      setSubType]      = useState<string | null>(initialSubType ?? null);
   const [otherSubType, setOtherSubType] = useState("");
-  const [context,      setContext]      = useState<ContextValues>({});
+  const [context,      setContext]      = useState<ContextValues>(templateContext ?? {});
   const [step,         setStep]         = useState(minStep);
   const [animKey,      setAnimKey]      = useState(0);
   const [done,          setDone]          = useState(false);
@@ -325,7 +357,9 @@ export default function Onboarding({
           role,
           subType: effectiveSubType,
           context,
-          ...(entryPath ? { entryPath } : {}),
+          ...(entryPath    ? { entryPath }           : {}),
+          ...(templateId   ? { templateId }          : {}),
+          ...(templateRef  ? { ref: templateRef }    : {}),
         });
         if (result.redirect) {
           window.location.href = `https://www.tokans.org${result.redirect}`;

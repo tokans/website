@@ -185,7 +185,7 @@ export default withErrorHandling(async function handler(
   const session = await requireSession(req, res);
   if (!session) return;
 
-  const { role, subType, context, entryPath } = (req.body ?? {}) as OnboardingCompleteBody;
+  const { role, subType, context, entryPath, templateId, ref } = (req.body ?? {}) as OnboardingCompleteBody;
 
   if (!role) {
     res.status(400).json({ error: "Role is required" });
@@ -227,6 +227,15 @@ export default withErrorHandling(async function handler(
         sub_type     = EXCLUDED.sub_type,
         context      = EXCLUDED.context,
         completed_at = NOW()
+    `;
+  }
+
+  if (templateId) {
+    const refOrNull = (ref as string | undefined) ?? null;
+    await sql`
+      INSERT INTO onboarding_signups (user_id, template_id, ref)
+      VALUES (${session.userId}, ${templateId}, ${refOrNull})
+      ON CONFLICT DO NOTHING
     `;
   }
 

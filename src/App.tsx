@@ -5,6 +5,8 @@ import Dashboard  from "./screens/Dashboard.js";
 import Professionals from "./screens/Professionals.js";
 import FirstTokanTask from "./screens/FirstTokanTask.js";
 import MwaMount from "./screens/MwaMount.js";
+import AdminTemplates from "./screens/AdminTemplates.js";
+import OnboardTemplate from "./screens/OnboardTemplate.js";
 import type { SessionResponse, SessionPayload, RoleId } from "./lib/types.js";
 
 // ── App state ─────────────────────────────────────────────────────────────────
@@ -39,18 +41,29 @@ export default function App() {
   const [session, setSession]         = useState<AppSession>(null);
   const [reOnboarding, setReOnboarding] = useState(false);
 
-  // Entry flow selected via the path (/professionals, rewritten /tokan-task,
-  // /myWorkAssistant) or a ?flow=… query param (set by the static auth redirect).
+  // Entry flow selected via the path or a ?flow=… query param.
   const [flow] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     const path = window.location.pathname;
     const q = new URLSearchParams(window.location.search).get("flow") ?? "";
     if (path === "/founders" || q === "founders") return "founders";
-    if (path === "/join" || q === "join") return "join";   // supply: Opportunity Seeker
-    if (path === "/hire" || q === "hire") return "hire";   // demand: Employer
+    if (path === "/join" || q === "join") return "join";
+    if (path === "/hire" || q === "hire") return "hire";
     if (path === "/tokan-task" || q === "tokan-task") return "tokan-task";
     if (path.startsWith("/professionals") || q === "professionals") return "professionals";
+    if (path === "/onboard" || q === "onboard") return "onboard";
+    if (path === "/admin" || path.startsWith("/admin/")) return "admin";
     return q;
+  });
+
+  // Params used by specific flows.
+  const [onboardVal] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("val") ?? "";
+  });
+  const [onboardRef] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return new URLSearchParams(window.location.search).get("ref") ?? "";
   });
 
   // /join and /hire are the same onboarding engine with a pre-selected role.
@@ -103,6 +116,24 @@ export default function App() {
   // myWorkAssistant cockpit (mounted sub-app).
   if (isMwaPath) {
     return <MwaMount user={session.user} />;
+  }
+
+  // Admin panel — template management.
+  if (flow === "admin") {
+    return <AdminTemplates user={session.user} />;
+  }
+
+  // Template-driven onboarding (/onboard?val=...&ref=...).
+  if (flow === "onboard") {
+    return (
+      <OnboardTemplate
+        user={session.user}
+        val={onboardVal}
+        {...(onboardRef ? { ref: onboardRef } : {})}
+        onComplete={handleOnboardingComplete}
+        onLogout={() => void handleLogout()}
+      />
+    );
   }
 
   // Professional onboarding + download gate (separate from the talent-role

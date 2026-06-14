@@ -92,6 +92,10 @@ export interface OnboardingCompleteBody {
   context?: Record<string, unknown>;
   /** The entry path this journey ran from — recorded so it runs only once. */
   entryPath?: string | null;
+  /** Template that drove this signup (for attribution). */
+  templateId?: string | null;
+  /** Referrer label from the /onboard?ref=... param. */
+  ref?: string | null;
 }
 
 // ── GitHub OAuth API shapes ────────────────────────────────────────────────────

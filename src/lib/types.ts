@@ -92,6 +92,20 @@ export interface OnboardingCompleteBody {
   context?: Record<string, unknown>;
   /** The entry path this journey ran from — recorded so it runs only once. */
   entryPath?: string | null;
+  /** Template that drove this signup (for attribution). */
+  templateId?: string | null;
+  /** Referrer label from the /onboard?ref=... param. */
+  ref?: string | null;
+}
+
+export interface OnboardingTemplate {
+  id: string;
+  name: string;
+  valHash: string;
+  role: string;
+  subType: string | null;
+  context: Record<string, unknown>;
+  createdAt?: string;
 }
 
 export interface OnboardingCompleteResult {

@@ -16,6 +16,7 @@ import type {
   SeedProfile,
   TokanTaskAnswers,
   EmployerBriefBody,
+  OnboardingTemplate,
 } from "./lib/types.js";
 
 const BASE = ""; // same-origin; Vercel routes /api/* automatically
@@ -191,5 +192,31 @@ export const api = {
     request<{ ok: boolean; tokanAwarded: boolean; remaining: number }>("/api/tokan-task", {
       method: "POST",
       body:   JSON.stringify(body),
+    }),
+
+  // ── Template-driven onboarding (/onboard?val=...) ───────────────────────────
+  fetchOnboardTemplate: (val: string) =>
+    request<{ id: string; name: string; role: string; subType: string | null; context: Record<string, unknown> }>(
+      `/api/onboarding/template?val=${encodeURIComponent(val)}`
+    ),
+
+  // ── Admin ───────────────────────────────────────────────────────────────────
+  adminListTemplates: () =>
+    request<{ templates: OnboardingTemplate[] }>("/api/admin/templates"),
+
+  adminCreateTemplate: (body: {
+    name: string;
+    role: string;
+    subType?: string | null;
+    context?: Record<string, unknown>;
+  }) =>
+    request<{ id: string; valHash: string }>("/api/admin/templates", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
+  adminDeleteTemplate: (id: string) =>
+    request<{ ok: boolean }>(`/api/admin/templates?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
     }),
 };
