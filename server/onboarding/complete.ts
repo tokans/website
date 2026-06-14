@@ -215,6 +215,8 @@ export default withErrorHandling(async function handler(
   const websiteUrl = (context?.["websiteUrl"] as string | undefined)?.trim() ?? "";
   const isIdeaStage = role === "builder" && subType === "idea_stage";
 
+  console.log(`[onboarding/complete] role=${role} subType=${subType} websiteUrl=${websiteUrl || "(empty)"}`);
+
   if (!isIdeaStage || !websiteUrl) {
     res.status(200).json({ ok: true });
     return;
@@ -222,6 +224,7 @@ export default withErrorHandling(async function handler(
 
   const appUrl = process.env["APP_URL"] ?? "";
   const ghCoords = parseGithubUrl(websiteUrl);
+  console.log(`[onboarding/complete] ghCoords=${ghCoords ? `${ghCoords.owner}/${ghCoords.repo}` : "none"}`);
 
   // ── Path 1: GitHub URL provided ───────────────────────────────────────────
   if (ghCoords) {
@@ -233,6 +236,7 @@ export default withErrorHandling(async function handler(
       ? githubLoginFromProfileUrl(dbUser.github_url)
       : null;
 
+    console.log(`[onboarding/complete] storedGithubLogin=${storedGithubLogin ?? "none"}`);
     // 1a. User logged in via GitHub AND the project owner matches their account.
     if (storedGithubLogin && storedGithubLogin === ghCoords.owner) {
       await sql`
@@ -248,6 +252,7 @@ export default withErrorHandling(async function handler(
 
     // 1b. Try README for an email address (works regardless of OAuth state).
     const readmeEmail = await scrapeReadmeEmail(ghCoords);
+    console.log(`[onboarding/complete] readmeEmail=${readmeEmail ?? "none"}`);
     if (readmeEmail) {
       await issueAndSendToken({
         userId: session.userId,
@@ -275,6 +280,7 @@ export default withErrorHandling(async function handler(
 
   // ── Path 2: Regular website URL ───────────────────────────────────────────
   const { email: scraped, domain, githubCoords: linkedGh } = await scrapeContactEmail(websiteUrl);
+  console.log(`[onboarding/complete] path2 scraped=${scraped ?? "none"} domain=${domain} linkedGh=${linkedGh ? `${linkedGh.owner}/${linkedGh.repo}` : "none"}`);
 
   if (scraped) {
     await issueAndSendToken({
