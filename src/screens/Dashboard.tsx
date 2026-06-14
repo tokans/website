@@ -58,10 +58,11 @@ const PLACEHOLDER_STATS = [
 ];
 
 export default function Dashboard({
-  user, onLogout,
+  user, onLogout, onChangeProfile,
 }: {
-  user:     SessionPayload;
-  onLogout: () => void;
+  user:            SessionPayload;
+  onLogout:        () => void;
+  onChangeProfile: () => void;
 }) {
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -87,9 +88,14 @@ export default function Dashboard({
           <div className="dash-user">
             {user.name ?? user.email}
           </div>
-          <div className="dash-role-pill">
-            {roleLabel.toUpperCase()}
-          </div>
+          <button
+            type="button"
+            onClick={onChangeProfile}
+            className="dash-role-pill dash-role-pill--btn"
+            title="Change profile"
+          >
+            {roleLabel.toUpperCase()} ✎
+          </button>
           <button
             type="button"
             onClick={() => void handleLogout()}

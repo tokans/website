@@ -26,7 +26,7 @@ export function appRowHTML(a) {
     ${icon}
     <div style="flex:1;min-width:0">
       <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-        <strong>${escapeHtml(a.name)}</strong>
+        <a href="/apps/${escapeHtml(a.slug)}" style="font-weight:700;color:inherit;text-decoration:none">${escapeHtml(a.name)}</a>
         <span class="dash-role-pill">${pill}</span>
       </div>
       ${a.tagline ? `<div class="ui-barrier-text">${escapeHtml(a.tagline)}</div>` : ""}

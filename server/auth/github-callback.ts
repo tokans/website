@@ -4,6 +4,7 @@ import { createSession, setSessionCookie } from "../lib/session.js";
 import { ensureCsrfToken } from "../lib/csrf.js";
 import { verifyOAuthState } from "../lib/oauthState.js";
 import { withErrorHandling } from "../lib/handler.js";
+import { parseGithubUrl } from "../lib/scraper.js";
 import type {
   DbUser,
   GithubEmail,
@@ -123,8 +124,29 @@ export default withErrorHandling(async function handler(
 
   // ── Check onboarding status ───────────────────────────────────────────────
   const [od] = await sql`
-    SELECT id FROM onboarding_data WHERE user_id = ${user.id}
-  ` as { id: string }[];
+    SELECT id, role, sub_type, context FROM onboarding_data WHERE user_id = ${user.id}
+  ` as { id: string; role: string; sub_type: string | null; context: Record<string, unknown> }[];
+
+  // ── Auto-verify GitHub project URL if the new GitHub login matches ────────
+  // Handles the case where the user onboarded as an idea_stage builder with a
+  // GitHub project URL, then came back to connect GitHub.
+  if (
+    od &&
+    od.role === "builder" &&
+    od.sub_type === "idea_stage"
+  ) {
+    const websiteUrl = (od.context?.["websiteUrl"] as string | undefined)?.trim() ?? "";
+    const ghCoords = websiteUrl ? parseGithubUrl(websiteUrl) : null;
+    const githubLogin = profile.login.toLowerCase();
+
+    if (ghCoords && ghCoords.owner === githubLogin) {
+      await sql`
+        UPDATE users
+        SET website_url = ${websiteUrl}, is_verified = true
+        WHERE id = ${user.id}
+      `;
+    }
+  }
 
   const sessionId = await createSession({
     userId: user.id,

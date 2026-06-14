@@ -66,73 +66,30 @@ export function donateSuccessHTML() {
 </div>`.trim();
 }
 
+function comingSoonHTML() {
+  return `
+<div class="ui-card" style="--ui-card-max-w:480px">
+  <div class="ui-fade-in" style="text-align:center;padding:2rem 0">
+    <div style="font-size:2.5rem;margin-bottom:1rem">🤝</div>
+    <div class="ui-step-header">
+      <div class="ui-step-eyebrow">COMING SOON</div>
+      <div class="ui-step-title">Donations opening soon</div>
+      <div class="ui-step-sub" style="max-width:340px;margin:0 auto">
+        We're finalising our payment setup. In the meantime, reach out at
+        <a href="mailto:hello@tokans.org" style="color:inherit;text-decoration:underline">hello@tokans.org</a>
+        if you'd like to support the mission.
+      </div>
+    </div>
+    <a href="/" class="ui-btn ui-btn--primary ui-btn--full" style="margin-top:2rem;display:block">Back to Tokans →</a>
+  </div>
+</div>`.trim();
+}
+
 // ── Mount + wiring ──────────────────────────────────────────────────────────────
 export function mount() {
   const root = document.getElementById("donate-island");
   if (!root) return;
-
-  void api.initCsrf();
-
-  const status = new URLSearchParams(window.location.search).get("status");
-
-  if (status === "success") {
-    root.innerHTML = donateSuccessHTML();
-    qs(root, "#donate-home")?.addEventListener("click", () => {
-      window.location.href = "/";
-    });
-    return;
-  }
-
-  root.innerHTML = donateFormHTML(status === "cancel" ? "cancel" : "");
-
-  const amountEl = qs(root, "#donate-amount");
-  const emailEl = qs(root, "#donate-email");
-  const submitEl = qs(root, "#donate-submit");
-  const errorEl = qs(root, "#donate-error");
-  if (!amountEl || !submitEl) return;
-
-  const rupees = () => Number(amountEl.value);
-  const isValid = () => Number.isFinite(rupees()) && rupees() >= MIN_RUPEES;
-
-  const syncButton = () => {
-    submitEl.textContent = `Donate ₹${isValid() ? inr(rupees()) : "…"} →`;
-    submitEl.disabled = !isValid();
-  };
-
-  // Preset buttons set the amount.
-  for (const btn of root.querySelectorAll("button[data-preset]")) {
-    btn.addEventListener("click", () => {
-      amountEl.value = btn.dataset.preset ?? "";
-      syncButton();
-    });
-  }
-  amountEl.addEventListener("input", syncButton);
-
-  submitEl.addEventListener("click", () => {
-    if (!isValid()) return;
-    submitEl.disabled = true;
-    submitEl.textContent = "Redirecting…";
-    if (errorEl) errorEl.innerHTML = "";
-    api
-      .donateCheckout({
-        amountMinor: Math.round(rupees() * 100),
-        currency: "INR",
-        email: emailEl?.value.trim() || null,
-      })
-      .then(({ url }) => {
-        window.location.href = url;
-      })
-      .catch((e) => {
-        if (errorEl) {
-          errorEl.innerHTML = `<div class="ui-info ui-info--error u-mt-16">${escapeHtml(
-            e instanceof Error ? e.message : "Could not start the donation",
-          )}</div>`;
-        }
-        syncButton();
-      });
-  });
-
-  syncButton();
+  root.innerHTML = comingSoonHTML();
 }
 
 onReady(mount);

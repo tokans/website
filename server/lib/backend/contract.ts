@@ -1,7 +1,7 @@
 /**
  * Backend service contract (P0 slice).
  *
- * The typed shape the website needs from `tokans/backend`, mirroring the hyperclaw
+ * The typed shape the website needs from `tokans/backend`, mirroring the
  * `uam` schema (RoleCategory, AccessLevel, the 9-boolean Auth). For P0 only the
  * slice the website needs is modelled; it grows as BE phases land.
  *
@@ -96,6 +96,7 @@ export interface AppListing {
   iconUrl: string | null;
   usesSharedCoreLib: boolean;
   supportStatus: AppSupportStatus;
+  siteUrl: string | null;
   listed: boolean;
   /** True if the requesting user owns this app. */
   isOwner: boolean;

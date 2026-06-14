@@ -36,7 +36,8 @@ function Splash() {
 }
 
 export default function App() {
-  const [session, setSession] = useState<AppSession>(null);
+  const [session, setSession]         = useState<AppSession>(null);
+  const [reOnboarding, setReOnboarding] = useState(false);
 
   // Entry flow selected via the path (/professionals, rewritten /tokan-task,
   // /myWorkAssistant) or a ?flow=… query param (set by the static auth redirect).
@@ -158,22 +159,35 @@ export default function App() {
         />
       );
     }
-    return <Dashboard user={session.user} onLogout={() => void handleLogout()} />;
+    return (
+      <Dashboard
+        user={session.user}
+        onLogout={() => void handleLogout()}
+        onChangeProfile={() => setReOnboarding(true)}
+      />
+    );
   }
 
   // Default entry: the generic role-picker onboarding runs once, gated by the
   // global onboardingComplete flag.
-  if (!session.user.onboardingComplete) {
+  if (!session.user.onboardingComplete || reOnboarding) {
     return (
       <Onboarding
         user={session.user}
-        onComplete={handleOnboardingComplete}
+        onComplete={(s) => { setReOnboarding(false); handleOnboardingComplete(s); }}
         onLogout={() => void handleLogout()}
         entryPath={flow}
+        reOnboarding={reOnboarding}
         {...(initialRole ? { initialRole } : {})}
       />
     );
   }
 
-  return <Dashboard user={session.user} onLogout={() => void handleLogout()} />;
+  return (
+    <Dashboard
+      user={session.user}
+      onLogout={() => void handleLogout()}
+      onChangeProfile={() => setReOnboarding(true)}
+    />
+  );
 }

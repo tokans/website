@@ -24,7 +24,7 @@ export async function buildAppsSnapshot(): Promise<AppsSnapshot> {
   const sql = getDb();
   const rows = (await sql`
     SELECT id, slug, name, tagline, repo_url, stack, description,
-           icon_url, uses_sharedcorelib, support_status, listed, owner_user_id
+           icon_url, site_url, uses_sharedcorelib, support_status, listed, owner_user_id
     FROM apps WHERE listed = TRUE ORDER BY name
   `) as AppRow[];
   // Snapshot is the public view — isOwner is per-viewer and never cached.

@@ -185,7 +185,7 @@ export class MockBackend implements BackendPort {
       UPDATE apps SET support_status = 'requested', updated_at = NOW()
       WHERE id = ${appId}
       RETURNING id, slug, name, tagline, repo_url, stack, description,
-                icon_url, uses_sharedcorelib, support_status, listed, owner_user_id
+                icon_url, site_url, uses_sharedcorelib, support_status, listed, owner_user_id
     `) as AppRow[];
     const row = rows[0];
     if (!row) throw new Error("App not found");

@@ -94,6 +94,20 @@ export interface OnboardingCompleteBody {
   entryPath?: string | null;
 }
 
+export interface OnboardingCompleteResult {
+  ok: boolean;
+  /** true = email found (scraped or README) and verification email already sent */
+  verificationSent?: boolean;
+  /** email address we found and sent the verification to */
+  scrapedEmail?: string;
+  /** domain the user must match when entering their own email */
+  emailDomain?: string;
+  /** GitHub URL matched the user's connected GitHub account — no email needed */
+  autoVerified?: boolean;
+  /** GitHub project URL detected but user hasn't connected GitHub OAuth yet */
+  needsGithubAuth?: boolean;
+}
+
 // ── GitHub OAuth API shapes ────────────────────────────────────────────────────
 export interface GithubEmail {
   email: string;
@@ -173,6 +187,7 @@ export interface AppListing {
   iconUrl: string | null;
   usesSharedCoreLib: boolean;
   supportStatus: AppSupportStatus;
+  siteUrl: string | null;
   listed: boolean;
   isOwner: boolean;
 }
@@ -185,6 +200,7 @@ export interface AppRegisterBody {
   stack?: string | null;
   description?: string | null;
   usesSharedCoreLib?: boolean;
+  siteUrl?: string | null;
 }
 
 // ── Partner directory + connections (P1) ──────────────────────────────────────

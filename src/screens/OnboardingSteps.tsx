@@ -192,8 +192,8 @@ export function ContextStep({
       <Field label="Describe what you're building" hint="Around 100 words is ideal. Co-founders will use this to decide if they want to explore further.">
         <Textarea placeholder="e.g. A marketplace for verified freelance translators in regional Indian languages. Built the prototype in Bolt, have 3 pilot customers…" value={values["buildDesc"] ?? ""} onChange={set("buildDesc")} maxLength={600} minHeight={110} />
       </Field>
-      <Field label="Your website or landing page URL" hint="We'll send a verification email to the contact address on this site to confirm you own it.">
-        <Input type="url" placeholder="https://yourproject.com" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
+      <Field label="Your website / landing page URL OR github repo / ghpages URL" hint="For a website we'll email the contact address on the site to confirm you own it; for a GitHub repo or Pages (ghpages) URL we verify ownership via GitHub sign-in.">
+        <Input type="url" placeholder="https://yourproject.com  ·  https://github.com/you/app  ·  https://you.github.io/app" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
       </Field>
     </>
   );

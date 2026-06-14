@@ -25,6 +25,8 @@ import { withErrorHandling } from "../server/lib/handler.js";
 import appsIndex from "../server/apps/index.js";
 import appsById from "../server/apps/[id].js";
 import appsRequestSupport from "../server/apps/[id]/request-support.js";
+import appProxy from "../server/apps/proxy.js";
+import appApprove from "../server/apps/approve.js";
 import authSignup from "../server/auth/signup.js";
 import authSignin from "../server/auth/signin.js";
 import authLogout from "../server/auth/logout.js";
@@ -32,6 +34,7 @@ import authGithub from "../server/auth/github.js";
 import authGoogle from "../server/auth/google.js";
 import authGithubCallback from "../server/auth/github-callback.js";
 import authGoogleCallback from "../server/auth/google-callback.js";
+import authVerifyWebsite from "../server/auth/verify-website.js";
 import authSession from "../server/auth/session.js";
 import csrf from "../server/csrf.js";
 import connectionsIndex from "../server/connections/index.js";
@@ -43,6 +46,7 @@ import mwaInboxById from "../server/mwa/inbox/[id].js";
 import mwaInboxActions from "../server/mwa/inbox/[id]/actions.js";
 import mwaInboxComments from "../server/mwa/inbox/[id]/comments.js";
 import onboardingComplete from "../server/onboarding/complete.js";
+import onboardingSendVerify from "../server/onboarding/send-verify.js";
 import partnersIndex from "../server/partners/index.js";
 import partnersById from "../server/partners/[id].js";
 import paymentsWebhook from "../server/payments/webhook.js";
@@ -52,6 +56,7 @@ import proStatus from "../server/professionals/status.js";
 import proSubscribe from "../server/professionals/subscribe.js";
 import proSubscription from "../server/professionals/subscription.js";
 import tokanTaskIndex from "../server/tokan-task/index.js";
+import emailInbound from "../server/email/inbound.js";
 
 type Handler = (req: VercelRequest, res: VercelResponse) => Promise<void> | void;
 
@@ -65,8 +70,10 @@ interface Route {
 // param via `score`. Listed roughly by area for readability.
 const ROUTES: Route[] = [
   { segs: ["apps"], handler: appsIndex },
+  { segs: ["apps", "approve"], handler: appApprove },
   { segs: ["apps", ":id", "request-support"], handler: appsRequestSupport },
   { segs: ["apps", ":id"], handler: appsById },
+  { segs: ["app-proxy"], handler: appProxy },
   { segs: ["auth", "signup"], handler: authSignup },
   { segs: ["auth", "signin"], handler: authSignin },
   { segs: ["auth", "logout"], handler: authLogout },
@@ -74,6 +81,7 @@ const ROUTES: Route[] = [
   { segs: ["auth", "google"], handler: authGoogle },
   { segs: ["auth", "github-callback"], handler: authGithubCallback },
   { segs: ["auth", "google-callback"], handler: authGoogleCallback },
+  { segs: ["auth", "verify-website"], handler: authVerifyWebsite },
   { segs: ["auth", "session"], handler: authSession },
   { segs: ["csrf"], handler: csrf },
   { segs: ["connections"], handler: connectionsIndex },
@@ -85,6 +93,7 @@ const ROUTES: Route[] = [
   { segs: ["mwa", "inbox", ":id", "comments"], handler: mwaInboxComments },
   { segs: ["mwa", "inbox", ":id"], handler: mwaInboxById },
   { segs: ["onboarding", "complete"], handler: onboardingComplete },
+  { segs: ["onboarding", "send-verify"], handler: onboardingSendVerify },
   { segs: ["partners"], handler: partnersIndex },
   { segs: ["partners", ":id"], handler: partnersById },
   { segs: ["payments", "webhook"], handler: paymentsWebhook },
@@ -94,6 +103,7 @@ const ROUTES: Route[] = [
   { segs: ["professionals", "subscribe"], handler: proSubscribe },
   { segs: ["professionals", "subscription"], handler: proSubscription },
   { segs: ["tokan-task"], handler: tokanTaskIndex },
+  { segs: ["email", "inbound"], handler: emailInbound },
 ];
 
 /**

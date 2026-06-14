@@ -2,6 +2,7 @@
   "name": "tokans",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "local": "vercel dev",
     "prelocal": "npm run build:css && npm run build:partials",

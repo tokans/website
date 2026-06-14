@@ -6,6 +6,7 @@ import {
 } from "../components/ui.js";
 import type { Journey } from "../data/journeys.js";
 import type { SessionPayload } from "../lib/types.js";
+import SiteSetupInstructions from "./SiteSetupInstructions.js";
 
 type Values = Record<string, string>;
 
@@ -101,6 +102,9 @@ export default function JourneyFlow({
                 </div>
               ))}
             </div>
+            {journey.role === "builder" && values["websiteUrl"] && (
+              <SiteSetupInstructions websiteUrl={values["websiteUrl"]} />
+            )}
             <BtnPrimary className="u-mt-24" onClick={() => onComplete({
               authenticated: true,
               user: {

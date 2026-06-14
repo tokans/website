@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { api } from "../api.js";
-import { Wordmark, Card, BtnPrimary, ProgressBar, FadeIn, InfoBox } from "../components/ui.js";
+import { Wordmark, Card, BtnPrimary, ProgressBar, FadeIn, InfoBox, Field, Input } from "../components/ui.js";
 import { RoleStep, SubTypeStep, ContextStep, BarrierStep, type ContextValues } from "./OnboardingSteps.js";
 import JourneyFlow from "./JourneyFlow.js";
 import { HAS_SUBTYPE, HAS_BARRIER, getStepCount } from "../data/roles.js";
@@ -41,24 +41,117 @@ const DONE_NEXT: Record<RoleId, { t: string; d: string }[]> = {
   ],
 };
 
+// ── GitHub connect prompt (GitHub URL but no GitHub OAuth yet) ────────────────
+function NeedsGithubAuthStep({ projectUrl }: { projectUrl: string }) {
+  return (
+    <FadeIn k="github-auth">
+      <Card maxWidth={480}>
+        <div className="ui-step-header">
+          <div className="ui-step-eyebrow">WEBSITE VERIFICATION</div>
+          <div className="ui-step-title">Connect GitHub to verify your project</div>
+          <div className="ui-step-sub">
+            You provided a GitHub project URL. Sign in with GitHub and we'll automatically
+            confirm you own <strong>{projectUrl}</strong> — no email needed.
+          </div>
+        </div>
+        <BtnPrimary
+          className="u-mt-24"
+          onClick={() => { window.location.href = "/api/auth/github"; }}
+        >
+          Continue with GitHub →
+        </BtnPrimary>
+        <div style={{ marginTop: "12px", textAlign: "center", fontSize: "13px", color: "var(--color-muted, #888)" }}>
+          Already connected? <a href="/app" style={{ color: "inherit", textDecoration: "underline" }}>Go to dashboard</a>
+        </div>
+      </Card>
+    </FadeIn>
+  );
+}
+
+// ── Website email input (when scraper found no mailto:) ───────────────────────
+function WebsiteEmailStep({
+  domain,
+  onSent,
+}: {
+  domain: string;
+  onSent: (email: string) => void;
+}) {
+  const [email,   setEmail]   = useState("");
+  const [saving,  setSaving]  = useState(false);
+  const [err,     setErr]     = useState("");
+
+  const emailDomain = email.split("@")[1]?.toLowerCase().replace(/^www\./, "") ?? "";
+  const valid = email.includes("@") && emailDomain === domain;
+
+  const submit = async () => {
+    if (!valid || saving) return;
+    setSaving(true);
+    setErr("");
+    try {
+      await api.sendVerifyEmail(email);
+      onSent(email);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Something went wrong");
+      setSaving(false);
+    }
+  };
+
+  return (
+    <FadeIn k="email-input">
+      <Card maxWidth={480}>
+        <div className="ui-step-header">
+          <div className="ui-step-eyebrow">WEBSITE VERIFICATION</div>
+          <div className="ui-step-title">Enter your contact email</div>
+          <div className="ui-step-sub">
+            We couldn't find a <code>mailto:</code> link on your site. Enter an email address at{" "}
+            <strong>@{domain}</strong> so we can confirm you own it.
+          </div>
+        </div>
+        <Field label={`Contact email at @${domain}`} hint={`Must end with @${domain}`}>
+          <Input
+            type="email"
+            placeholder={`you@${domain}`}
+            value={email}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value.trim())}
+          />
+        </Field>
+        {err && <InfoBox variant="error" className="u-mt-16">{err}</InfoBox>}
+        <div className="onboard-actions">
+          <BtnPrimary onClick={() => void submit()} disabled={!valid || saving}>
+            {saving ? "Sending…" : "Send verification email →"}
+          </BtnPrimary>
+        </div>
+      </Card>
+    </FadeIn>
+  );
+}
+
 // ── Done screen ───────────────────────────────────────────────────────────────
 function DoneScreen({
-  role, name, onGoToDashboard,
+  role, name, doneNextItems, onGoToDashboard, reOnboarding,
 }: {
   role:            RoleId;
   name:            string | null;
+  doneNextItems?:  { t: string; d: string }[];
   onGoToDashboard: () => void;
+  reOnboarding?:   boolean;
 }) {
-  const items = DONE_NEXT[role];
+  const items = doneNextItems ?? DONE_NEXT[role];
   return (
     <FadeIn k="done">
       <Card maxWidth={480}>
         <div className="done-tick">✓</div>
         <div className="done-title">
-          You're in{name ? `, ${name.split(" ")[0]}` : ""}
+          {reOnboarding
+            ? `Profile updated${name ? `, ${name.split(" ")[0]}` : ""}`
+            : `You're in${name ? `, ${name.split(" ")[0]}` : ""}`
+          }
         </div>
         <div className="done-body">
-          Your account is set up and your profile is being configured.<br />Here's what happens next.
+          {reOnboarding
+            ? "Your profile has been updated. Here's what happens next with your new role."
+            : <>Your account is set up and your profile is being configured.<br />Here's what happens next.</>
+          }
         </div>
         <div className="done-next">
           <div className="done-next-eyebrow">WHAT HAPPENS NEXT</div>
@@ -81,7 +174,7 @@ function DoneScreen({
 
 // ── Main orchestrator ─────────────────────────────────────────────────────────
 export default function Onboarding({
-  user, onComplete, onLogout, initialRole, entryPath,
+  user, onComplete, onLogout, initialRole, entryPath, reOnboarding,
 }: {
   user:        SessionPayload;
   onComplete:  (session: { authenticated: true; user: SessionPayload }) => void;
@@ -91,6 +184,8 @@ export default function Onboarding({
   /** The path the journey started from (App `flow`). Selects a tailored,
    *  path-specific question set when one is defined in data/journeys.ts. */
   entryPath?:   string;
+  /** true when the user is changing their profile after initial onboarding. */
+  reOnboarding?: boolean;
 }) {
   // Entry-path journeys (e.g. /join, /hire, /founders) drive their own,
   // path-specific questions. Everything else uses the generic role picker below.
@@ -113,9 +208,14 @@ export default function Onboarding({
   const [context,      setContext]      = useState<ContextValues>({});
   const [step,         setStep]         = useState(minStep);
   const [animKey,      setAnimKey]      = useState(0);
-  const [done,         setDone]         = useState(false);
-  const [saving,       setSaving]       = useState(false);
-  const [serverErr,    setServerErr]    = useState("");
+  const [done,          setDone]          = useState(false);
+  const [saving,        setSaving]        = useState(false);
+  const [serverErr,     setServerErr]     = useState("");
+  // Website verification states (idea_stage builders)
+  const [verifyEmailDomain,  setVerifyEmailDomain]  = useState<string | null>(null);
+  const [verifyEmailSent,    setVerifyEmailSent]    = useState<string | null>(null);
+  const [needsGithubAuth,    setNeedsGithubAuth]    = useState(false);
+  const [autoVerified,       setAutoVerified]       = useState(false);
 
   const totalSteps  = role ? getStepCount(role) : 1;
   const hasSubtype  = role !== null && HAS_SUBTYPE.has(role);
@@ -147,7 +247,29 @@ export default function Onboarding({
       setSaving(true);
       setServerErr("");
       try {
-        await api.completeOnboarding({ role, subType, context });
+        const result = await api.completeOnboarding({ role, subType, context });
+        if (result.autoVerified) {
+          // GitHub URL matched their connected account — instant verification.
+          setAutoVerified(true);
+          setDone(true);
+          return;
+        }
+        if (result.needsGithubAuth) {
+          // GitHub project URL but no GitHub login yet — prompt to connect.
+          setNeedsGithubAuth(true);
+          return;
+        }
+        if (result.verificationSent === true && result.scrapedEmail) {
+          // Email found (scraped or README) and sent — jump to done.
+          setVerifyEmailSent(result.scrapedEmail);
+          setDone(true);
+          return;
+        }
+        if (result.verificationSent === false && result.emailDomain) {
+          // No email found — prompt the user to provide one at the right domain.
+          setVerifyEmailDomain(result.emailDomain);
+          return;
+        }
         if (role === "employer") {
           // /hire: persist the (partial) 7-question brief; questions 5–7 come later.
           await api.saveEmployerBrief({
@@ -200,12 +322,51 @@ export default function Onboarding({
     return "Continue →";
   };
 
+  // GitHub connect prompt.
+  if (needsGithubAuth && !done) {
+    const projectUrl = (context["websiteUrl"] ?? "") as string;
+    return (
+      <div className="onboard-page">
+        <NeedsGithubAuthStep projectUrl={projectUrl} />
+      </div>
+    );
+  }
+
+  // Email input step: scraper found the domain but no email.
+  if (verifyEmailDomain && !done) {
+    return (
+      <div className="onboard-page">
+        <WebsiteEmailStep
+          domain={verifyEmailDomain}
+          onSent={(email) => { setVerifyEmailSent(email); setDone(true); }}
+        />
+      </div>
+    );
+  }
+
   if (done && role) {
+    // Override "what happens next" for builders depending on how verification resolved.
+    const overriddenItems = autoVerified
+      ? DONE_NEXT[role].map((it) =>
+          it.t === "Verification email on its way"
+            ? { t: "Profile verified via GitHub ✓", d: "Your GitHub account confirmed ownership of the project. Your Builder profile is live." }
+            : it
+        )
+      : verifyEmailSent
+      ? DONE_NEXT[role].map((it) =>
+          it.t === "Verification email on its way"
+            ? { ...it, d: `Sent to ${verifyEmailSent} — click the link to publish your profile.` }
+            : it
+        )
+      : DONE_NEXT[role];
+
     return (
       <div className="onboard-page">
         <DoneScreen
           role={role}
           name={user.name}
+          doneNextItems={overriddenItems}
+          {...(reOnboarding ? { reOnboarding } : {})}
           onGoToDashboard={() => onComplete({
             authenticated: true,
             user: { ...user, onboardingComplete: true, role, subType },
@@ -257,7 +418,10 @@ export default function Onboarding({
 
       {step === 0 && (
         <div className="onboard-hint">
-          Not sure? You can always add or change roles after completing onboarding.
+          {reOnboarding
+            ? "Switching roles replaces your current profile. Your Tokan history is preserved."
+            : "Not sure? You can always add or change roles after completing onboarding."
+          }
         </div>
       )}
     </div>

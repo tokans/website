@@ -1,6 +1,7 @@
 import type {
   AuthResponse,
   OnboardingCompleteBody,
+  OnboardingCompleteResult,
   SessionResponse,
   RoleId,
   SubType,
@@ -104,9 +105,15 @@ export const api = {
     context?:   Record<string, unknown>;
     entryPath?: string | null;
   }) =>
-    request<{ ok: boolean }>("/api/onboarding/complete", {
+    request<OnboardingCompleteResult>("/api/onboarding/complete", {
       method: "POST",
       body:   JSON.stringify(body satisfies OnboardingCompleteBody),
+    }),
+
+  sendVerifyEmail: (email: string) =>
+    request<{ ok: boolean; email: string }>("/api/onboarding/send-verify", {
+      method: "POST",
+      body:   JSON.stringify({ email }),
     }),
 
   // ── Professionals (P0) ──────────────────────────────────────────────────────
