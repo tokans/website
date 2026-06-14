@@ -1593,7 +1593,7 @@ a { color: inherit; text-decoration: none; }
     grid-template-columns: 1fr;
     overflow: visible;
   }
-  .split-media { min-height: 40vh; }
+  .split-media { display: none; }
   .split-panel { overflow-y: visible; }
 }
 
