@@ -61,9 +61,7 @@ export default withErrorHandling(async function handler(
 
   const appUrl = process.env["APP_URL"] ?? "";
   const token = randomBytes(32).toString("hex");
-  const payload = JSON.stringify({ userId: session.userId, websiteUrl, email });
-
-  await getRedis().set(`ws_verify:${token}`, payload, { ex: TOKEN_TTL });
+  await getRedis().set(`ws_verify:${token}`, { userId: session.userId, websiteUrl, email }, { ex: TOKEN_TTL });
 
   const verifyUrl = `${appUrl}/api/auth/verify-website?token=${token}`;
   await sendEmail({

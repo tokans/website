@@ -22,17 +22,9 @@ export default withErrorHandling(async function handler(
   }
 
   const redis = getRedis();
-  const raw = await redis.get<string>(`ws_verify:${token}`);
-  if (!raw) {
+  const payload = await redis.get<VerifyPayload>(`ws_verify:${token}`);
+  if (!payload) {
     res.redirect(302, `${appUrl}/login?verify_error=expired`);
-    return;
-  }
-
-  let payload: VerifyPayload;
-  try {
-    payload = JSON.parse(raw) as VerifyPayload;
-  } catch {
-    res.redirect(302, `${appUrl}/login?verify_error=invalid`);
     return;
   }
 

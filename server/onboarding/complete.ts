@@ -35,8 +35,7 @@ async function issueAndSendToken(opts: {
   appUrl: string;
 }): Promise<void> {
   const token = randomBytes(32).toString("hex");
-  const payload = JSON.stringify({ userId: opts.userId, websiteUrl: opts.websiteUrl, email: opts.email });
-  await getRedis().set(`ws_verify:${token}`, payload, { ex: TOKEN_TTL });
+  await getRedis().set(`ws_verify:${token}`, { userId: opts.userId, websiteUrl: opts.websiteUrl, email: opts.email }, { ex: TOKEN_TTL });
   const verifyUrl = `${opts.appUrl}/api/auth/verify-website?token=${token}`;
   await sendEmail({
     to: opts.email,
@@ -118,7 +117,7 @@ async function upsertAppForBuilder(opts: {
     if (!appId) return;
 
     const approvalToken = randomBytes(32).toString("hex");
-    await getRedis().set(`app_approve:${approvalToken}`, JSON.stringify({ appId }), { ex: APPROVAL_TOKEN_TTL });
+    await getRedis().set(`app_approve:${approvalToken}`, { appId }, { ex: APPROVAL_TOKEN_TTL });
 
     const approveUrl = `${appUrl}/api/apps/approve?token=${approvalToken}`;
     const approvalEmail = process.env["APP_APPROVAL_EMAIL"] ?? "tokans.org@gmail.com";
