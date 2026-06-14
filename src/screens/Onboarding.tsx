@@ -6,6 +6,7 @@ import JourneyFlow from "./JourneyFlow.js";
 import { HAS_SUBTYPE, HAS_BARRIER, getStepCount } from "../data/roles.js";
 import { getJourney } from "../data/journeys.js";
 import type { RoleId, SessionPayload } from "../lib/types.js";
+import SiteSetupInstructions from "./SiteSetupInstructions.js";
 
 // ── What-happens-next items per role ─────────────────────────────────────────
 const DONE_NEXT: Record<RoleId, { t: string; d: string }[]> = {
@@ -128,13 +129,14 @@ function WebsiteEmailStep({
 
 // ── Done screen ───────────────────────────────────────────────────────────────
 function DoneScreen({
-  role, name, doneNextItems, onGoToDashboard, reOnboarding,
+  role, name, doneNextItems, onGoToDashboard, reOnboarding, websiteUrl,
 }: {
   role:            RoleId;
   name:            string | null;
   doneNextItems?:  { t: string; d: string }[];
   onGoToDashboard: () => void;
   reOnboarding?:   boolean;
+  websiteUrl?:     string;
 }) {
   const items = doneNextItems ?? DONE_NEXT[role];
   return (
@@ -164,6 +166,9 @@ function DoneScreen({
             </div>
           ))}
         </div>
+        {role === "builder" && websiteUrl && (
+          <SiteSetupInstructions websiteUrl={websiteUrl} />
+        )}
         <BtnPrimary className="u-mt-24" onClick={onGoToDashboard}>
           Go to my dashboard →
         </BtnPrimary>
@@ -367,6 +372,7 @@ export default function Onboarding({
           name={user.name}
           doneNextItems={overriddenItems}
           {...(reOnboarding ? { reOnboarding } : {})}
+          {...(context["websiteUrl"] ? { websiteUrl: context["websiteUrl"] as string } : {})}
           onGoToDashboard={() => onComplete({
             authenticated: true,
             user: { ...user, onboardingComplete: true, role, subType },
