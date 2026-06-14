@@ -4,7 +4,7 @@ import {
   InfoBox, BarrierBox,
 } from "../components/ui.js";
 import {
-  ROLES, OPP_SUBTYPES, BUILDER_SUBTYPES, EMPLOYER_SUBTYPES,
+  ROLES, OPP_SUBTYPES, BUILDER_SUBTYPES, EMPLOYER_SUBTYPES, SKILL_LIST,
 } from "../data/roles.js";
 import type { RoleId } from "../lib/types.js";
 
@@ -73,6 +73,38 @@ function Chip({
   );
 }
 
+function MultiSelectChips({
+  options, value, onChange, label,
+}: {
+  options:  string[];
+  value:    string;
+  onChange: (v: string) => void;
+  label?:   string;
+}) {
+  const selected = new Set(value ? value.split(",").filter(Boolean) : []);
+  const toggle = (s: string) => {
+    const next = new Set(selected);
+    if (next.has(s)) next.delete(s); else next.add(s);
+    onChange(Array.from(next).join(","));
+  };
+  return (
+    <div>
+      {label && <div className="ui-field-label" style={{ marginBottom: 10 }}>{label}</div>}
+      <div className="steps-grid-2">
+        {options.map((s) => (
+          <div
+            key={s}
+            onClick={() => toggle(s)}
+            className={`chip${selected.has(s) ? " is-selected" : ""}`}
+          >
+            {s}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Step 0: Role selection ────────────────────────────────────────────────────
 export function RoleStep({
   selected, onSelect,
@@ -98,13 +130,15 @@ export function RoleStep({
 
 // ── Step 1: Sub-type ──────────────────────────────────────────────────────────
 export function SubTypeStep({
-  role, selected, onSelect, otherVal, onOtherChange,
+  role, selected, onSelect, otherVal, onOtherChange, subType2, onSubType2Change,
 }: {
-  role:          RoleId;
-  selected:      string | null;
-  onSelect:      (id: string) => void;
-  otherVal:      string;
-  onOtherChange: (v: string) => void;
+  role:              RoleId;
+  selected:          string | null;
+  onSelect:          (id: string) => void;
+  otherVal:          string;
+  onOtherChange:     (v: string) => void;
+  subType2?:         string;
+  onSubType2Change?: (v: string) => void;
 }) {
   if (role === "opportunity_seeker") {
     return (
@@ -137,6 +171,16 @@ export function SubTypeStep({
             <RadioCard key={s.id} item={s} selected={selected} onSelect={onSelect} />
           ))}
         </div>
+        {selected === "service_provider_company" && (
+          <div className="u-mt-20">
+            <MultiSelectChips
+              options={SKILL_LIST}
+              value={subType2 ?? ""}
+              onChange={onSubType2Change ?? (() => undefined)}
+              label="What services do you provide?"
+            />
+          </div>
+        )}
       </>
     );
   }
@@ -192,7 +236,7 @@ export function ContextStep({
       <Field label="Describe what you're building" hint="Around 100 words is ideal. Co-founders will use this to decide if they want to explore further.">
         <Textarea placeholder="e.g. A marketplace for verified freelance translators in regional Indian languages. Built the prototype in Bolt, have 3 pilot customers…" value={values["buildDesc"] ?? ""} onChange={set("buildDesc")} maxLength={600} minHeight={110} />
       </Field>
-      <Field label="Your website / landing page URL OR github repo / ghpages URL" hint="For a website we'll email the contact address on the site to confirm you own it; for a GitHub repo or Pages (ghpages) URL we verify ownership via GitHub sign-in.">
+      <Field label="Your website / landing page URL OR GitHub repo / Pages URL" hint="For a website we'll email the contact address on the site to confirm you own it; for a GitHub repo or Pages URL we verify ownership via GitHub sign-in.">
         <Input type="url" placeholder="https://yourproject.com  ·  https://github.com/you/app  ·  https://you.github.io/app" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
       </Field>
     </>
@@ -200,15 +244,32 @@ export function ContextStep({
 
   if (role === "builder" && subType === "vibe_founder") return (
     <>
-      <StepHeader eyebrow="STEP 3 — YOUR PRODUCT" title="Tell us about what you've built" sub="We'll use this to do a codebase assessment and match you with the right verified engineer." />
-      <Field label="What's your current tech stack?">
-        <Input placeholder="e.g. Next.js, Supabase, Vercel, Stripe — built with Cursor" value={values["stack"] ?? ""} onChange={set("stack")} />
+      <StepHeader eyebrow="STEP 3 — YOUR PRODUCT" title="Tell us what you need" sub="We'll match you with the right verified professional or service company based on your skill needs." />
+      <div className="u-mb-16">
+        <MultiSelectChips
+          options={SKILL_LIST}
+          value={values["bottleneck"] ?? ""}
+          onChange={(v) => onChange({ ...values, bottleneck: v })}
+          label="What skills do you need to progress forward?"
+        />
+      </div>
+      <Field label="Describe your most pressing problem that needs a solution">
+        <Textarea placeholder="e.g. Auth breaks under concurrent users and performance is degrading. I need someone to own the backend architecture…" value={values["problem"] ?? ""} onChange={set("problem")} maxLength={500} minHeight={100} />
       </Field>
-      <Field label="What's your biggest technical bottleneck right now?">
-        <Textarea placeholder="e.g. Auth breaks under concurrent users and I have no idea how to debug it…" value={values["bottleneck"] ?? ""} onChange={set("bottleneck")} maxLength={400} minHeight={90} />
+      <Field label="Your website / landing page URL OR GitHub repo / Pages URL" hint="For a website we'll email the contact address on the site to confirm you own it; for a GitHub repo or Pages URL we verify ownership via GitHub sign-in.">
+        <Input type="url" placeholder="https://yourproduct.com  ·  https://github.com/you/app  ·  https://you.github.io/app" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
       </Field>
-      <Field label="Describe what you've built and its current state">
-        <Textarea placeholder="e.g. A B2B SaaS for gym owners — 12 paying customers, ~₹40k MRR. The core product works but the code is messy…" value={values["builtState"] ?? ""} onChange={set("builtState")} maxLength={500} minHeight={100} />
+    </>
+  );
+
+  if (role === "builder" && subType === "service_provider_company") return (
+    <>
+      <StepHeader eyebrow="STEP 3 — YOUR COMPANY" title="Tell us about your services" sub="This helps us verify your company and list you accurately in the Tokans directory." />
+      <Field label="Describe the services your company provides" hint="Optional — we can also gather this from your website.">
+        <Textarea placeholder="e.g. We provide full-stack engineering teams to early-stage founders on a project or retainer basis…" value={values["description"] ?? ""} onChange={set("description")} maxLength={500} minHeight={100} />
+      </Field>
+      <Field label="Your company website URL" hint="We'll use your website to verify your company and list your services in the directory.">
+        <Input type="url" placeholder="https://yourcompany.com" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
       </Field>
     </>
   );
@@ -317,12 +378,24 @@ export function BarrierStep({
 
   if (role === "builder" && subType === "vibe_founder") return (
     <>
-      <StepHeader eyebrow="STEP 4 — WHAT HAPPENS NEXT" title="We start with a codebase assessment" sub="We don't match you to a pool and let you browse. We assess what you've built first — then match you to exactly the right person." />
-      <BarrierBox title="THE VIBE-FOUNDER FLOW" steps={[
-        "Our team reviews the codebase context you've submitted — within 48 hours",
-        "We produce a one-page handoff brief: current state, risks, and what the next engineer needs to do",
-        "We match you with a Tokans-verified engineer with Legacy/Handoff Tokans",
+      <StepHeader eyebrow="STEP 4 — WHAT HAPPENS NEXT" title="We will match your ask with available partners" sub="We don't match you to a pool and let you browse. We assess your needs first — then match you to exactly the right person or team." />
+      <BarrierBox title="THE MATCH PROCESS" steps={[
+        "Our team reviews your submission and skill needs — within 48 hours",
+        "We match you with a verified professional or service company from our directory based on your bottleneck",
+        "You're introduced directly — no unsolicited contact, mutual interest only",
         "Engagement is outcome-based. We take 15% on delivery, no upfront cost",
+      ]} />
+    </>
+  );
+
+  if (role === "builder" && subType === "service_provider_company") return (
+    <>
+      <StepHeader eyebrow="STEP 4 — WHAT HAPPENS NEXT" title="Your services will be listed in the directory" sub="Once your company website is verified, your profile is added to the Tokans service directory." />
+      <BarrierBox title="HOW IT WORKS" steps={[
+        "We verify your company website — this is the gate to being listed",
+        "Your company profile and listed services go live in the Tokans directory",
+        "Builders searching for your skills can find and contact your company directly",
+        "You control which engagements you accept — no commitments until you agree",
       ]} />
     </>
   );

@@ -1088,6 +1088,28 @@ a { color: inherit; text-decoration: none; }
   background: var(--border);
   margin: 24px 0;
 }
+.dash-employer-brief {
+  padding: 4px 0 8px;
+}
+.dash-employer-brief-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.dash-employer-brief-note {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.dash-employer-brief-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .dash-stats {
   display: flex;
   gap: 16px;
@@ -1252,6 +1274,17 @@ a { color: inherit; text-decoration: none; }
   line-height: 1.5;
 }
 .done-next-text strong { color: var(--text); }
+
+.done-email-notice {
+  margin-top: 20px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text-2);
+}
+.done-email-notice strong { color: var(--text); }
 
 /* ───────────────────────────────────
    Onboarding step primitives

@@ -20,7 +20,7 @@ export type OppSubType =
   | "Business Analyst"
   | "Other";
 
-export type BuilderSubType = "idea_stage" | "vibe_founder";
+export type BuilderSubType = "idea_stage" | "vibe_founder" | "service_provider_company";
 
 export type EmployerSubType = "startup_sme" | "enterprise";
 

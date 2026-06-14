@@ -20,7 +20,7 @@ export type OppSubType =
   | "Business Analyst"
   | "Other";
 
-export type BuilderSubType = "idea_stage" | "vibe_founder";
+export type BuilderSubType = "idea_stage" | "vibe_founder" | "service_provider_company";
 
 export type EmployerSubType = "startup_sme" | "enterprise";
 
@@ -106,6 +106,8 @@ export interface OnboardingCompleteResult {
   autoVerified?: boolean;
   /** GitHub project URL detected but user hasn't connected GitHub OAuth yet */
   needsGithubAuth?: boolean;
+  /** redirect path — e.g. "/patrons" for donor role */
+  redirect?: string;
 }
 
 // ── GitHub OAuth API shapes ────────────────────────────────────────────────────

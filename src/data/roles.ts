@@ -49,6 +49,22 @@ export const BUILDER_SUBTYPES: SubTypeDef[] = [
   { id: "vibe_founder",
     label: "Product with Traction",
     desc: "V1 is shipped and users exist — I need trusted technical help to take it further. I have a budget." },
+  { id: "service_provider_company",
+    label: "Established Service Provider",
+    desc: "I can provide trusted technical help to founders for a negotiable fee." },
+];
+
+export const SKILL_LIST: string[] = [
+  "Software Development Engineer (SDE)",
+  "Engineering Manager (EM / SDM)",
+  "Product Manager",
+  "Designer (UI/UX)",
+  "Data Scientist / ML Engineer",
+  "DevOps / Platform / SRE",
+  "QA / SDET",
+  "Marketing Professional",
+  "Business Analyst",
+  "Other",
 ];
 
 export const EMPLOYER_SUBTYPES: SubTypeDef[] = [

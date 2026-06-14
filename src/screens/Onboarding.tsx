@@ -8,18 +8,32 @@ import { getJourney } from "../data/journeys.js";
 import type { RoleId, SessionPayload } from "../lib/types.js";
 import SiteSetupInstructions from "./SiteSetupInstructions.js";
 
-// ── What-happens-next items per role ─────────────────────────────────────────
+// ── What-happens-next items per role / sub-type ───────────────────────────────
+const BUILDER_DONE_NEXT: Record<string, { t: string; d: string }[]> = {
+  idea_stage: [
+    { t: "Verification email on its way", d: "Check the inbox connected to your website contact address and click confirm." },
+    { t: "Your Builder profile goes live", d: "Once verified, your co-founder brief is visible to other Builders and Angel Scouts." },
+    { t: "Mutual interest only", d: "Co-founders can see your brief and express interest. You'll be notified — no unsolicited contact." },
+  ],
+  vibe_founder: [
+    { t: "Submission under review", d: "We'll review your context and skill needs within 48 hours." },
+    { t: "Matched with a partner", d: "We connect you with a verified professional or service company from our directory based on your bottleneck." },
+    { t: "Outcome-based engagement", d: "Engagements are outcome-based. We take 15% on delivery, no upfront cost." },
+  ],
+  service_provider_company: [
+    { t: "Website verification underway", d: "We'll verify your company website and list your services in the Tokans directory." },
+    { t: "Builders can find you", d: "Your company profile appears in search results for the services you offer." },
+    { t: "Direct engagements", d: "Builders contact your company directly through the platform." },
+  ],
+};
+
 const DONE_NEXT: Record<RoleId, { t: string; d: string }[]> = {
   opportunity_seeker: [
     { t: "Complete your First Tokan Task", d: "An anonymised profile is waiting for your peer review. ~8 minutes." },
     { t: "Your profile goes live", d: "After submission, choose your next path — get reviewed, take a skill assessment, or join a live brief." },
     { t: "Earn Tokans, gain visibility", d: "Every verified contribution adds to your score. High Tokan profiles surface first in employer shortlists." },
   ],
-  builder: [
-    { t: "Verification email on its way", d: "Check the inbox connected to your website contact address and click confirm." },
-    { t: "Your Builder profile goes live", d: "Once verified, your co-founder brief is visible to other Builders and Angel Scouts." },
-    { t: "Mutual interest only", d: "Co-founders can see your brief and express interest. You'll be notified — no unsolicited contact." },
-  ],
+  builder: BUILDER_DONE_NEXT["idea_stage"]!,
   employer: [
     { t: "Brief review in 24 hours", d: "Our team will review your answers and may follow up for a 20-minute calibration call." },
     { t: "Shortlist delivered", d: "Up to 5 verified profiles matched to your brief. Names hidden until mutual interest." },
@@ -41,6 +55,10 @@ const DONE_NEXT: Record<RoleId, { t: string; d: string }[]> = {
     { t: "Post your Scout Brief", d: "Let Builders come to you — describe what you back and they approach you directly." },
   ],
 };
+
+function getBuilderDoneItems(subType: string | null) {
+  return BUILDER_DONE_NEXT[subType ?? "idea_stage"] ?? BUILDER_DONE_NEXT["idea_stage"]!;
+}
 
 // ── GitHub connect prompt (GitHub URL but no GitHub OAuth yet) ────────────────
 function NeedsGithubAuthStep({ projectUrl }: { projectUrl: string }) {
@@ -129,15 +147,17 @@ function WebsiteEmailStep({
 
 // ── Done screen ───────────────────────────────────────────────────────────────
 function DoneScreen({
-  role, name, doneNextItems, onGoToDashboard, reOnboarding, websiteUrl,
+  role, name, email, doneNextItems, onGoToDashboard, reOnboarding, websiteUrl,
 }: {
   role:            RoleId;
   name:            string | null;
+  email:           string;
   doneNextItems?:  { t: string; d: string }[];
   onGoToDashboard: () => void;
   reOnboarding?:   boolean;
   websiteUrl?:     string;
 }) {
+  const [noticeEmail, setNoticeEmail] = useState(email);
   const items = doneNextItems ?? DONE_NEXT[role];
   return (
     <FadeIn k="done">
@@ -169,6 +189,20 @@ function DoneScreen({
         {role === "builder" && websiteUrl && (
           <SiteSetupInstructions websiteUrl={websiteUrl} />
         )}
+        {email ? (
+          <div className="done-email-notice">We'll get back to you at <strong>{email}</strong>.</div>
+        ) : (
+          <div className="u-mt-16">
+            <Field label="Add your email so we can reach you" hint="Optional">
+              <Input
+                type="email"
+                placeholder="you@example.com"
+                value={noticeEmail}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setNoticeEmail(e.target.value)}
+              />
+            </Field>
+          </div>
+        )}
         <BtnPrimary className="u-mt-24" onClick={onGoToDashboard}>
           Go to my dashboard →
         </BtnPrimary>
@@ -192,7 +226,7 @@ export default function Onboarding({
   /** true when the user is changing their profile after initial onboarding. */
   reOnboarding?: boolean;
 }) {
-  // Entry-path journeys (e.g. /join, /hire, /founders) drive their own,
+  // Entry-path journeys (e.g. /join, /hire) drive their own,
   // path-specific questions. Everything else uses the generic role picker below.
   const journey = getJourney(entryPath);
   if (journey) {
@@ -216,7 +250,7 @@ export default function Onboarding({
   const [done,          setDone]          = useState(false);
   const [saving,        setSaving]        = useState(false);
   const [serverErr,     setServerErr]     = useState("");
-  // Website verification states (idea_stage builders)
+  // Website verification states (builder roles)
   const [verifyEmailDomain,  setVerifyEmailDomain]  = useState<string | null>(null);
   const [verifyEmailSent,    setVerifyEmailSent]    = useState<string | null>(null);
   const [needsGithubAuth,    setNeedsGithubAuth]    = useState(false);
@@ -231,12 +265,21 @@ export default function Onboarding({
 
   const canAdvance = (): boolean => {
     if (step === 0) return role !== null;
-    if (step === 1 && hasSubtype) return subType !== null;
+    if (step === 1 && hasSubtype) {
+      if (subType === null) return false;
+      if (subType === "service_provider_company") return !!(context["subType2"]?.trim());
+      if (subType === "Other") return !!otherSubType.trim();
+      return true;
+    }
     if (step === contextStep) {
       if (!role) return false;
       if (role === "opportunity_seeker") return !!(context["displacement"]?.trim() && context["next"]?.trim());
-      if (role === "builder" && subType === "idea_stage")   return !!context["buildDesc"]?.trim() && !!context["websiteUrl"]?.trim();
-      if (role === "builder" && subType === "vibe_founder") return !!(context["stack"]?.trim() && context["bottleneck"]?.trim());
+      if (role === "builder" && subType === "idea_stage")
+        return !!(context["buildDesc"]?.trim() && context["websiteUrl"]?.trim());
+      if (role === "builder" && subType === "vibe_founder")
+        return !!(context["bottleneck"]?.trim() && context["problem"]?.trim() && context["websiteUrl"]?.trim());
+      if (role === "builder" && subType === "service_provider_company")
+        return !!(context["websiteUrl"]?.trim());
       if (role === "employer")  return !!(context["q1"]?.trim() && context["q2"]?.trim() && context["q3"]?.trim() && context["q4"]?.trim());
       if (role === "mentor")    return !!context["existingUser"];
       if (role === "donor")     return !!context["whyDonate"]?.trim();
@@ -248,35 +291,65 @@ export default function Onboarding({
 
   const advance = async () => {
     if (!canAdvance() || !role) return;
+
+    // Donor shortcut: step 0 Continue → call API immediately → redirect to /patrons
+    if (step === 0 && role === "donor") {
+      setSaving(true);
+      setServerErr("");
+      try {
+        const result = await api.completeOnboarding({
+          role,
+          subType: null,
+          context: {},
+          ...(entryPath ? { entryPath } : {}),
+        });
+        if (result.redirect) {
+          window.location.href = `https://www.tokans.org${result.redirect}`;
+          return;
+        }
+        setDone(true);
+      } catch (e) {
+        setServerErr(e instanceof Error ? e.message : "Something went wrong");
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
     if (isLastStep) {
       setSaving(true);
       setServerErr("");
       try {
-        const result = await api.completeOnboarding({ role, subType, context });
+        const effectiveSubType = subType === "Other" ? (otherSubType.trim() || subType) : subType;
+        const result = await api.completeOnboarding({
+          role,
+          subType: effectiveSubType,
+          context,
+          ...(entryPath ? { entryPath } : {}),
+        });
+        if (result.redirect) {
+          window.location.href = `https://www.tokans.org${result.redirect}`;
+          return;
+        }
         if (result.autoVerified) {
-          // GitHub URL matched their connected account — instant verification.
           setAutoVerified(true);
           setDone(true);
           return;
         }
         if (result.needsGithubAuth) {
-          // GitHub project URL but no GitHub login yet — prompt to connect.
           setNeedsGithubAuth(true);
           return;
         }
         if (result.verificationSent === true && result.scrapedEmail) {
-          // Email found (scraped or README) and sent — jump to done.
           setVerifyEmailSent(result.scrapedEmail);
           setDone(true);
           return;
         }
         if (result.verificationSent === false && result.emailDomain) {
-          // No email found — prompt the user to provide one at the right domain.
           setVerifyEmailDomain(result.emailDomain);
           return;
         }
         if (role === "employer") {
-          // /hire: persist the (partial) 7-question brief; questions 5–7 come later.
           await api.saveEmployerBrief({
             whatTheyOwn:         context["q1"] ?? null,
             successAt60Days:     context["q2"] ?? null,
@@ -308,6 +381,17 @@ export default function Onboarding({
     setContext({});
   };
 
+  const handleSubTypeSelect = (id: string) => {
+    setSubType(id);
+    // Clear subType2 when switching away from service_provider_company
+    if (id !== "service_provider_company") {
+      setContext((prev) => {
+        const { subType2: _removed, ...rest } = prev;
+        return rest as ContextValues;
+      });
+    }
+  };
+
   const cardMaxWidth =
     step === 0 ? 680
     : step === contextStep && role === "employer" ? 600
@@ -315,7 +399,18 @@ export default function Onboarding({
 
   const renderStep = () => {
     if (step === 0) return <RoleStep key={animKey} selected={role} onSelect={handleRoleSelect} />;
-    if (step === 1 && hasSubtype && role) return <SubTypeStep key={animKey} role={role} selected={subType} onSelect={setSubType} otherVal={otherSubType} onOtherChange={setOtherSubType} />;
+    if (step === 1 && hasSubtype && role) return (
+      <SubTypeStep
+        key={animKey}
+        role={role}
+        selected={subType}
+        onSelect={handleSubTypeSelect}
+        otherVal={otherSubType}
+        onOtherChange={setOtherSubType}
+        subType2={context["subType2"] ?? ""}
+        onSubType2Change={(v) => setContext((prev) => ({ ...prev, subType2: v }))}
+      />
+    );
     if (step === contextStep && role) return <ContextStep key={animKey} role={role} subType={subType} values={context} onChange={setContext} />;
     if (step === barrierStep && hasBarrier && role) return <BarrierStep key={animKey} role={role} subType={subType} />;
     return null;
@@ -323,6 +418,7 @@ export default function Onboarding({
 
   const btnLabel = () => {
     if (saving) return "Saving…";
+    if (step === 0 && role === "donor") return "Continue →";
     if (isLastStep) return role === "opportunity_seeker" ? "Start my First Tokan Task →" : "Complete setup →";
     return "Continue →";
   };
@@ -350,32 +446,37 @@ export default function Onboarding({
   }
 
   if (done && role) {
-    // Override "what happens next" for builders depending on how verification resolved.
-    const overriddenItems = autoVerified
-      ? DONE_NEXT[role].map((it) =>
-          it.t === "Verification email on its way"
-            ? { t: "Profile verified via GitHub ✓", d: "Your GitHub account confirmed ownership of the project. Your Builder profile is live." }
-            : it
-        )
-      : verifyEmailSent
-      ? DONE_NEXT[role].map((it) =>
-          it.t === "Verification email on its way"
-            ? { ...it, d: `Sent to ${verifyEmailSent} — click the link to publish your profile.` }
-            : it
-        )
+    const baseItems = role === "builder"
+      ? getBuilderDoneItems(subType)
       : DONE_NEXT[role];
+
+    const overriddenItems =
+      role === "builder" && subType === "idea_stage" && autoVerified
+        ? baseItems.map((it) =>
+            it.t === "Verification email on its way"
+              ? { t: "Profile verified via GitHub ✓", d: "Your GitHub account confirmed ownership of the project. Your Builder profile is live." }
+              : it
+          )
+        : role === "builder" && subType === "idea_stage" && verifyEmailSent
+        ? baseItems.map((it) =>
+            it.t === "Verification email on its way"
+              ? { ...it, d: `Sent to ${verifyEmailSent} — click the link to publish your profile.` }
+              : it
+          )
+        : baseItems;
 
     return (
       <div className="onboard-page">
         <DoneScreen
           role={role}
           name={user.name}
+          email={user.email}
           doneNextItems={overriddenItems}
           {...(reOnboarding ? { reOnboarding } : {})}
           {...(context["websiteUrl"] ? { websiteUrl: context["websiteUrl"] as string } : {})}
           onGoToDashboard={() => onComplete({
             authenticated: true,
-            user: { ...user, onboardingComplete: true, role, subType },
+            user: { ...user, onboardingComplete: true, role, subType: subType === "Other" ? otherSubType || subType : subType },
           })}
         />
       </div>

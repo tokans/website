@@ -3,6 +3,83 @@ import { api } from "../api.js";
 import { Wordmark } from "../components/ui.js";
 import type { RoleId, SessionPayload } from "../lib/types.js";
 
+// ── Employer q5–q7 brief section ──────────────────────────────────────────────
+function EmployerBriefSection() {
+  const [q5, setQ5] = useState("");
+  const [q6, setQ6] = useState("");
+  const [q7, setQ7] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [err, setErr] = useState("");
+
+  const canSave = q5.trim() && q6.trim() && q7.trim();
+
+  const handleSave = async () => {
+    if (!canSave || saving) return;
+    setSaving(true);
+    setErr("");
+    try {
+      await api.saveEmployerBrief({
+        technicalSetup: q5.trim(),
+        engagementType: q6.trim(),
+        budgetRange: q7.trim(),
+      });
+      setSaved(true);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (saved) {
+    return (
+      <div className="dash-employer-brief">
+        <div className="dash-employer-brief-title">Brief questions — complete ✓</div>
+        <div className="dash-employer-brief-note">Your full brief has been submitted. We'll be in touch within 24 hours.</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="dash-employer-brief">
+      <div className="dash-employer-brief-title">Complete your brief — questions 5–7</div>
+      <div className="dash-employer-brief-note">These three questions complete your hiring brief. We need them before we can send your shortlist.</div>
+      <div className="dash-employer-brief-fields">
+        {[
+          { key: "q5", label: "5. What is your current technical setup?", val: q5, set: setQ5,
+            placeholder: "e.g. Monolith on Heroku, MySQL, React frontend — no CI/CD yet…" },
+          { key: "q6", label: "6. What type of engagement are you looking for?", val: q6, set: setQ6,
+            placeholder: "e.g. 3-month contract initially, open to hire. Need someone available Indian time zones…" },
+          { key: "q7", label: "7. What is your budget range?", val: q7, set: setQ7,
+            placeholder: "e.g. ₹1.5L–2.5L/month for contract, or ₹18–24L CTC for hire…" },
+        ].map(({ key, label, val, set, placeholder }) => (
+          <div key={key} className="dash-modal-field">
+            <label className="ui-field-label">{label}</label>
+            <textarea
+              className="ui-textarea"
+              placeholder={placeholder}
+              value={val}
+              onChange={(e) => { set(e.target.value); setSaved(false); }}
+              rows={3}
+              maxLength={400}
+            />
+          </div>
+        ))}
+      </div>
+      {err && <div className="dash-modal-error" style={{ marginTop: 8 }}>{err}</div>}
+      <button
+        type="button"
+        className="ui-btn ui-btn--primary u-mt-16"
+        onClick={() => void handleSave()}
+        disabled={!canSave || saving}
+      >
+        {saving ? "Saving…" : "Submit remaining questions →"}
+      </button>
+    </div>
+  );
+}
+
 const ROLE_LABELS: Record<RoleId, string> = {
   opportunity_seeker: "Opportunity Seeker",
   builder:            "Builder",
@@ -262,6 +339,10 @@ export default function Dashboard({
               Start your First Tokan Task →
             </a>
           )}
+
+          <div className="dash-divider" />
+
+          {role === "employer" && <EmployerBriefSection />}
 
           <div className="dash-divider" />
 

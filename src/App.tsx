@@ -120,7 +120,8 @@ export default function App() {
   const completedJourneys = session.user.completedJourneys ?? [];
   const journeyDone = (path: string) => completedJourneys.includes(path);
 
-  // Founders: run the founders journey once, then land on the static /apps page.
+  // Founders: generic builder onboarding (role pre-set), recorded under entryPath="founders".
+  // After completion, land on the static /apps page.
   if (flow === "founders") {
     if (!journeyDone("founders")) {
       return (
@@ -129,6 +130,7 @@ export default function App() {
           onComplete={handleOnboardingComplete}
           onLogout={() => void handleLogout()}
           entryPath="founders"
+          initialRole="builder"
         />
       );
     }

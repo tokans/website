@@ -44,13 +44,49 @@ async function issueAndSendToken(opts: {
   });
 }
 
+async function upsertServiceProvider(opts: {
+  userId: string;
+  websiteUrl: string;
+  subType2: string | null;
+  description: string | null;
+}): Promise<void> {
+  const { userId, websiteUrl, subType2, description } = opts;
+  const sql = getDb();
+  const skillsJson = JSON.stringify(
+    subType2 ? subType2.split(",").filter(Boolean) : []
+  );
+  await sql`
+    INSERT INTO partner_listings
+      (professional_user_id, role_category, sub_type, website_url, skills, description, visible)
+    VALUES
+      (${userId}, 'Partner', 'company', ${websiteUrl}, ${skillsJson}::jsonb, ${description ?? null}, TRUE)
+    ON CONFLICT (professional_user_id) DO UPDATE SET
+      sub_type    = EXCLUDED.sub_type,
+      website_url = EXCLUDED.website_url,
+      skills      = EXCLUDED.skills,
+      description = COALESCE(EXCLUDED.description, partner_listings.description),
+      visible     = TRUE,
+      updated_at  = NOW()
+  `;
+}
+
 async function upsertAppForBuilder(opts: {
   userId: string;
   websiteUrl: string;
   appUrl: string;
   userName: string | null;
+  subType?: string | null;
+  subType2?: string | null;
+  description?: string | null;
 }): Promise<void> {
-  const { userId, websiteUrl, appUrl, userName } = opts;
+  const { userId, websiteUrl, appUrl, userName, subType, subType2, description } = opts;
+
+  // Service providers go into partner_listings, not apps
+  if (subType === "service_provider_company") {
+    await upsertServiceProvider({ userId, websiteUrl, subType2: subType2 ?? null, description: description ?? null });
+    return;
+  }
+
   const sql = getDb();
 
   const isTrusted = TRUSTED_PREFIXES.some((p) => websiteUrl.startsWith(p));
@@ -156,27 +192,29 @@ export default withErrorHandling(async function handler(
     return;
   }
 
-  const sql            = getDb();
-  const contextJson    = JSON.stringify(context ?? {});
-  const subTypeOrNull  = subType ?? null;
+  const sql             = getDb();
+  const contextJson     = JSON.stringify(context ?? {});
+  const subTypeOrNull   = subType ?? null;
   const entryPathOrNull = entryPath ?? null;
+  const sub_type2       = (context?.["subType2"] as string | undefined) ?? null;
 
   await sql`
-    INSERT INTO onboarding_data (user_id, role, sub_type, context)
-    VALUES (${session.userId}, ${role}, ${subTypeOrNull}, ${contextJson})
+    INSERT INTO onboarding_data (user_id, role, sub_type, sub_type2, context)
+    VALUES (${session.userId}, ${role}, ${subTypeOrNull}, ${sub_type2}, ${contextJson})
     ON CONFLICT (user_id)
     DO UPDATE SET
       role         = EXCLUDED.role,
       sub_type     = EXCLUDED.sub_type,
+      sub_type2    = EXCLUDED.sub_type2,
       context      = EXCLUDED.context,
       completed_at = NOW()
   `;
 
   await sql`
-    INSERT INTO user_roles (user_id, role, sub_type)
-    VALUES (${session.userId}, ${role}, ${subTypeOrNull})
+    INSERT INTO user_roles (user_id, role, sub_type, sub_type2)
+    VALUES (${session.userId}, ${role}, ${subTypeOrNull}, ${sub_type2})
     ON CONFLICT (user_id, role)
-    DO UPDATE SET sub_type = EXCLUDED.sub_type
+    DO UPDATE SET sub_type = EXCLUDED.sub_type, sub_type2 = EXCLUDED.sub_type2
   `;
 
   if (entryPathOrNull) {
@@ -211,13 +249,18 @@ export default withErrorHandling(async function handler(
   setSessionCookie(res, newSessionId, req);
   ensureCsrfToken(req, res);
 
-  // ── Website verification for idea_stage builders ──────────────────────────
+  // ── Donor shortcut → redirect to /patrons ────────────────────────────────
+  if (role === "donor") {
+    res.status(200).json({ ok: true, redirect: "/patrons" });
+    return;
+  }
+
+  // ── Website verification for all builder sub-types ────────────────────────
   const websiteUrl = (context?.["websiteUrl"] as string | undefined)?.trim() ?? "";
-  const isIdeaStage = role === "builder" && subType === "idea_stage";
 
   console.log(`[onboarding/complete] role=${role} subType=${subType} websiteUrl=${websiteUrl || "(empty)"}`);
 
-  if (!isIdeaStage || !websiteUrl) {
+  if (role !== "builder" || !websiteUrl) {
     res.status(200).json({ ok: true });
     return;
   }
@@ -244,7 +287,7 @@ export default withErrorHandling(async function handler(
         SET website_url = ${websiteUrl}, is_verified = true
         WHERE id = ${session.userId}
       `;
-      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name })
+      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
         .catch((err: unknown) => console.error("[upsert-app] failed:", err));
       res.status(200).json({ ok: true, autoVerified: true, verifiedVia: "github" });
       return;
@@ -261,7 +304,7 @@ export default withErrorHandling(async function handler(
         userName: session.name,
         appUrl,
       });
-      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name })
+      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
         .catch((err: unknown) => console.error("[upsert-app] failed:", err));
       res.status(200).json({ ok: true, verificationSent: true, scrapedEmail: readmeEmail });
       return;
@@ -290,7 +333,7 @@ export default withErrorHandling(async function handler(
       userName: session.name,
       appUrl,
     });
-    upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name })
+    upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
       .catch((err: unknown) => console.error("[upsert-app] failed:", err));
     res.status(200).json({ ok: true, verificationSent: true, scrapedEmail: scraped });
     return;
@@ -311,7 +354,7 @@ export default withErrorHandling(async function handler(
       await sql`
         UPDATE users SET website_url = ${websiteUrl}, is_verified = true WHERE id = ${session.userId}
       `;
-      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name })
+      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
         .catch((err: unknown) => console.error("[upsert-app] failed:", err));
       res.status(200).json({ ok: true, autoVerified: true, verifiedVia: "github" });
       return;
@@ -326,7 +369,7 @@ export default withErrorHandling(async function handler(
         userName: session.name,
         appUrl,
       });
-      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name })
+      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
         .catch((err: unknown) => console.error("[upsert-app] failed:", err));
       res.status(200).json({ ok: true, verificationSent: true, scrapedEmail: readmeEmail });
       return;
@@ -338,7 +381,7 @@ export default withErrorHandling(async function handler(
     }
   }
 
-  upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name })
+  upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
     .catch((err: unknown) => console.error("[upsert-app] failed:", err));
   res.status(200).json({ ok: true, verificationSent: false, emailDomain: domain });
 });

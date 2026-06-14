@@ -190,51 +190,12 @@ const HIRE: Journey = {
   ],
 };
 
-// ── /founders → Builder (vibe-coded founder) ─────────────────────────────────
-const FOUNDERS: Journey = {
-  entryPath: "founders",
-  role: "builder",
-  fixedSubType: "vibe_founder",
-  finishLabel: "Complete setup →",
-  steps: [
-    {
-      kind: "fields",
-      eyebrow: "YOUR PRODUCT",
-      title: "Tell us about what you've built",
-      sub: "We'll use this to do a codebase assessment and match you with the right verified engineer.",
-      fields: [
-        { key: "stack", label: "What's your current tech stack?", type: "text", placeholder: "e.g. Next.js, Supabase, Vercel, Stripe — built with Cursor", required: true },
-        { key: "bottleneck", label: "What's your biggest technical bottleneck right now?", type: "textarea", placeholder: "e.g. Auth breaks under concurrent users and I have no idea how to debug it…", required: true, maxLength: 400, minHeight: 90 },
-        { key: "builtState", label: "Describe what you've built and its current state", type: "textarea", placeholder: "e.g. A B2B SaaS for gym owners — 12 paying customers, ~₹40k MRR. The core product works but the code is messy…", required: true, maxLength: 500, minHeight: 100 },
-        { key: "websiteUrl", label: "Your product URL", type: "url", placeholder: "https://yourproduct.com", hint: "Optional — helps us scope the assessment." },
-      ],
-    },
-    {
-      kind: "barrier",
-      eyebrow: "WHAT HAPPENS NEXT",
-      title: "We start with a codebase assessment",
-      sub: "We don't match you to a pool and let you browse. We assess what you've built first — then match you to exactly the right person.",
-      steps: [
-        "Our team reviews the codebase context you've submitted — within 48 hours",
-        "We produce a one-page handoff brief: current state, risks, and what the next engineer needs to do",
-        "We match you with a Tokans-verified engineer with Legacy/Handoff Tokans",
-        "Engagement is outcome-based. We take 15% on delivery, no upfront cost",
-      ],
-      note: "Next, list your app in the directory so the partner network can support it.",
-      noteVariant: "gold",
-    },
-  ],
-  doneNext: [
-    { t: "List your app", d: "Add your app to the directory so verified professionals can support it." },
-    { t: "Codebase assessment", d: "Our team reviews what you've built and produces a one-page handoff brief within 48 hours." },
-    { t: "Engineer match", d: "We match you with a Tokans-verified Legacy/Handoff engineer — outcome-based, no upfront cost." },
-  ],
-};
+// /founders is handled by the Generic engine (Onboarding.tsx) with initialRole="builder".
+// It records entryPath="founders" in user_journeys and lets the user pick their builder sub-type.
 
 const JOURNEYS: Record<string, Journey> = {
   join: JOIN,
   hire: HIRE,
-  founders: FOUNDERS,
 };
 
 /** Resolve the journey for an entry path, if one is defined. */
