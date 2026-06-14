@@ -36,6 +36,9 @@ import authGithubCallback from "../server/auth/github-callback.js";
 import authGoogleCallback from "../server/auth/google-callback.js";
 import authVerifyWebsite from "../server/auth/verify-website.js";
 import authSession from "../server/auth/session.js";
+import authForgotPassword from "../server/auth/forgot-password.js";
+import authResetPassword from "../server/auth/reset-password.js";
+import authChangePassword from "../server/auth/change-password.js";
 import csrf from "../server/csrf.js";
 import connectionsIndex from "../server/connections/index.js";
 import cronSnapshot from "../server/cron/snapshot.js";
@@ -83,6 +86,9 @@ const ROUTES: Route[] = [
   { segs: ["auth", "google-callback"], handler: authGoogleCallback },
   { segs: ["auth", "verify-website"], handler: authVerifyWebsite },
   { segs: ["auth", "session"], handler: authSession },
+  { segs: ["auth", "forgot-password"], handler: authForgotPassword },
+  { segs: ["auth", "reset-password"], handler: authResetPassword },
+  { segs: ["auth", "change-password"], handler: authChangePassword },
   { segs: ["csrf"], handler: csrf },
   { segs: ["connections"], handler: connectionsIndex },
   { segs: ["cron", "snapshot"], handler: cronSnapshot },

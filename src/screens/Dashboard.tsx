@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { api } from "../api.js";
 import { Wordmark } from "../components/ui.js";
 import type { RoleId, SessionPayload } from "../lib/types.js";
@@ -64,17 +64,53 @@ export default function Dashboard({
   onLogout:        () => void;
   onChangeProfile: () => void;
 }) {
-  const [loggingOut, setLoggingOut] = useState(false);
+  const [loggingOut, setLoggingOut]       = useState(false);
+  const [dropOpen, setDropOpen]           = useState(false);
+  const [changePwOpen, setChangePwOpen]   = useState(false);
+  const [currentPw, setCurrentPw]         = useState("");
+  const [newPw, setNewPw]                 = useState("");
+  const [pwError, setPwError]             = useState("");
+  const [pwSuccess, setPwSuccess]         = useState(false);
+  const [pwBusy, setPwBusy]               = useState(false);
+  const dropRef = useRef<HTMLDivElement>(null);
 
   const role      = (user.role ?? "opportunity_seeker") as RoleId;
   const firstName = user.name?.split(" ")[0] ?? "there";
   const roleLabel = ROLE_LABELS[role];
   const next      = ROLE_NEXT[role];
+  const initials  = (user.name ?? user.email ?? "?").slice(0, 1).toUpperCase();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!dropOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (dropRef.current && !dropRef.current.contains(e.target as Node)) setDropOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [dropOpen]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
     await api.logout().catch(() => undefined);
     onLogout();
+  };
+
+  const handleChangePassword = async () => {
+    setPwError("");
+    if (!currentPw) { setPwError("Enter your current password"); return; }
+    if (newPw.length < 8) { setPwError("New password must be at least 8 characters"); return; }
+    setPwBusy(true);
+    try {
+      await api.changePassword({ currentPassword: currentPw, newPassword: newPw });
+      setPwSuccess(true);
+      setCurrentPw("");
+      setNewPw("");
+    } catch (err) {
+      setPwError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setPwBusy(false);
+    }
   };
 
   return (
@@ -85,9 +121,6 @@ export default function Dashboard({
       <nav className="dash-nav">
         <a href="/" aria-label="Tokans home" className="site-header-logo"><Wordmark size={22} /></a>
         <div className="dash-nav-right">
-          <div className="dash-user">
-            {user.name ?? user.email}
-          </div>
           <button
             type="button"
             onClick={onChangeProfile}
@@ -96,16 +129,97 @@ export default function Dashboard({
           >
             {roleLabel.toUpperCase()} ✎
           </button>
-          <button
-            type="button"
-            onClick={() => void handleLogout()}
-            disabled={loggingOut}
-            className="dash-signout"
-          >
-            {loggingOut ? "…" : "Sign out"}
-          </button>
+
+          {/* Profile dropdown */}
+          <div className="dash-profile-wrap" ref={dropRef}>
+            <button
+              type="button"
+              className="dash-profile-btn"
+              onClick={() => setDropOpen((o) => !o)}
+              aria-expanded={dropOpen}
+              aria-haspopup="true"
+            >
+              <span className="dash-avatar">{initials}</span>
+              <span className="dash-profile-name">{user.name ?? user.email}</span>
+              <span className="dash-profile-caret" aria-hidden="true">▾</span>
+            </button>
+            {dropOpen && (
+              <div className="dash-dropdown" role="menu">
+                <div className="dash-dropdown-user">
+                  <div className="dash-dropdown-name">{user.name ?? ""}</div>
+                  <div className="dash-dropdown-email">{user.email}</div>
+                </div>
+                <div className="dash-dropdown-divider" />
+                <button
+                  type="button"
+                  className="dash-dropdown-item"
+                  role="menuitem"
+                  onClick={() => { setDropOpen(false); setChangePwOpen(true); setPwSuccess(false); setPwError(""); }}
+                >
+                  Change password
+                </button>
+                <div className="dash-dropdown-divider" />
+                <button
+                  type="button"
+                  className="dash-dropdown-item dash-dropdown-item--danger"
+                  role="menuitem"
+                  onClick={() => { setDropOpen(false); void handleLogout(); }}
+                  disabled={loggingOut}
+                >
+                  {loggingOut ? "Signing out…" : "Sign out"}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
+
+      {/* Change-password modal */}
+      {changePwOpen && (
+        <div className="dash-modal-overlay" onClick={() => setChangePwOpen(false)}>
+          <div className="dash-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="dash-modal-title">Change password</div>
+            {pwSuccess ? (
+              <>
+                <div className="dash-modal-success">Password updated successfully.</div>
+                <button type="button" className="ui-btn ui-btn--primary ui-btn--full" onClick={() => setChangePwOpen(false)}>Done</button>
+              </>
+            ) : (
+              <>
+                <div className="dash-modal-field">
+                  <label className="ui-field-label">Current password</label>
+                  <input
+                    className="ui-input"
+                    type="password"
+                    placeholder="Your current password"
+                    value={currentPw}
+                    onChange={(e) => setCurrentPw(e.target.value)}
+                    autoComplete="current-password"
+                  />
+                </div>
+                <div className="dash-modal-field">
+                  <label className="ui-field-label">New password</label>
+                  <input
+                    className="ui-input"
+                    type="password"
+                    placeholder="At least 8 characters"
+                    value={newPw}
+                    onChange={(e) => setNewPw(e.target.value)}
+                    autoComplete="new-password"
+                  />
+                </div>
+                {pwError && <div className="dash-modal-error">{pwError}</div>}
+                <div className="dash-modal-actions">
+                  <button type="button" className="ui-btn ui-btn--outline" onClick={() => setChangePwOpen(false)} disabled={pwBusy}>Cancel</button>
+                  <button type="button" className="ui-btn ui-btn--primary" onClick={() => void handleChangePassword()} disabled={pwBusy}>
+                    {pwBusy ? "Updating…" : "Update password"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <main className="dash-main">
 

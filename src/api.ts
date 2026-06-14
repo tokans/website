@@ -91,6 +91,12 @@ export const api = {
   logout: () =>
     request<{ ok: boolean }>("/api/auth/logout", { method: "POST" }),
 
+  changePassword: (body: { currentPassword: string; newPassword: string }) =>
+    request<{ ok: boolean }>("/api/auth/change-password", {
+      method: "POST",
+      body:   JSON.stringify(body),
+    }),
+
   session: () =>
     request<SessionResponse | { authenticated: false }>("/api/auth/session"),
 

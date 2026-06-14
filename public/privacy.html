@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy · Tokans</title>
+  <meta name="description" content="Tokans Privacy Policy — how we collect, use, and protect your personal data." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/site.css" />
+  <style>
+    .legal-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+    .legal-wrap h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+    }
+    .legal-wrap .legal-date {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 40px;
+    }
+    .legal-wrap h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 36px 0 10px;
+    }
+    .legal-wrap p, .legal-wrap li {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.7;
+      margin: 0 0 12px;
+    }
+    .legal-wrap ul {
+      padding-left: 20px;
+      margin: 0 0 12px;
+    }
+    .legal-wrap a { color: var(--gold); }
+  </style>
+</head>
+<body class="bg-paper">
+
+  <div data-chrome="header"></div>
+
+  <main class="legal-wrap">
+    <h1>Privacy Policy</h1>
+    <p class="legal-date">Effective date: 1 June 2026</p>
+
+    <p>Tokans.org ("we", "our", "us") is committed to protecting your privacy. This Policy explains what personal data we collect, how we use it, and your rights under applicable law — including India's Digital Personal Data Protection Act 2023 (DPDP Act).</p>
+
+    <h2>1. Data We Collect</h2>
+    <p><strong>Account data:</strong> name, email address, and (if you use email/password sign-in) a bcrypt-hashed password. We never store your password in plain text.</p>
+    <p><strong>OAuth identity data:</strong> if you sign in via GitHub or Google, we receive your name, email, and OAuth provider ID. We do not receive your provider password.</p>
+    <p><strong>Profile and contribution data:</strong> role, sub-type, professional context, GitHub URL, website URL, and any contribution information you voluntarily submit to build your Tokan score.</p>
+    <p><strong>Usage data:</strong> onboarding journey path, completed journeys, and anonymised feature-usage signals. We do not use third-party analytics trackers.</p>
+    <p><strong>Session data:</strong> a session token stored as an HttpOnly cookie with a 7-day TTL. We use Upstash (Redis) to store session payloads server-side.</p>
+
+    <h2>2. How We Use Your Data</h2>
+    <ul>
+      <li>To create and maintain your account and Tokan profile.</li>
+      <li>To compute and display your verified Tokan score.</li>
+      <li>To match opportunity seekers with employers and founders.</li>
+      <li>To send transactional emails (email verification, password reset, platform updates). We use Resend to deliver email.</li>
+      <li>To detect and prevent fraud, gaming, and abuse.</li>
+    </ul>
+    <p>We do not sell, rent, or share your personal data with third parties for marketing purposes.</p>
+
+    <h2>3. Data Storage and Security</h2>
+    <p>Your data is stored in a managed PostgreSQL database (Neon) and a Redis cache (Upstash), both hosted on infrastructure with encryption at rest and in transit. Access is restricted to the Platform's serverless functions; no human has routine access to your raw data.</p>
+    <p>Passwords are hashed with bcrypt (cost factor 12). Session tokens are cryptographically random UUIDs.</p>
+
+    <h2>4. Cookies</h2>
+    <p>We use two cookies:</p>
+    <ul>
+      <li><strong>tokans_session</strong> — HttpOnly, Secure, SameSite=Lax. Stores your session ID. Required for login.</li>
+      <li><strong>tokans_csrf</strong> — used to protect mutating requests against cross-site request forgery.</li>
+    </ul>
+    <p>We do not use advertising, tracking, or analytics cookies.</p>
+
+    <h2>5. Third-Party Services</h2>
+    <ul>
+      <li><strong>GitHub / Google OAuth</strong> — identity only; governed by their respective privacy policies.</li>
+      <li><strong>Neon</strong> — PostgreSQL database provider. <a href="https://neon.tech/privacy" target="_blank" rel="noopener">neon.tech/privacy</a></li>
+      <li><strong>Upstash</strong> — Redis session store. <a href="https://upstash.com/trust/privacy.pdf" target="_blank" rel="noopener">upstash.com privacy</a></li>
+      <li><strong>Resend</strong> — transactional email. <a href="https://resend.com/privacy" target="_blank" rel="noopener">resend.com/privacy</a></li>
+      <li><strong>Vercel</strong> — hosting and edge functions. <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener">vercel.com/legal/privacy-policy</a></li>
+    </ul>
+
+    <h2>6. Data Retention</h2>
+    <p>We retain your account and profile data for as long as your account is active. If you request deletion, we will remove your personal data within 30 days, except where retention is required by law. Aggregated, anonymised Tokan score signals may be retained for platform integrity purposes.</p>
+
+    <h2>7. Your Rights</h2>
+    <p>Under the DPDP Act and applicable law you have the right to:</p>
+    <ul>
+      <li>Access the personal data we hold about you.</li>
+      <li>Correct inaccurate data.</li>
+      <li>Request erasure of your data ("right to be forgotten").</li>
+      <li>Withdraw consent at any time (which may affect your ability to use the Platform).</li>
+      <li>Nominate a person to exercise these rights on your behalf.</li>
+    </ul>
+    <p>To exercise any of these rights, email <a href="mailto:hello@tokans.org">hello@tokans.org</a>. We will respond within 30 days.</p>
+
+    <h2>8. Children's Privacy</h2>
+    <p>The Platform is not directed at children under 16. We do not knowingly collect personal data from anyone under 16. If you believe a child has provided us with personal data, contact us and we will delete it promptly.</p>
+
+    <h2>9. Changes to This Policy</h2>
+    <p>We may update this Policy periodically. Material changes will be communicated by email or a prominent notice on the Platform at least 14 days before they take effect.</p>
+
+    <h2>10. Contact</h2>
+    <p>For privacy-related questions or to exercise your rights, contact us at <a href="mailto:hello@tokans.org">hello@tokans.org</a>.</p>
+  </main>
+
+  <div data-chrome="footer"></div>
+
+  <script type="module" src="/js/chrome.js"></script>
+</body>
+</html>

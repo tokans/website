@@ -70,17 +70,35 @@
                 <input class="ui-input" type="password" id="auth-password" placeholder="At least 8 characters" autocomplete="current-password" />
                 <div class="ui-field-error" id="err-password"></div>
               </div>
+              <div class="auth-forgot" id="auth-forgot-wrap" hidden>
+                <button type="button" class="auth-forgot-btn" id="auth-forgot-btn">Forgot password?</button>
+              </div>
 
               <div class="auth-error" id="auth-error" hidden></div>
 
               <button type="submit" class="ui-btn ui-btn--primary ui-btn--full" id="auth-submit">Create account →</button>
             </form>
 
+            <!-- Forgot-password inline form (hidden until user clicks link) -->
+            <div id="auth-forgot-form" hidden>
+              <div class="ui-field">
+                <label class="ui-field-label">Email Address</label>
+                <input class="ui-input" type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email" />
+                <div class="ui-field-error" id="err-forgot-email"></div>
+              </div>
+              <div class="auth-error" id="forgot-error" hidden></div>
+              <div class="auth-success" id="forgot-success" hidden></div>
+              <button type="button" class="ui-btn ui-btn--primary ui-btn--full" id="forgot-submit">Send reset link →</button>
+              <div class="auth-toggle" style="margin-top:14px">
+                <button type="button" class="auth-toggle-btn" id="forgot-back-btn">← Back to sign in</button>
+              </div>
+            </div>
+
             <div class="auth-toggle" id="auth-toggle"></div>
 
           </div>
           <div class="auth-terms">
-            By continuing, you agree to Tokans' Terms of Service and Privacy Policy.
+            By continuing, you agree to Tokans' <a href="/terms" class="auth-terms-link">Terms of Service</a> and <a href="/privacy" class="auth-terms-link">Privacy Policy</a>.
           </div>
         </div>
       </main>

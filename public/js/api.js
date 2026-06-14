@@ -67,6 +67,15 @@ export const api = {
 
   session: () => request("/api/auth/session"),
 
+  logout: () =>
+    request("/api/auth/logout", { method: "POST", body: JSON.stringify({}) }),
+
+  forgotPassword: (email) =>
+    request("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) }),
+
+  resetPassword: (token, password) =>
+    request("/api/auth/reset-password", { method: "POST", body: JSON.stringify({ token, password }) }),
+
   // OAuth — full-page redirects, not fetch calls.
   githubLogin: () => { window.location.href = "/api/auth/github"; },
   googleLogin: () => { window.location.href = "/api/auth/google"; },

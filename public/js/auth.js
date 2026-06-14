@@ -72,6 +72,15 @@ function init() {
     form: qs(root, "#auth-form"),
     github: qs(root, "#auth-github"),
     google: qs(root, "#auth-google"),
+    forgotWrap: qs(root, "#auth-forgot-wrap"),
+    forgotBtn: qs(root, "#auth-forgot-btn"),
+    forgotForm: qs(root, "#auth-forgot-form"),
+    forgotEmail: qs(root, "#forgot-email"),
+    forgotErrEmail: qs(root, "#err-forgot-email"),
+    forgotErr: qs(root, "#forgot-error"),
+    forgotSuccess: qs(root, "#forgot-success"),
+    forgotSubmit: qs(root, "#forgot-submit"),
+    forgotBackBtn: qs(root, "#forgot-back-btn"),
   };
 
   let mode = flow ? "signup" : "signin"; // flow entry points default to signup
@@ -126,9 +135,76 @@ function init() {
     els.errPassword.textContent = "";
   }
 
+  // ── Forgot-password inline flow ───────────────────────────────────────────
+  function showForgotForm() {
+    els.form?.setAttribute("hidden", "");
+    els.toggle?.setAttribute("hidden", "");
+    els.forgotWrap?.setAttribute("hidden", "");
+    els.forgotForm?.removeAttribute("hidden");
+    els.title.textContent = "Reset your password";
+    els.subtitle.textContent = "Enter your email and we'll send you a reset link.";
+  }
+
+  function hideForgotForm() {
+    els.forgotForm?.setAttribute("hidden", "");
+    els.form?.removeAttribute("hidden");
+    els.toggle?.removeAttribute("hidden");
+    clearFieldErrors();
+    showServerError("");
+    applyMode();
+  }
+
+  function showForgotError(msg) {
+    if (!els.forgotErr) return;
+    if (msg) {
+      els.forgotErr.textContent = msg;
+      els.forgotErr.removeAttribute("hidden");
+    } else {
+      els.forgotErr.textContent = "";
+      els.forgotErr.setAttribute("hidden", "");
+    }
+  }
+
+  function showForgotSuccess(msg) {
+    if (!els.forgotSuccess) return;
+    if (msg) {
+      els.forgotSuccess.textContent = msg;
+      els.forgotSuccess.removeAttribute("hidden");
+      els.forgotSubmit.setAttribute("hidden", "");
+    } else {
+      els.forgotSuccess.textContent = "";
+      els.forgotSuccess.setAttribute("hidden", "");
+      els.forgotSubmit?.removeAttribute("hidden");
+    }
+  }
+
+  els.forgotBtn?.addEventListener("click", showForgotForm);
+  els.forgotBackBtn?.addEventListener("click", hideForgotForm);
+
+  els.forgotSubmit?.addEventListener("click", async () => {
+    if (els.forgotErrEmail) els.forgotErrEmail.textContent = "";
+    showForgotError("");
+    const email = els.forgotEmail?.value.trim() ?? "";
+    if (!email.includes("@")) {
+      if (els.forgotErrEmail) els.forgotErrEmail.textContent = "Enter a valid email";
+      return;
+    }
+    els.forgotSubmit.disabled = true;
+    els.forgotSubmit.textContent = "Sending…";
+    try {
+      await api.forgotPassword(email);
+      showForgotSuccess("Check your inbox — we've sent a reset link if that email is registered.");
+    } catch {
+      showForgotError("Couldn't send reset email. Please try again.");
+      els.forgotSubmit.disabled = false;
+      els.forgotSubmit.textContent = "Send reset link →";
+    }
+  });
+
   function applyMode() {
     const signup = mode === "signup";
     els.fieldName?.toggleAttribute("hidden", !signup);
+    els.forgotWrap?.toggleAttribute("hidden", signup);
     els.title.textContent = signup ? "Create your account" : "Welcome back";
     els.subtitle.textContent = signup
       ? "Join professionals navigating the AI era — contribution verified, opportunity matched."
