@@ -38,12 +38,11 @@ async function issueAndSendToken(opts: {
   const payload = JSON.stringify({ userId: opts.userId, websiteUrl: opts.websiteUrl, email: opts.email });
   await getRedis().set(`ws_verify:${token}`, payload, { ex: TOKEN_TTL });
   const verifyUrl = `${opts.appUrl}/api/auth/verify-website?token=${token}`;
-  // Fire-and-forget so email failure never blocks onboarding completion.
-  sendEmail({
+  await sendEmail({
     to: opts.email,
     subject: "Confirm your website ownership — Tokans",
     html: verifyEmailHtml({ verifyUrl, websiteUrl: opts.websiteUrl, userName: opts.userName }),
-  }).catch((err: unknown) => console.error("[verify-email] send failed:", err));
+  });
 }
 
 async function upsertAppForBuilder(opts: {
@@ -124,7 +123,7 @@ async function upsertAppForBuilder(opts: {
     const approveUrl = `${appUrl}/api/apps/approve?token=${approvalToken}`;
     const approvalEmail = process.env["APP_APPROVAL_EMAIL"] ?? "tokans.org@gmail.com";
 
-    sendEmail({
+    await sendEmail({
       to: approvalEmail,
       subject: "Action Required: app added — Tokans",
       html: approvalEmailHtml({
@@ -133,7 +132,7 @@ async function upsertAppForBuilder(opts: {
         siteUrl,
         submittedBy: userName ?? userId,
       }),
-    }).catch((err: unknown) => console.error("[app-approval-email] send failed:", err));
+    });
   }
 }
 
