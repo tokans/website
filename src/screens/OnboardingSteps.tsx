@@ -236,8 +236,8 @@ export function ContextStep({
       <Field label="Describe what you're building" hint="Around 100 words is ideal. Co-founders will use this to decide if they want to explore further.">
         <Textarea placeholder="e.g. A marketplace for verified freelance translators in regional Indian languages. Built the prototype in Bolt, have 3 pilot customers…" value={values["buildDesc"] ?? ""} onChange={set("buildDesc")} maxLength={600} minHeight={110} />
       </Field>
-      <Field label="Your website / landing page URL OR GitHub repo / Pages URL" hint="For a website we'll email the contact address on the site to confirm you own it; for a GitHub repo or Pages URL we verify ownership via GitHub sign-in.">
-        <Input type="url" placeholder="https://yourproject.com  ·  https://github.com/you/app  ·  https://you.github.io/app" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
+      <Field label="Website or GitHub URL" hint="Used to verify you own the project.">
+        <Input type="url" placeholder="https://yourproject.com" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
       </Field>
     </>
   );
@@ -256,8 +256,8 @@ export function ContextStep({
       <Field label="Describe your most pressing problem that needs a solution">
         <Textarea placeholder="e.g. Auth breaks under concurrent users and performance is degrading. I need someone to own the backend architecture…" value={values["problem"] ?? ""} onChange={set("problem")} maxLength={500} minHeight={100} />
       </Field>
-      <Field label="Your website / landing page URL OR GitHub repo / Pages URL" hint="For a website we'll email the contact address on the site to confirm you own it; for a GitHub repo or Pages URL we verify ownership via GitHub sign-in.">
-        <Input type="url" placeholder="https://yourproduct.com  ·  https://github.com/you/app  ·  https://you.github.io/app" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
+      <Field label="Website or GitHub URL" hint="Used to verify you own the product.">
+        <Input type="url" placeholder="https://yourproduct.com" value={values["websiteUrl"] ?? ""} onChange={set("websiteUrl")} />
       </Field>
     </>
   );
