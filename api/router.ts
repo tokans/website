@@ -36,6 +36,8 @@ import authGithubCallback from "../server/auth/github-callback.js";
 import authGoogleCallback from "../server/auth/google-callback.js";
 import authVerifyWebsite from "../server/auth/verify-website.js";
 import authVerifyEmail from "../server/auth/verify-email.js";
+import authLinkedin from "../server/auth/linkedin.js";
+import authLinkedinCallback from "../server/auth/linkedin-callback.js";
 import authSession from "../server/auth/session.js";
 import authForgotPassword from "../server/auth/forgot-password.js";
 import authResetPassword from "../server/auth/reset-password.js";
@@ -90,6 +92,8 @@ const ROUTES: Route[] = [
   { segs: ["auth", "google-callback"], handler: authGoogleCallback },
   { segs: ["auth", "verify-website"], handler: authVerifyWebsite },
   { segs: ["auth", "verify-email"], handler: authVerifyEmail },
+  { segs: ["auth", "linkedin"], handler: authLinkedin },
+  { segs: ["auth", "linkedin-callback"], handler: authLinkedinCallback },
   { segs: ["auth", "session"], handler: authSession },
   { segs: ["auth", "forgot-password"], handler: authForgotPassword },
   { segs: ["auth", "reset-password"], handler: authResetPassword },

@@ -218,20 +218,50 @@ export function ContextStep({
   const set = (k: string) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     onChange({ ...values, [k]: e.target.value });
 
-  if (role === "opportunity_seeker") return (
-    <>
-      <StepHeader eyebrow="STEP 3 — CONTEXT" title="Tell us what changed" sub="This context shapes your profile and helps employers understand your story — not just your résumé." />
-      <Field label="What changed in your last role because of AI?">
-        <Textarea placeholder="e.g. Automated testing reduced the QA team by half. My responsibilities shifted but there was no clear path for the evolved role…" value={values["displacement"] ?? ""} onChange={set("displacement")} maxLength={400} minHeight={100} />
-      </Field>
-      <Field label="What are you looking for next?">
-        <Textarea placeholder="e.g. A product-focused engineering role where I can own outcomes end-to-end, or a freelance project while I explore…" value={values["next"] ?? ""} onChange={set("next")} maxLength={300} minHeight={90} />
-      </Field>
-      <Field label="LinkedIn profile URL" hint="Required — we'll send a confirmation email to verify this is yours.">
-        <Input type="url" placeholder="https://linkedin.com/in/yourprofile" value={values["linkedinUrl"] ?? ""} onChange={set("linkedinUrl")} />
-      </Field>
-    </>
-  );
+  if (role === "opportunity_seeker") {
+    const liVerified = values["linkedinVerified"] === "true";
+    const liName     = values["linkedinVerifiedName"] ?? null;
+    const openLinkedIn = () => {
+      const popup = window.open("/api/auth/linkedin", "linkedin-oauth", "width=620,height=700,left=200,top=100");
+      const onMessage = (e: MessageEvent) => {
+        const d = e.data as { type?: string; displayName?: string } | undefined;
+        if (d?.type === "linkedin-verified") {
+          onChange({
+            ...values,
+            linkedinVerified: "true",
+            ...(d.displayName ? { linkedinVerifiedName: d.displayName } : {}),
+          });
+          window.removeEventListener("message", onMessage);
+          popup?.close();
+        }
+      };
+      window.addEventListener("message", onMessage);
+    };
+    return (
+      <>
+        <StepHeader eyebrow="STEP 3 — CONTEXT" title="Tell us what changed" sub="This context shapes your profile and helps employers understand your story — not just your résumé." />
+        <Field label="What changed in your last role because of AI?">
+          <Textarea placeholder="e.g. Automated testing reduced the QA team by half. My responsibilities shifted but there was no clear path for the evolved role…" value={values["displacement"] ?? ""} onChange={set("displacement")} maxLength={400} minHeight={100} />
+        </Field>
+        <Field label="What are you looking for next?">
+          <Textarea placeholder="e.g. A product-focused engineering role where I can own outcomes end-to-end, or a freelance project while I explore…" value={values["next"] ?? ""} onChange={set("next")} maxLength={300} minHeight={90} />
+        </Field>
+        <Field label="LinkedIn profile URL" hint="Required — paste your public profile URL.">
+          <Input type="url" placeholder="https://linkedin.com/in/yourprofile" value={values["linkedinUrl"] ?? ""} onChange={set("linkedinUrl")} />
+        </Field>
+        {liVerified ? (
+          <div className="linkedin-verified-badge">
+            ✓ Verified with LinkedIn{liName ? ` as ${liName}` : ""}
+          </div>
+        ) : (
+          <button type="button" className="linkedin-oauth-btn" onClick={openLinkedIn}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            Verify with LinkedIn
+          </button>
+        )}
+      </>
+    );
+  }
 
   if (role === "builder" && subType === "idea_stage") return (
     <>

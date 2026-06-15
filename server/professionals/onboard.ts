@@ -59,21 +59,29 @@ export default withErrorHandling(async function handler(
     input
   );
 
-  // Save LinkedIn URL and issue verification email.
+  // Save LinkedIn URL. Skip the verify email if user already connected via LinkedIn OAuth.
   const sql = getDb();
+  const [dbUser] = await sql`
+    SELECT linkedin_verified FROM users WHERE id = ${session.userId}
+  ` as { linkedin_verified: boolean }[];
+  const alreadyVerified = !!dbUser?.linkedin_verified;
+
   await sql`UPDATE users SET linkedin_url = ${linkedinUrl} WHERE id = ${session.userId}`;
-  const token = randomBytes(32).toString("hex");
-  const appUrl = process.env["APP_URL"] ?? "";
-  await getRedis().set(`li_verify:${token}`, { userId: session.userId, linkedinUrl, email: session.email }, { ex: TOKEN_TTL });
-  await sendEmail({
-    to: session.email,
-    subject: "Confirm your LinkedIn profile — Tokans",
-    html: linkedinVerifyEmailHtml({
-      verifyUrl: `${appUrl}/api/verify/linkedin?token=${token}`,
-      linkedinUrl,
-      userName: session.name ?? null,
-    }),
-  });
+
+  if (!alreadyVerified) {
+    const token = randomBytes(32).toString("hex");
+    const appUrl = process.env["APP_URL"] ?? "";
+    await getRedis().set(`li_verify:${token}`, { userId: session.userId, linkedinUrl, email: session.email }, { ex: TOKEN_TTL });
+    await sendEmail({
+      to: session.email,
+      subject: "Confirm your LinkedIn profile — Tokans",
+      html: linkedinVerifyEmailHtml({
+        verifyUrl: `${appUrl}/api/verify/linkedin?token=${token}`,
+        linkedinUrl,
+        userName: session.name ?? null,
+      }),
+    });
+  }
 
   ensureCsrfToken(req, res);
   res.status(200).json(status);

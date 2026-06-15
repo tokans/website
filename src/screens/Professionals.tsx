@@ -61,6 +61,8 @@ export default function Professionals({
   const [experience, setExperience] = useState("");
   const [skills,     setSkills]     = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [linkedinVerified, setLinkedinVerified] = useState(false);
+  const [linkedinName,     setLinkedinName]     = useState<string | null>(null);
   const [saving,     setSaving]     = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [err,        setErr]        = useState("");
@@ -107,6 +109,20 @@ export default function Professionals({
     } catch (e) {
       setDlReason(e instanceof Error ? e.message : "Could not start download");
     }
+  };
+
+  const openLinkedInOAuth = () => {
+    const popup = window.open("/api/auth/linkedin", "linkedin-oauth", "width=620,height=700,left=200,top=100");
+    const onMessage = (e: MessageEvent) => {
+      const d = e.data as { type?: string; displayName?: string } | undefined;
+      if (d?.type === "linkedin-verified") {
+        setLinkedinVerified(true);
+        if (d.displayName) setLinkedinName(d.displayName);
+        window.removeEventListener("message", onMessage);
+        popup?.close();
+      }
+    };
+    window.addEventListener("message", onMessage);
   };
 
   const firstName = user.name?.split(" ")[0] ?? "there";
@@ -199,7 +215,7 @@ export default function Professionals({
               />
             </Field>
 
-            <Field label="LinkedIn profile URL" hint="Required for identity verification — we'll send a confirmation email.">
+            <Field label="LinkedIn profile URL" hint="Required — paste your public profile URL.">
               <input
                 className="ui-input"
                 type="url"
@@ -208,6 +224,16 @@ export default function Professionals({
                 onChange={(e) => setLinkedinUrl(e.target.value)}
               />
             </Field>
+            {linkedinVerified ? (
+              <div className="linkedin-verified-badge">
+                ✓ Verified with LinkedIn{linkedinName ? ` as ${linkedinName}` : ""}
+              </div>
+            ) : (
+              <button type="button" className="linkedin-oauth-btn" onClick={openLinkedInOAuth}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                Verify with LinkedIn
+              </button>
+            )}
 
             <Field label="Primary skills" hint="Optional — comma separated">
               <Textarea

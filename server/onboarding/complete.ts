@@ -270,16 +270,23 @@ export default withErrorHandling(async function handler(
   if (role === "opportunity_seeker") {
     const linkedinUrl = (context?.["linkedinUrl"] as string | undefined)?.trim() ?? "";
     if (linkedinUrl) {
-      const sql = getDb();
+      const [dbUser] = await sql`
+        SELECT linkedin_verified FROM users WHERE id = ${session.userId}
+      ` as { linkedin_verified: boolean }[];
+      const alreadyVerified = !!dbUser?.linkedin_verified;
+
       await sql`UPDATE users SET linkedin_url = ${linkedinUrl} WHERE id = ${session.userId}`;
-      const liToken = randomBytes(32).toString("hex");
-      const appUrl = process.env["APP_URL"] ?? "";
-      await getRedis().set(`li_verify:${liToken}`, { userId: session.userId, linkedinUrl, email: session.email }, { ex: TOKEN_TTL });
-      await sendEmail({
-        to: session.email,
-        subject: "Confirm your LinkedIn profile — Tokans",
-        html: linkedinVerifyEmailHtml({ verifyUrl: `${appUrl}/api/verify/linkedin?token=${liToken}`, linkedinUrl, userName: session.name ?? null }),
-      });
+
+      if (!alreadyVerified) {
+        const liToken = randomBytes(32).toString("hex");
+        const appUrl = process.env["APP_URL"] ?? "";
+        await getRedis().set(`li_verify:${liToken}`, { userId: session.userId, linkedinUrl, email: session.email }, { ex: TOKEN_TTL });
+        await sendEmail({
+          to: session.email,
+          subject: "Confirm your LinkedIn profile — Tokans",
+          html: linkedinVerifyEmailHtml({ verifyUrl: `${appUrl}/api/verify/linkedin?token=${liToken}`, linkedinUrl, userName: session.name ?? null }),
+        });
+      }
     }
     res.status(200).json({ ok: true });
     return;
