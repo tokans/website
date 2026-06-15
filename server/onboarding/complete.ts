@@ -20,6 +20,8 @@ import { slugify } from "../lib/apps.js";
 import type { OnboardingCompleteBody } from "../lib/types.js";
 
 const TOKEN_TTL = 60 * 60 * 24; // 24 hours
+
+const emailDomain = (e: string) => e.split("@")[1]?.toLowerCase() ?? "";
 const APPROVAL_TOKEN_TTL = 60 * 60 * 24 * 7; // 7 days
 
 const TRUSTED_PREFIXES = [
@@ -325,6 +327,13 @@ export default withErrorHandling(async function handler(
     const readmeEmail = await scrapeReadmeEmail(ghCoords);
     console.log(`[onboarding/complete] readmeEmail=${readmeEmail ?? "none"}`);
     if (readmeEmail) {
+      if (emailDomain(readmeEmail) === emailDomain(session.email)) {
+        await sql`UPDATE users SET website_url = ${websiteUrl}, is_verified = true WHERE id = ${session.userId}`;
+        upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
+          .catch((err: unknown) => console.error("[upsert-app] failed:", err));
+        res.status(200).json({ ok: true, autoVerified: true, verifiedVia: "email-domain" });
+        return;
+      }
       await issueAndSendToken({
         userId: session.userId,
         websiteUrl,
@@ -354,6 +363,13 @@ export default withErrorHandling(async function handler(
   console.log(`[onboarding/complete] path2 scraped=${scraped ?? "none"} domain=${domain} linkedGh=${linkedGh ? `${linkedGh.owner}/${linkedGh.repo}` : "none"}`);
 
   if (scraped) {
+    if (emailDomain(scraped) === emailDomain(session.email)) {
+      await sql`UPDATE users SET website_url = ${websiteUrl}, is_verified = true WHERE id = ${session.userId}`;
+      upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
+        .catch((err: unknown) => console.error("[upsert-app] failed:", err));
+      res.status(200).json({ ok: true, autoVerified: true, verifiedVia: "email-domain" });
+      return;
+    }
     await issueAndSendToken({
       userId: session.userId,
       websiteUrl,
@@ -390,6 +406,13 @@ export default withErrorHandling(async function handler(
 
     const readmeEmail = await scrapeReadmeEmail(linkedGh);
     if (readmeEmail) {
+      if (emailDomain(readmeEmail) === emailDomain(session.email)) {
+        await sql`UPDATE users SET website_url = ${websiteUrl}, is_verified = true WHERE id = ${session.userId}`;
+        upsertAppForBuilder({ userId: session.userId, websiteUrl, appUrl, userName: session.name, subType: subTypeOrNull, subType2: sub_type2, description: (context?.["description"] as string | undefined) ?? null })
+          .catch((err: unknown) => console.error("[upsert-app] failed:", err));
+        res.status(200).json({ ok: true, autoVerified: true, verifiedVia: "email-domain" });
+        return;
+      }
       await issueAndSendToken({
         userId: session.userId,
         websiteUrl,

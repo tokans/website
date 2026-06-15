@@ -63,6 +63,8 @@ export interface SessionPayload {
   subType?: SubType | null;
   /** Entry paths whose onboarding journey this user has completed (run once each). */
   completedJourneys?: string[];
+  /** True once the user clicks the signup confirmation link. OAuth users start as true. */
+  emailVerified?: boolean;
 }
 
 export interface SessionWithId extends SessionPayload {

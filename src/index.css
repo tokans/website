@@ -1286,6 +1286,21 @@ a { color: inherit; text-decoration: none; }
 }
 .done-email-notice strong { color: var(--text); }
 
+.done-verify-email-notice {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #92400e;
+}
+.done-verify-email-notice strong { color: #78350f; display: block; margin-bottom: 2px; font-size: 14px; }
+.done-verify-email-notice span strong { color: #78350f; display: inline; font-size: 13px; }
+
 /* ───────────────────────────────────
    Onboarding step primitives
 ─────────────────────────────────── */

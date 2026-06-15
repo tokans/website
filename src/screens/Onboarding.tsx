@@ -147,11 +147,12 @@ function WebsiteEmailStep({
 
 // ── Done screen ───────────────────────────────────────────────────────────────
 function DoneScreen({
-  role, name, email, doneNextItems, onGoToDashboard, reOnboarding, websiteUrl,
+  role, name, email, emailVerified, doneNextItems, onGoToDashboard, reOnboarding, websiteUrl,
 }: {
   role:            RoleId;
   name:            string | null;
   email:           string;
+  emailVerified?:  boolean;
   doneNextItems?:  { t: string; d: string }[];
   onGoToDashboard: () => void;
   reOnboarding?:   boolean;
@@ -189,7 +190,12 @@ function DoneScreen({
         {role === "builder" && websiteUrl && (
           <SiteSetupInstructions websiteUrl={websiteUrl} />
         )}
-        {email ? (
+        {email && emailVerified === false ? (
+          <div className="done-verify-email-notice">
+            <strong>Verify your email to complete your profile.</strong>
+            <span>We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account.</span>
+          </div>
+        ) : email ? (
           <div className="done-email-notice">We'll get back to you at <strong>{email}</strong>.</div>
         ) : (
           <div className="u-mt-16">
@@ -505,6 +511,7 @@ export default function Onboarding({
           role={role}
           name={user.name}
           email={user.email}
+          {...(user.emailVerified !== undefined ? { emailVerified: user.emailVerified } : {})}
           doneNextItems={overriddenItems}
           {...(reOnboarding ? { reOnboarding } : {})}
           {...(context["websiteUrl"] ? { websiteUrl: context["websiteUrl"] as string } : {})}

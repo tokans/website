@@ -1,13 +1,18 @@
+import { randomBytes } from "crypto";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import bcrypt from "bcryptjs";
 import { getDb } from "../lib/db.js";
+import { getRedis } from "../lib/redis.js";
 import { createSession, setSessionCookie } from "../lib/session.js";
 import { checkRateLimit } from "../lib/ratelimit.js";
 import { requireJsonContent, verifyCsrf, ensureCsrfToken } from "../lib/csrf.js";
 import { withErrorHandling } from "../lib/handler.js";
+import { sendEmail, emailConfirmHtml } from "../lib/email.js";
 import type { DbUser, AuthResponse } from "../lib/types.js";
 
 type UserIdentity = Pick<DbUser, "id" | "name" | "email">;
+
+const EMAIL_VERIFY_TTL = 60 * 60 * 24; // 24 hours
 
 export default withErrorHandling(async function handler(
   req: VercelRequest,
@@ -69,8 +74,24 @@ export default withErrorHandling(async function handler(
   });
 
   setSessionCookie(res, sessionId, req);
-  // Refresh CSRF token alongside the new session.
   ensureCsrfToken(req, res);
+
+  // Issue email confirmation token (fire-and-forget — don't block the response).
+  const token = randomBytes(32).toString("hex");
+  const appUrl = process.env["APP_URL"] ?? "";
+  getRedis()
+    .set(`email_verify:${token}`, { userId: user.id }, { ex: EMAIL_VERIFY_TTL })
+    .then(() =>
+      sendEmail({
+        to: normEmail,
+        subject: "Confirm your email — Tokans",
+        html: emailConfirmHtml({
+          confirmUrl: `${appUrl}/api/auth/verify-email?token=${token}`,
+          userName: user.name,
+        }),
+      })
+    )
+    .catch((err: unknown) => console.error("[signup] email confirm failed:", err));
 
   const body: AuthResponse = {
     user: { id: user.id, name: user.name, email: user.email },

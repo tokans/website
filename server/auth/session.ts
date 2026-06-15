@@ -25,18 +25,22 @@ export default withErrorHandling(async function handler(
   // from the DB) so each entry-path journey runs exactly once, even for users
   // who signed in this session rather than completing onboarding just now.
   let completedJourneys = session.completedJourneys ?? [];
+  let emailVerified = false;
   try {
-    const rows = await getDb()`
-      SELECT entry_path FROM user_journeys WHERE user_id = ${session.userId}
-    `;
+    const sql = getDb();
+    const [rows, evRow] = await Promise.all([
+      sql`SELECT entry_path FROM user_journeys WHERE user_id = ${session.userId}`,
+      sql`SELECT email_verified FROM users WHERE id = ${session.userId}`,
+    ]);
     completedJourneys = rows.map((r) => r["entry_path"] as string);
+    emailVerified = !!(evRow[0] as { email_verified: boolean } | undefined)?.email_verified;
   } catch {
-    // user_journeys table not present yet — fall back to the session payload.
+    // tables not present yet — fall back to session payload.
   }
 
   const body: SessionResponse = {
     authenticated: true,
-    user: { ...session, completedJourneys },
+    user: { ...session, completedJourneys, emailVerified },
   };
   res.status(200).json(body);
 });
