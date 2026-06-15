@@ -78,6 +78,49 @@ export function verifyEmailHtml(opts: {
 </html>`.trim();
 }
 
+export function linkedinVerifyEmailHtml(opts: {
+  verifyUrl: string;
+  linkedinUrl: string;
+  userName: string | null;
+}): string {
+  const name = opts.userName ? `, ${opts.userName.split(" ")[0]}` : "";
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f5f0;font-family:'DM Sans',Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f0;padding:40px 16px">
+  <tr><td align="center">
+    <table width="480" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+      <tr><td style="background:#1a1a1a;padding:24px 32px">
+        <span style="font-family:'Syne',Arial,sans-serif;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px">Tokans</span>
+      </td></tr>
+      <tr><td style="padding:32px">
+        <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#1a1a1a;line-height:1.3">Confirm your LinkedIn profile${name}</p>
+        <p style="margin:0 0 24px;font-size:15px;color:#555;line-height:1.6">
+          You've added <strong>${opts.linkedinUrl}</strong> to your Tokans profile.
+          Click the button below to confirm this LinkedIn profile belongs to you.
+        </p>
+        <table cellpadding="0" cellspacing="0" style="margin:0 0 24px">
+          <tr><td style="background:#0077b5;border-radius:8px">
+            <a href="${opts.verifyUrl}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:-.2px">Confirm my LinkedIn →</a>
+          </td></tr>
+        </table>
+        <p style="margin:0 0 8px;font-size:13px;color:#888;line-height:1.5">
+          This link expires in 24 hours. If you didn't add a LinkedIn profile to Tokans, you can safely ignore this email.
+        </p>
+        <p style="margin:0;font-size:12px;color:#bbb">Or copy this URL into your browser:<br>${opts.verifyUrl}</p>
+      </td></tr>
+      <tr><td style="background:#fafaf8;padding:16px 32px;border-top:1px solid #eee">
+        <p style="margin:0;font-size:12px;color:#aaa">Tokans · AI needs Tokens. Humans need Tokans. · <a href="https://tokans.org" style="color:#aaa">tokans.org</a></p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`.trim();
+}
+
 export function approvalEmailHtml(opts: {
   approveUrl: string;
   appName: string;

@@ -15,7 +15,7 @@ import {
   parseGithubUrl,
   githubLoginFromProfileUrl,
 } from "../lib/scraper.js";
-import { sendEmail, verifyEmailHtml, approvalEmailHtml } from "../lib/email.js";
+import { sendEmail, verifyEmailHtml, approvalEmailHtml, linkedinVerifyEmailHtml } from "../lib/email.js";
 import { slugify } from "../lib/apps.js";
 import type { OnboardingCompleteBody } from "../lib/types.js";
 
@@ -261,6 +261,25 @@ export default withErrorHandling(async function handler(
   // ── Donor shortcut → redirect to /patrons ────────────────────────────────
   if (role === "donor") {
     res.status(200).json({ ok: true, redirect: "/patrons" });
+    return;
+  }
+
+  // ── LinkedIn verification for opportunity_seeker ─────────────────────────
+  if (role === "opportunity_seeker") {
+    const linkedinUrl = (context?.["linkedinUrl"] as string | undefined)?.trim() ?? "";
+    if (linkedinUrl) {
+      const sql = getDb();
+      await sql`UPDATE users SET linkedin_url = ${linkedinUrl} WHERE id = ${session.userId}`;
+      const liToken = randomBytes(32).toString("hex");
+      const appUrl = process.env["APP_URL"] ?? "";
+      await getRedis().set(`li_verify:${liToken}`, { userId: session.userId, linkedinUrl, email: session.email }, { ex: TOKEN_TTL });
+      await sendEmail({
+        to: session.email,
+        subject: "Confirm your LinkedIn profile — Tokans",
+        html: linkedinVerifyEmailHtml({ verifyUrl: `${appUrl}/api/verify/linkedin?token=${liToken}`, linkedinUrl, userName: session.name ?? null }),
+      });
+    }
+    res.status(200).json({ ok: true });
     return;
   }
 

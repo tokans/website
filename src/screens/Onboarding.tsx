@@ -305,7 +305,7 @@ export default function Onboarding({
     }
     if (step === contextStep) {
       if (!role) return false;
-      if (role === "opportunity_seeker") return !!(context["displacement"]?.trim() && context["next"]?.trim());
+      if (role === "opportunity_seeker") return !!(context["displacement"]?.trim() && context["next"]?.trim() && context["linkedinUrl"]?.trim());
       if (role === "builder" && subType === "idea_stage")
         return !!(context["buildDesc"]?.trim() && context["websiteUrl"]?.trim());
       if (role === "builder" && subType === "vibe_founder")

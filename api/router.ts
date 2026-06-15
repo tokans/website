@@ -62,6 +62,7 @@ import proSubscribe from "../server/professionals/subscribe.js";
 import proSubscription from "../server/professionals/subscription.js";
 import tokanTaskIndex from "../server/tokan-task/index.js";
 import emailInbound from "../server/email/inbound.js";
+import verifyLinkedin from "../server/verify/linkedin.js";
 
 type Handler = (req: VercelRequest, res: VercelResponse) => Promise<void> | void;
 
@@ -114,6 +115,7 @@ const ROUTES: Route[] = [
   { segs: ["professionals", "subscription"], handler: proSubscription },
   { segs: ["tokan-task"], handler: tokanTaskIndex },
   { segs: ["email", "inbound"], handler: emailInbound },
+  { segs: ["verify", "linkedin"], handler: verifyLinkedin },
 ];
 
 /**

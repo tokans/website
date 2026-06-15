@@ -227,6 +227,9 @@ export function ContextStep({
       <Field label="What are you looking for next?">
         <Textarea placeholder="e.g. A product-focused engineering role where I can own outcomes end-to-end, or a freelance project while I explore…" value={values["next"] ?? ""} onChange={set("next")} maxLength={300} minHeight={90} />
       </Field>
+      <Field label="LinkedIn profile URL" hint="Required — we'll send a confirmation email to verify this is yours.">
+        <Input type="url" placeholder="https://linkedin.com/in/yourprofile" value={values["linkedinUrl"] ?? ""} onChange={set("linkedinUrl")} />
+      </Field>
     </>
   );
 

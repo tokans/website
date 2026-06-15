@@ -60,6 +60,7 @@ export default function Professionals({
   const [profession, setProfession] = useState("");
   const [experience, setExperience] = useState("");
   const [skills,     setSkills]     = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [saving,     setSaving]     = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [err,        setErr]        = useState("");
@@ -75,7 +76,7 @@ export default function Professionals({
     try {
       const next = await api.professionalOnboard({
         profession,
-        answers: { experience: experience.trim(), skills: skills.trim() },
+        answers: { experience: experience.trim(), skills: skills.trim(), linkedinUrl: linkedinUrl.trim() },
       });
       setStatus(next);
     } catch (e) {
@@ -198,6 +199,16 @@ export default function Professionals({
               />
             </Field>
 
+            <Field label="LinkedIn profile URL" hint="Required for identity verification — we'll send a confirmation email.">
+              <input
+                className="ui-input"
+                type="url"
+                placeholder="https://linkedin.com/in/yourprofile"
+                value={linkedinUrl}
+                onChange={(e) => setLinkedinUrl(e.target.value)}
+              />
+            </Field>
+
             <Field label="Primary skills" hint="Optional — comma separated">
               <Textarea
                 placeholder={SKILLS_PLACEHOLDER[profession] ?? "e.g. your key skills, comma separated"}
@@ -215,7 +226,7 @@ export default function Professionals({
               </InfoBox>
             )}
 
-            <BtnPrimary className="u-mt-24" onClick={() => void submit()} disabled={!profession || saving}>
+            <BtnPrimary className="u-mt-24" onClick={() => void submit()} disabled={!profession || !linkedinUrl.trim() || saving}>
               {saving ? "Saving…" : "Continue →"}
             </BtnPrimary>
           </FadeIn>
