@@ -186,13 +186,15 @@ export default function Professionals({
               </Select>
             </Field>
 
-            <Field label="Years of experience" hint="Optional">
-              <Textarea
-                placeholder="e.g. 6 years building web apps"
+            <Field label="Years of experience">
+              <input
+                className="field-input"
+                type="number"
+                min={0}
+                max={60}
+                placeholder="0"
                 value={experience}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setExperience(e.target.value)}
-                maxLength={120}
-                minHeight={48}
+                onChange={(e) => setExperience(e.target.value)}
               />
             </Field>
 
