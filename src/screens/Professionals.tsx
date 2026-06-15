@@ -188,7 +188,7 @@ export default function Professionals({
 
             <Field label="Years of experience">
               <input
-                className="field-input"
+                className="ui-input"
                 type="number"
                 min={0}
                 max={60}
