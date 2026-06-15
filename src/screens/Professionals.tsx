@@ -6,6 +6,38 @@ import {
 import { PROFESSION_GROUPS } from "../data/professions.js";
 import type { ProfessionalStatus, SessionPayload } from "../lib/types.js";
 
+const SKILLS_PLACEHOLDER: Record<string, string> = {
+  software_engineer:    "e.g. React, Node.js, system design, code reviews",
+  frontend_engineer:    "e.g. React, TypeScript, CSS, accessibility",
+  backend_engineer:     "e.g. Node.js, Go, PostgreSQL, API design",
+  devops_sre:           "e.g. Kubernetes, Terraform, CI/CD, incident response",
+  data_ml:              "e.g. Python, PyTorch, data pipelines, LLM fine-tuning",
+  qa_sdet:              "e.g. Selenium, Playwright, test strategy, load testing",
+  product_manager:      "e.g. roadmapping, user research, Jira, GTM strategy",
+  designer:             "e.g. Figma, user flows, design systems, prototyping",
+  tech_writer:          "e.g. API docs, developer guides, markdown, Docusaurus",
+  consultant:           "e.g. architecture reviews, vendor evaluation, tech audits",
+  chartered_accountant: "e.g. GST, statutory audit, tax planning, MCA filings",
+  lawyer:               "e.g. startup contracts, IP law, employment law, litigation",
+  financial_advisor:    "e.g. portfolio management, mutual funds, retirement planning",
+  tax_consultant:       "e.g. income tax, ITR filing, TDS, international taxation",
+  cs_company_secretary: "e.g. ROC filings, board minutes, SEBI compliance, FEMA",
+  doctor:               "e.g. general medicine, internal medicine, teleconsultation",
+  dentist:              "e.g. cosmetic dentistry, orthodontics, oral surgery",
+  psychologist:         "e.g. CBT, anxiety & depression, couples therapy, assessments",
+  physiotherapist:      "e.g. sports rehab, post-surgery recovery, pain management",
+  dietician:            "e.g. weight management, PCOS diet, sports nutrition, diabetes",
+  gym_trainer:          "e.g. strength training, weight loss, HIIT, body recomposition",
+  yoga_instructor:      "e.g. Hatha, Vinyasa, prenatal yoga, meditation",
+  life_coach:           "e.g. goal setting, mindfulness, stress management, burnout",
+  tutor:                "e.g. JEE Maths, IELTS prep, Class 10–12 Physics, coding",
+  career_coach:         "e.g. resume writing, interview prep, LinkedIn, job search",
+  teacher:              "e.g. CBSE curriculum, primary education, online teaching",
+  architect:            "e.g. residential design, structural drawings, 3D modelling",
+  interior_designer:    "e.g. space planning, mood boards, residential interiors",
+  photographer:         "e.g. wedding photography, product shoots, video editing",
+};
+
 const EMPTY: ProfessionalStatus = {
   onboarded: false, profession: null, roleName: null, category: null,
   subType: null, status: "none", subscribed: false, downloadEligible: false,
@@ -166,7 +198,7 @@ export default function Professionals({
 
             <Field label="Primary skills" hint="Optional — comma separated">
               <Textarea
-                placeholder="e.g. React, Rust, Postgres, code audits"
+                placeholder={SKILLS_PLACEHOLDER[profession] ?? "e.g. your key skills, comma separated"}
                 value={skills}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setSkills(e.target.value)}
                 maxLength={240}
