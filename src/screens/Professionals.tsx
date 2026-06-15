@@ -3,7 +3,7 @@ import { api } from "../api.js";
 import {
   Wordmark, Card, Field, Select, Textarea, BtnPrimary, InfoBox, StepHeader, FadeIn,
 } from "../components/ui.js";
-import { PROFESSIONS } from "../data/professions.js";
+import { PROFESSION_GROUPS } from "../data/professions.js";
 import type { ProfessionalStatus, SessionPayload } from "../lib/types.js";
 
 const EMPTY: ProfessionalStatus = {
@@ -144,8 +144,12 @@ export default function Professionals({
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => setProfession(e.target.value)}
               >
                 <option value="">Select your profession…</option>
-                {PROFESSIONS.map((p) => (
-                  <option key={p.id} value={p.id}>{p.label}</option>
+                {PROFESSION_GROUPS.map((g) => (
+                  <optgroup key={g.group} label={g.group}>
+                    {g.items.map((p) => (
+                      <option key={p.id} value={p.id}>{p.label}</option>
+                    ))}
+                  </optgroup>
                 ))}
               </Select>
             </Field>
