@@ -12,6 +12,7 @@
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/router?__route=$1" },
+    { "source": "/apps/myFinance", "destination": "/myfinance" },
     { "source": "/apps/:slug", "destination": "/api/router?__route=app-proxy&slug=:slug&path=" },
     { "source": "/apps/:slug/(.*)", "destination": "/api/router?__route=app-proxy&slug=:slug&path=$1" },
     { "source": "/founders", "destination": "/auth" },

@@ -5,13 +5,7 @@
   "hints": {
     "axe/forms": "off",
     "no-inline-styles": "off",
-    "compat-api/css": [
-      "default",
-      {
-        "ignore": [
-          "scrollbar-width"
-        ]
-      }
-    ]
+    "compat-api/css": "off",
+    "disown-opener": "off"
   }
 }

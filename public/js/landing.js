@@ -53,9 +53,10 @@ if (profileCard) {
    MARQUEE — build items
 ═══════════════════════════════ */
 const marqueeItems = [
-  'Build Tokans', 'Legacy & Handoff', 'Employer Verified 1.6×', 'Peer Reviewed',
-  'Score Decay Built In', 'No AI-Generated CVs', 'Real Work. Real Signal.',
-  'Work Tokans', 'Mentor Tokans', 'Not Bought. Not Transferred.',
+  'Privacy-Native by Design', 'Your Data, Your Device', 'No Cloud · No Telemetry',
+  'Local-First Architecture', 'Encrypted Local Vault', 'LAN Sync, No Server',
+  'Built on sharedCoreLib', 'Domain Experts, Verified', 'Trust-Verified Partners',
+  'Not Bought. Not Transferred.', 'AI Needs Tokens. Humans Need Tokans.',
 ];
 const track = document.getElementById('marqueeTrack');
 if (track) {
@@ -65,6 +66,34 @@ if (track) {
     div.innerHTML = `<span class="dot" aria-hidden="true"></span>${text}`;
     track.appendChild(div);
   });
+}
+
+
+/* ═══════════════════════════════
+   LIVE APPS — horizontal carousel arrows
+═══════════════════════════════ */
+const appsCarousel = document.getElementById('appsCarousel');
+const appsPrev = document.getElementById('appsPrev');
+const appsNext = document.getElementById('appsNext');
+if (appsCarousel && appsPrev && appsNext) {
+  // Scroll by roughly one card (card width + gap).
+  const cardStep = () => {
+    const card = appsCarousel.querySelector('.app-card');
+    const gap = parseInt(getComputedStyle(appsCarousel).columnGap || '18', 10) || 18;
+    return card ? card.getBoundingClientRect().width + gap : appsCarousel.clientWidth * 0.8;
+  };
+  appsPrev.addEventListener('click', () => appsCarousel.scrollBy({ left: -cardStep(), behavior: 'smooth' }));
+  appsNext.addEventListener('click', () => appsCarousel.scrollBy({ left:  cardStep(), behavior: 'smooth' }));
+
+  // Dim arrows at the scroll extremes.
+  const updateAppsArrows = () => {
+    const maxScroll = appsCarousel.scrollWidth - appsCarousel.clientWidth - 1;
+    appsPrev.style.opacity = appsCarousel.scrollLeft <= 0 ? '0.35' : '1';
+    appsNext.style.opacity = appsCarousel.scrollLeft >= maxScroll ? '0.35' : '1';
+  };
+  appsCarousel.addEventListener('scroll', updateAppsArrows, { passive: true });
+  window.addEventListener('resize', updateAppsArrows, { passive: true });
+  updateAppsArrows();
 }
 
 

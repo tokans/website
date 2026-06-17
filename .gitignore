@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -18,6 +19,9 @@
 # misc
 .DS_Store
 *.pem
+
+# Office temp/lock files (created while a doc is open)
+~$*
 
 # debug
 npm-debug.log*
@@ -41,3 +45,4 @@ dist
 
 # generated stylesheet (compiled from src/static.css by `npm run build:css`)
 /public/css/site.css
+.env*
