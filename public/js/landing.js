@@ -22,30 +22,57 @@ revealEls.forEach(el => revealObs.observe(el));
 
 
 /* ═══════════════════════════════
-   PROFILE CARD — animate bars on entry
+   HERO PARTICIPANT CAROUSEL - rotate partner / builder / maintainer cards,
+   animating each card's metric bars as it becomes active.
 ═══════════════════════════════ */
-const profileCard = document.querySelector('.profile-card');
-if (profileCard) {
-  const barFills = profileCard.querySelectorAll('.pc-bar-fill');
-  // Store target widths (from data-pct), start at 0
-  barFills.forEach(bar => {
-    bar.dataset.target = (bar.dataset.pct || '0') + '%';
-    bar.style.width = '0%';
-  });
-  const cardObs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        // Stagger bar animations
-        barFills.forEach((bar, i) => {
-          setTimeout(() => {
-            bar.style.width = bar.dataset.target;
-          }, 200 + i * 120);
-        });
-        cardObs.unobserve(e.target);
-      }
+const profileCarousel = document.getElementById('profileCarousel');
+if (profileCarousel) {
+  const pSlides = Array.from(profileCarousel.querySelectorAll('.profile-slide'));
+  const pDotsWrap = document.getElementById('profileDots');
+  let pIdx = 0;
+  let pTimer;
+
+  // Animate a slide's metric bars from 0 to their target widths.
+  const animateBars = (slide) => {
+    slide.querySelectorAll('.pc-bar-fill').forEach((bar, i) => {
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = (bar.dataset.pct || '0') + '%'; }, 150 + i * 120);
     });
-  }, { threshold: 0.4 });
-  cardObs.observe(profileCard);
+  };
+
+  const pDots = pSlides.map((_, i) => {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'profile-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('role', 'tab');
+    d.setAttribute('aria-label', `Profile ${i + 1} of ${pSlides.length}`);
+    d.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    d.addEventListener('click', () => pGoTo(i));
+    if (pDotsWrap) pDotsWrap.appendChild(d);
+    return d;
+  });
+
+  function pGoTo(n) {
+    pSlides[pIdx].classList.remove('active');
+    pDots[pIdx] && (pDots[pIdx].classList.remove('active'), pDots[pIdx].setAttribute('aria-selected', 'false'));
+    pIdx = (n + pSlides.length) % pSlides.length;
+    pSlides[pIdx].classList.add('active');
+    pDots[pIdx] && (pDots[pIdx].classList.add('active'), pDots[pIdx].setAttribute('aria-selected', 'true'));
+    animateBars(pSlides[pIdx]);
+    pResetAuto();
+  }
+
+  function pResetAuto() {
+    clearInterval(pTimer);
+    pTimer = setInterval(() => pGoTo(pIdx + 1), 5000);
+  }
+
+  // Pause on hover.
+  profileCarousel.addEventListener('mouseenter', () => clearInterval(pTimer));
+  profileCarousel.addEventListener('mouseleave', pResetAuto);
+
+  animateBars(pSlides[0]);
+  pResetAuto();
 }
 
 

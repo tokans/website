@@ -448,6 +448,33 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-radius: 20px;
 }
 
+/* Hero participant carousel (partner / builder / maintainer) */
+.profile-carousel { position: relative; }
+.profile-slide { display: none; }
+.profile-slide.active { display: block; }
+.profile-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+}
+.profile-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.profile-dot.active {
+  background: var(--sky);
+  width: 22px;
+  border-radius: 4px;
+}
+
 
 /* ════════════════════════════════
    MARQUEE
@@ -530,11 +557,23 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .collage-cell:nth-child(3) { grid-column: 2; grid-row: 1 / span 2; }
 
 .what-content { padding-top: 12px; }
-.what-points { margin-top: 32px; display: flex; flex-direction: column; gap: 24px; }
-.what-point { display: flex; gap: 16px; align-items: flex-start; }
-.wp-icon { color: var(--sky); font-size: 1rem; flex-shrink: 0; margin-top: 3px; line-height: 1.5; }
-.what-point strong { display: block; font-size: 0.95rem; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; font-family: 'Syne', sans-serif; }
-.what-point p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+.what-body {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  max-width: 560px;
+  margin-top: 16px;
+}
+.what-subhead {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-top: 34px;
+  margin-bottom: 2px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
+}
 
 
 /* ════════════════════════════════
