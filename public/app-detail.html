@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Title / description / canonical are set per-app by /js/app-detail.js once
+       the listing is fetched. The static values are a sensible pre-render fallback. -->
+  <title>App · Tokans</title>
+  <meta name="description" content="A privacy-native app on the Tokans network — runs on your device, no cloud, no telemetry." />
+  <link rel="canonical" href="https://tokans.org/apps" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&family=Syne:wght@600;700;800&family=DM+Mono:wght@400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/site.css" />
+
+  <!-- Detail-page-specific layout. Uses the shared design tokens so it matches
+       the rest of tokans.org; only the bits the global stylesheet doesn't cover. -->
+  <style>
+    .ad-hero { text-align: center; padding-top: clamp(2.5rem, 6vw, 5rem); }
+    .ad-hero .eyebrow { justify-content: center; }
+    .ad-hero .lead { margin: 18px auto 0; }
+    .ad-icon {
+      width: 72px; height: 72px; border-radius: 18px; object-fit: cover;
+      border: 1px solid var(--border); background: #fff; box-shadow: var(--shadow-sm);
+      margin: 0 auto 20px; display: block;
+    }
+    .ad-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+    .ad-dl-other { margin-top: 14px; font-size: 0.85rem; color: var(--text-muted); }
+    .ad-dl-other a { color: var(--sky-dark); margin: 0 8px; white-space: nowrap; }
+
+    .ad-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 36px; }
+    .ad-feature {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--card-radius);
+      padding: 24px; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .ad-feature:hover { transform: translateY(-3px); border-color: var(--sky); box-shadow: var(--shadow-md); }
+    .ad-feature-ico { font-size: 28px; margin-bottom: 12px; line-height: 1; }
+    .ad-feature h3 { margin: 0 0 6px; font-size: 1.05rem; font-family: 'Syne', sans-serif; }
+    .ad-feature p { margin: 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+    .ad-demo {
+      margin-top: 32px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--card-radius); overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .ad-demo video { display: block; width: 100%; height: auto; background: #000; }
+    .ad-demo figcaption { padding: 12px 18px; color: var(--text-muted); font-size: 0.9rem; }
+
+    .ad-shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 32px; }
+    .ad-shot { border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden; background: var(--bg-subtle); }
+    .ad-shot img { display: block; width: 100%; height: auto; }
+    .ad-shot figcaption { padding: 10px 14px; color: var(--text-muted); font-size: 0.85rem; }
+
+    .ad-privacy {
+      margin-top: 12px; background: var(--bg-alt); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 36px; text-align: center;
+    }
+    .ad-privacy .lead { margin: 10px auto 0; }
+
+    .ad-state { text-align: center; padding: clamp(3rem, 10vw, 7rem) 0; color: var(--text-muted); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Shared navbar + footer injected/wired by /js/chrome.js (same as every page). -->
+  <div data-chrome="header"></div>
+
+  <main id="main">
+    <div id="app-detail-island">
+      <div class="ad-state">Loading…</div>
+    </div>
+  </main>
+
+  <div data-chrome="footer"></div>
+
+  <script type="module" src="/js/chrome.js"></script>
+  <script type="module" src="/js/app-detail.js"></script>
+</body>
+</html>

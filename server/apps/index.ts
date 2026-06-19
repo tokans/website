@@ -3,8 +3,10 @@ import { getDb } from "../lib/db.js";
 import { getSession, getSessionId, requireSession } from "../lib/session.js";
 import { requireJsonContent, verifyCsrf, ensureCsrfToken } from "../lib/csrf.js";
 import { withErrorHandling } from "../lib/handler.js";
-import { type AppRow, mapAppRow, slugify } from "../lib/apps.js";
+import { type AppRow, mapAppRow, mapAppDetail, slugify } from "../lib/apps.js";
 import { readAppsSnapshot } from "../lib/snapshot.js";
+import { sanitizeAppContent } from "../lib/appContent.js";
+import type { AppContent } from "../lib/backend/contract.js";
 
 interface RegisterBody {
   name?: string;
@@ -15,6 +17,7 @@ interface RegisterBody {
   description?: string | null;
   usesSharedCoreLib?: boolean;
   siteUrl?: string | null;
+  content?: AppContent | null;
 }
 
 export default withErrorHandling(async function handler(
@@ -67,14 +70,18 @@ export default withErrorHandling(async function handler(
       return;
     }
 
+    // Detail-page content is user-supplied — strip unknown keys, enforce shapes,
+    // and allow only https URLs (see sanitizeAppContent). null when empty.
+    const content = sanitizeAppContent(body.content);
+
     const rows = (await sql`
-      INSERT INTO apps (owner_user_id, slug, name, tagline, repo_url, stack, description, uses_sharedcorelib, site_url)
+      INSERT INTO apps (owner_user_id, slug, name, tagline, repo_url, stack, description, uses_sharedcorelib, site_url, content)
       VALUES (${session.userId}, ${slug}, ${name}, ${body.tagline ?? null}, ${body.repoUrl ?? null},
               ${body.stack ?? null}, ${body.description ?? null}, ${body.usesSharedCoreLib ?? true},
-              ${body.siteUrl ?? null})
+              ${body.siteUrl ?? null}, ${content ? JSON.stringify(content) : null}::jsonb)
       ON CONFLICT (slug) DO NOTHING
       RETURNING id, slug, name, tagline, repo_url, stack, description,
-                icon_url, site_url, uses_sharedcorelib, support_status, listed, owner_user_id
+                icon_url, site_url, uses_sharedcorelib, support_status, listed, owner_user_id, content
     `) as AppRow[];
 
     const row = rows[0];
@@ -83,7 +90,7 @@ export default withErrorHandling(async function handler(
       return;
     }
     ensureCsrfToken(req, res);
-    res.status(201).json(mapAppRow(row, session.userId));
+    res.status(201).json(mapAppDetail(row, session.userId));
     return;
   }
 

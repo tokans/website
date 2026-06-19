@@ -1,0 +1,27 @@
+{
+  "heroTagline": "A private, offline-first personal finance tracker. No account, no cloud, no server — your data never leaves your device.",
+  "features": [
+    { "icon": "📊", "title": "Net worth over time", "body": "Monthly snapshots of every account, with month-over-month and financial-year trends." },
+    { "icon": "📈", "title": "Per-account growth trend", "body": "View the growth trend of each account over time, not just your total — see exactly which holdings are moving." },
+    { "icon": "📁", "title": "Excel in, Excel out", "body": "Import your existing spreadsheet and export back to it. Excel stays the source of truth you own." },
+    { "icon": "🧾", "title": "Tax helper", "body": "Import official ITR JSON exports and get an advisory ITR-form recommendation." },
+    { "icon": "🎯", "title": "Goals & projections", "body": "Set targets and see realistic ETAs based on your actual saving pace." },
+    { "icon": "🔥", "title": "FIRE calculator", "body": "Project your path to Financial Independence / Retire Early — target corpus, safe withdrawal, and the age you get there." },
+    { "icon": "🔐", "title": "Encrypted vault", "body": "Account credentials protected by a master password (Argon2id + Stronghold). No plain text, ever." },
+    { "icon": "🛟", "title": "Emergency & estate planning", "body": "Size your emergency fund against real expenses, and keep nominee and estate details organised for the people who'll need them." },
+    { "icon": "🔄", "title": "Sync over your own LAN", "body": "Sync between desktop and mobile directly over your own Wi-Fi — nothing is ever shared over the internet." }
+  ],
+  "demo": {
+    "videoUrl": "https://tokans.github.io/myFinance/assets/demo.mp4",
+    "caption": "Importing a spreadsheet in myFinance."
+  },
+  "downloads": [
+    { "os": "windows", "arch": "x64", "label": "Windows (.msi)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/myFinance_1.0.3_x64_en-US.msi" },
+    { "os": "macos", "arch": "arm64", "label": "macOS (Apple Silicon)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/myFinance_1.0.3_aarch64.dmg" },
+    { "os": "macos", "arch": "x64", "label": "macOS (Intel)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/myFinance_1.0.3_x64.dmg" }
+  ],
+  "privacyNote": {
+    "title": "No backend. No telemetry.",
+    "body": "All data lives in a local SQLite database and an encrypted vault on your own machine. myFinance can't phone home — there's nowhere for it to call."
+  }
+}

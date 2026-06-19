@@ -28,6 +28,11 @@ CREATE INDEX IF NOT EXISTS idx_apps_listed ON apps (listed);
 ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_url TEXT;
 ALTER TABLE apps ADD COLUMN IF NOT EXISTS site_url TEXT;
 
+-- Rich detail-page content (features, demo, per-OS downloads, screenshots),
+-- rendered natively at /apps/<slug>. Shape = AppContent in
+-- server/lib/backend/contract.ts. Collected via the /list-app onboarding form.
+ALTER TABLE apps ADD COLUMN IF NOT EXISTS content JSONB;
+
 -- Seed data is NOT hardcoded here. The seed vibe-coded apps are the local
 -- projects in C:\workspace\ whose name starts with 'my' (myFinance, myHealth,
 -- myWorkAssistant, …). Seed them with:  npm run seed:apps

@@ -73,13 +73,13 @@ describe("apps island — pure render", () => {
 });
 
 describe("apps island — mounted behaviour", () => {
-  it("renders the directory and a 'list your app' CTA to /founders", async () => {
+  it("renders the directory and a 'list your app' CTA to /list-app", async () => {
     listApps.mockResolvedValue({ apps: [app({ name: "DirApp" })] });
     const root = island();
     mount();
     await vi.waitFor(() => expect(root.textContent).toContain("DirApp"));
     const cta = root.querySelector<HTMLAnchorElement>(".dir-cta a");
-    expect(cta?.getAttribute("href")).toBe("/founders");
+    expect(cta?.getAttribute("href")).toBe("/list-app");
     expect(cta?.textContent).toContain("List your app");
     // The in-deck owner registration form is gone — listing is the CTA now.
     expect(root.querySelector("#app-register")).toBeNull();
@@ -90,6 +90,6 @@ describe("apps island — mounted behaviour", () => {
     const root = island();
     mount();
     await vi.waitFor(() => expect(root.textContent).toContain("No apps listed yet"));
-    expect(root.querySelector<HTMLAnchorElement>(".dir-cta a")?.getAttribute("href")).toBe("/founders");
+    expect(root.querySelector<HTMLAnchorElement>(".dir-cta a")?.getAttribute("href")).toBe("/list-app");
   });
 });

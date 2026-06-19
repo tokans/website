@@ -232,7 +232,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 
 /* ════════════════════════════════
-   HERO
+   HERO — split layout: copy left, featured carousel right
 ════════════════════════════════ */
 #hero {
   padding: 50px 0 3rem;
@@ -252,8 +252,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: 55fr 45fr;
+  grid-template-columns: 1fr 1fr;     /* copy left, carousel right — half each */
   column-gap: 60px;
+  align-items: center;
 }
 .hero-left .eyebrow { margin-bottom: 20px; }
 .hero-lead {
@@ -265,19 +266,180 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .hero-ctas {
   display: flex;
-  padding-top: 1rem;
   gap: 14px;
   flex-wrap: wrap;
-  flex-direction: column; 
-  align-items: flex-end;
 }
-.hero-trust {
-  margin-top: 28px;
+
+/* Featured carousel panel — fills the right column, auto-advancing with crossfade */
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  height: clamp(440px, 56vh, 560px);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: #0B1E33;
+}
+.hero-slides { position: absolute; inset: 0; }
+
+/* Crossfade — slides stack, fading 400ms between frames. */
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;                 /* content anchored to the lower third */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+  background: var(--hero-fallback, #0B1E33);  /* fallback colour shows if the image is missing */
+}
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+.hero-slide-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+/* When the image 404s, JS adds this class so the broken-image glyph never shows —
+   the per-slide --hero-fallback colour then renders behind the overlay. */
+.hero-slide-img.hero-img-failed { display: none; }
+.hero-slide-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* darken toward the bottom so the text stays clearly legible over any image */
+  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.74) 100%);
+}
+.hero-slide-shell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  /* horizontal padding clears the side arrows so they never overlap the text */
+  padding: 28px 64px clamp(52px, 9%, 70px);
+}
+.hero-slide-inner { max-width: 100%; }
+.hero-badge {
+  display: inline-block;
   font-family: 'DM Mono', monospace;
   font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-faint);
+  letter-spacing: 8px;
+  color: var(--sky);
+  /* solid white block behind the brand-blue badge so it stays legible over any photo */
+  background: #fff;
+  padding: 6px 8px 6px 12px;   /* trim right pad to offset the trailing letter-spacing */
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  margin-bottom: 16px;
+}
+.hero-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+  margin-bottom: 14px;
+}
+.hero-subline {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 10px rgba(0,0,0,0.55);
+  margin-bottom: 22px;
+}
+.hero-cta { box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+/* Arrows — desktop only (hidden ≤768px in favour of swipe) */
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #fff;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.35);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.hero-arrow:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.7); }
+.hero-arrow--prev { left: 14px; }
+.hero-arrow--next { right: 14px; }
+
+/* Dots — centred at the very bottom of the frame */
+.hero-dots {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+.hero-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;                       /* inactive: outlined */
+  border: 1.5px solid rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.hero-dot.active {
+  background: #fff;                              /* active: filled */
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
+/* Verified track-record card carousel — right column of "What is Tokans?" */
+.track-record-label { margin-bottom: 18px; }
+.profile-carousel { position: relative; }
+.profile-slide { display: none; }
+.profile-slide.active { display: block; }
+.profile-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+}
+.profile-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.profile-dot.active {
+  background: var(--sky);
+  width: 22px;
+  border-radius: 4px;
 }
 
 /* Profile card */
@@ -448,34 +610,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-radius: 20px;
 }
 
-/* Hero participant carousel (partner / builder / maintainer) */
-.profile-carousel { position: relative; }
-.profile-slide { display: none; }
-.profile-slide.active { display: block; }
-.profile-dots {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  margin-top: 16px;
-}
-.profile-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--border);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.25s;
-}
-.profile-dot.active {
-  background: var(--sky);
-  width: 22px;
-  border-radius: 4px;
-}
-
-
 /* ════════════════════════════════
    MARQUEE
 ════════════════════════════════ */
@@ -534,29 +668,19 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 ════════════════════════════════ */
 .what-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: start;
+  grid-template-columns: 1.15fr 0.85fr;   /* text left, card carousel right */
+  gap: 56px;
+  align-items: stretch;                    /* both columns share the same height */
 }
-.what-collage { position: relative; }
-.collage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 12px;
-}
-.collage-cell { position: relative; }
-.collage-cell--tall .img-ph { height: 300px; }
-.collage-cell--sq   .img-ph { height: 200px; }
-.collage-cell--offset { margin-top: 40px; }
-.collage-cell--tall.collage-cell--offset .img-ph { height: 300px; }
-
-/* Place cells in 2-column collage */
-.collage-cell:nth-child(1) { grid-column: 1; grid-row: 1; }
-.collage-cell:nth-child(2) { grid-column: 1; grid-row: 2; }
-.collage-cell:nth-child(3) { grid-column: 2; grid-row: 1 / span 2; }
-
 .what-content { padding-top: 12px; }
+/* The card carousel sits centred in its (equal-height) column so it visually
+   matches the taller text column instead of clinging to the top. */
+.what-cards {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .what-body {
   font-size: 1rem;
   color: var(--text-muted);
@@ -1115,7 +1239,6 @@ body > footer {
 
 /* 1024px */
 @media (max-width: 1024px) {
-  .hero-grid { gap: 40px; }
   .what-grid { gap: 48px; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
 }
@@ -1140,19 +1263,21 @@ body > footer {
   .roles-hint { display: block; }
 }
 
-/* 768px — stack hero (nav responsive rules now in src/chrome/chrome.css) */
+/* 768px — stack hero (copy over carousel); carousel keeps swipe, drops arrows */
 @media (max-width: 768px) {
-  #hero { padding: 1rem 0 2.5rem; }
-  .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 36px; }
   .hero-lead { max-width: 100%; }
+  .hero-carousel { height: clamp(360px, 62vh, 460px); }
+  .hero-arrow { display: none; }
+  .hero-slide-shell { padding-left: clamp(20px, 5%, 32px); padding-right: clamp(20px, 5%, 32px); }
+  .hero-badge { letter-spacing: 6px; }
+
+  .what-cards { max-width: 440px; }
 
   .manifesto-grid { grid-template-columns: 1fr; }
   .app-card { flex: 0 0 82vw; max-width: 340px; }
 
   .what-grid { grid-template-columns: 1fr; gap: 40px; }
-  .collage-grid { grid-template-columns: 1fr 1fr; }
-  .collage-cell--tall .img-ph { height: 220px; }
-  .collage-cell--sq   .img-ph { height: 160px; }
 
   .role-card { flex: 0 0 82vw; max-width: 320px; }
 
@@ -1169,12 +1294,8 @@ body > footer {
   :root { --container-pad: 1.125rem; }
 
   .h-hero { font-size: clamp(2.3rem, 9vw, 3.2rem); }
-  .hero-ctas { flex-direction: column; align-items: flex-end; }
-  .hero-ctas .btn { width: 100%; max-width: 340px; justify-content: center; }
-
-  .collage-grid { gap: 8px; }
-  .collage-cell--tall .img-ph { height: 180px; }
-  .collage-cell--offset { margin-top: 24px; }
+  .hero-headline { font-size: 28px; }
+  .hero-cta { width: 100%; max-width: 340px; justify-content: center; }
 
   .step-img-ph, .step-img-ph .img-ph { height: 200px; }
   .step-text-col { padding: 24px 20px; }
@@ -1195,5 +1316,5 @@ body > footer {
 
 /* Landscape short phone (nav-mobile-menu rule now in src/chrome/chrome.css) */
 @media (max-height: 500px) and (max-width: 900px) {
-  #hero { padding: 1rem 0; }
+  .hero-carousel { height: clamp(280px, 70vh, 380px); }
 }

@@ -193,6 +193,37 @@ export interface SubscriptionStatus {
 // ── Apps support directory (P1) ───────────────────────────────────────────────
 export type AppSupportStatus = "none" | "requested" | "accepted" | "listed";
 
+/** Target OS for a download asset. Mirrors server/lib/backend/contract.ts. */
+export type AppDownloadOs = "windows" | "macos" | "linux";
+
+export interface AppDownload {
+  os: AppDownloadOs;
+  arch?: string | null;
+  label: string;
+  url: string;
+}
+
+export interface AppFeature {
+  icon?: string | null;
+  title: string;
+  body: string;
+}
+
+export interface AppScreenshot {
+  url: string;
+  caption?: string | null;
+}
+
+/** Rich detail-page content rendered natively at /apps/<slug> (apps.content). */
+export interface AppContent {
+  heroTagline?: string | null;
+  features?: AppFeature[];
+  demo?: { videoUrl: string; caption?: string | null } | null;
+  downloads?: AppDownload[];
+  screenshots?: AppScreenshot[];
+  privacyNote?: { title: string; body: string } | null;
+}
+
 export interface AppListing {
   id: string;
   slug: string;
@@ -208,6 +239,8 @@ export interface AppListing {
   siteUrl: string | null;
   listed: boolean;
   isOwner: boolean;
+  /** Detail-page content; present only on the single-app detail response. */
+  content?: AppContent | null;
 }
 
 export interface AppRegisterBody {
@@ -219,6 +252,7 @@ export interface AppRegisterBody {
   description?: string | null;
   usesSharedCoreLib?: boolean;
   siteUrl?: string | null;
+  content?: AppContent | null;
 }
 
 // ── Partner directory + connections (P1) ──────────────────────────────────────

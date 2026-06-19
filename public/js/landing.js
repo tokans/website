@@ -22,15 +22,90 @@ revealEls.forEach(el => revealObs.observe(el));
 
 
 /* ═══════════════════════════════
-   HERO PARTICIPANT CAROUSEL - rotate partner / builder / maintainer cards,
-   animating each card's metric bars as it becomes active.
+   HERO CAROUSEL — full-bleed, auto-advancing frames with crossfade,
+   dot + arrow navigation, swipe, pause-on-hover, and reduced-motion awareness.
+═══════════════════════════════ */
+const heroCarousel = document.querySelector('.hero-carousel');
+if (heroCarousel) {
+  const hSlides   = Array.from(heroCarousel.querySelectorAll('.hero-slide'));
+  const hDotsWrap = document.getElementById('heroDots');
+  const hPrev     = document.getElementById('heroPrev');
+  const hNext     = document.getElementById('heroNext');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let hIdx = 0;
+  let hTimer = null;
+
+  // Image fallback: if a hero image 404s, hide it so the per-slide --hero-fallback
+  // colour shows through instead of a broken-image glyph.
+  hSlides.forEach(slide => {
+    const img = slide.querySelector('.hero-slide-img');
+    if (!img) return;
+    const fail = () => img.classList.add('hero-img-failed');
+    if (img.complete && img.naturalWidth === 0) fail();   // already failed (cached 404)
+    img.addEventListener('error', fail);
+  });
+
+  const hDots = hSlides.map((_, i) => {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'hero-dot' + (i === 0 ? ' active' : '');
+    d.setAttribute('role', 'tab');
+    d.setAttribute('aria-label', `Go to slide ${i + 1}`);
+    d.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    d.addEventListener('click', () => hGoTo(i));
+    if (hDotsWrap) hDotsWrap.appendChild(d);
+    return d;
+  });
+
+  function hGoTo(n) {
+    hSlides[hIdx].classList.remove('active');
+    if (hDots[hIdx]) { hDots[hIdx].classList.remove('active'); hDots[hIdx].setAttribute('aria-selected', 'false'); }
+    hIdx = (n + hSlides.length) % hSlides.length;
+    hSlides[hIdx].classList.add('active');
+    if (hDots[hIdx]) { hDots[hIdx].classList.add('active'); hDots[hIdx].setAttribute('aria-selected', 'true'); }
+    hResetAuto();
+  }
+
+  function hResetAuto() {
+    if (reduceMotion) return;            // honour prefers-reduced-motion: no auto-advance
+    clearInterval(hTimer);
+    hTimer = setInterval(() => hGoTo(hIdx + 1), 5000);
+  }
+  function hStop() { clearInterval(hTimer); }
+
+  if (hPrev) hPrev.addEventListener('click', () => hGoTo(hIdx - 1));
+  if (hNext) hNext.addEventListener('click', () => hGoTo(hIdx + 1));
+
+  // Pause on hover.
+  heroCarousel.addEventListener('mouseenter', hStop);
+  heroCarousel.addEventListener('mouseleave', hResetAuto);
+
+  // Swipe (mobile) — only act on a dominant horizontal gesture.
+  let hStartX = 0, hStartY = 0;
+  heroCarousel.addEventListener('touchstart', e => {
+    hStartX = e.touches[0].clientX; hStartY = e.touches[0].clientY;
+  }, { passive: true });
+  heroCarousel.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - hStartX;
+    const dy = e.changedTouches[0].clientY - hStartY;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) hGoTo(dx < 0 ? hIdx + 1 : hIdx - 1);
+  }, { passive: true });
+
+  hResetAuto();
+}
+
+
+/* ═══════════════════════════════
+   TRACK-RECORD CARD CAROUSEL — rotate partner / builder / contributor cards
+   in the "What is Tokans?" section, animating each card's metric bars as it
+   becomes active. Dot navigation + pause on hover.
 ═══════════════════════════════ */
 const profileCarousel = document.getElementById('profileCarousel');
 if (profileCarousel) {
-  const pSlides = Array.from(profileCarousel.querySelectorAll('.profile-slide'));
+  const pSlides   = Array.from(profileCarousel.querySelectorAll('.profile-slide'));
   const pDotsWrap = document.getElementById('profileDots');
   let pIdx = 0;
-  let pTimer;
+  let pTimer = null;
 
   // Animate a slide's metric bars from 0 to their target widths.
   const animateBars = (slide) => {
@@ -54,10 +129,10 @@ if (profileCarousel) {
 
   function pGoTo(n) {
     pSlides[pIdx].classList.remove('active');
-    pDots[pIdx] && (pDots[pIdx].classList.remove('active'), pDots[pIdx].setAttribute('aria-selected', 'false'));
+    if (pDots[pIdx]) { pDots[pIdx].classList.remove('active'); pDots[pIdx].setAttribute('aria-selected', 'false'); }
     pIdx = (n + pSlides.length) % pSlides.length;
     pSlides[pIdx].classList.add('active');
-    pDots[pIdx] && (pDots[pIdx].classList.add('active'), pDots[pIdx].setAttribute('aria-selected', 'true'));
+    if (pDots[pIdx]) { pDots[pIdx].classList.add('active'); pDots[pIdx].setAttribute('aria-selected', 'true'); }
     animateBars(pSlides[pIdx]);
     pResetAuto();
   }

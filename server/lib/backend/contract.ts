@@ -84,6 +84,47 @@ export interface DownloadGrant {
 // ── Apps support directory (P1) ───────────────────────────────────────────────
 export type AppSupportStatus = "none" | "requested" | "accepted" | "listed";
 
+/** Target OS for a download asset. */
+export type AppDownloadOs = "windows" | "macos" | "linux";
+
+export interface AppDownload {
+  os: AppDownloadOs;
+  /** Optional architecture qualifier, e.g. "x64", "arm64". */
+  arch?: string | null;
+  /** Button/row label, e.g. "Windows (.msi)". */
+  label: string;
+  /** Direct URL to the installer for this platform. */
+  url: string;
+}
+
+export interface AppFeature {
+  /** Optional emoji/icon shown on the feature card. */
+  icon?: string | null;
+  title: string;
+  body: string;
+}
+
+export interface AppScreenshot {
+  url: string;
+  caption?: string | null;
+}
+
+/**
+ * Rich, per-app detail-page content rendered natively on tokans.org at
+ * /apps/<slug>. Stored as the `apps.content` JSONB column; only the detail
+ * endpoint returns it (the directory listing stays lean). All fields optional
+ * so a sparsely-listed app still renders.
+ */
+export interface AppContent {
+  /** Longer hero subtitle; falls back to `tagline` when absent. */
+  heroTagline?: string | null;
+  features?: AppFeature[];
+  demo?: { videoUrl: string; caption?: string | null } | null;
+  downloads?: AppDownload[];
+  screenshots?: AppScreenshot[];
+  privacyNote?: { title: string; body: string } | null;
+}
+
 export interface AppListing {
   id: string;
   slug: string;
@@ -100,6 +141,11 @@ export interface AppListing {
   listed: boolean;
   /** True if the requesting user owns this app. */
   isOwner: boolean;
+  /**
+   * Detail-page content. Present only on the single-app detail response
+   * (GET /api/apps/<id-or-slug>); omitted from directory listings.
+   */
+  content?: AppContent | null;
 }
 
 // ── Partner directory + connections (P1) ──────────────────────────────────────

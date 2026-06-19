@@ -57,6 +57,22 @@ function slugify(name) {
 // Where seeded icons are copied to. Served by the static site at /app-icons/<slug>.
 const ICON_OUT_DIR = join(websiteRoot, "public", "app-icons");
 
+// Optional per-app detail-page content (AppContent), authored by hand and rendered
+// natively at /apps/<slug>. scripts/seed-content/<slug>.json — applied to apps.content.
+const CONTENT_DIR = join(here, "seed-content");
+
+/** Read scripts/seed-content/<slug>.json if present (parsed object, else null). */
+function readAppContent(slug) {
+  const p = join(CONTENT_DIR, `${slug}.json`);
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, "utf8"));
+  } catch (err) {
+    console.warn(`skip content for ${slug}: invalid JSON (${err.message})`);
+    return null;
+  }
+}
+
 // Candidate icon files inside an app, most-preferred first: a real square app
 // icon beats a favicon. Tauri apps keep theirs in src-tauri/icons/.
 const ICON_CANDIDATES = [
@@ -127,19 +143,22 @@ for (const d of dirs) {
   }
 
   const iconUrl = seedIcon(appDir, slug);
+  const content = readAppContent(slug);
 
   await sql`
-    INSERT INTO apps (slug, name, tagline, description, icon_url, uses_sharedcorelib, support_status, listed)
-    VALUES (${slug}, ${d.name}, ${tagline}, ${description}, ${iconUrl}, TRUE, 'listed', TRUE)
+    INSERT INTO apps (slug, name, tagline, description, icon_url, content, uses_sharedcorelib, support_status, listed)
+    VALUES (${slug}, ${d.name}, ${tagline}, ${description}, ${iconUrl},
+            ${content ? JSON.stringify(content) : null}::jsonb, TRUE, 'listed', TRUE)
     ON CONFLICT (slug) DO UPDATE SET
       tagline     = COALESCE(EXCLUDED.tagline, apps.tagline),
       description = COALESCE(EXCLUDED.description, apps.description),
       icon_url    = COALESCE(EXCLUDED.icon_url, apps.icon_url),
+      content     = COALESCE(EXCLUDED.content, apps.content),
       listed      = TRUE,
       updated_at  = NOW()
   `;
   seeded++;
-  console.log(`seeded ${d.name} → ${slug}${iconUrl ? " [icon]" : ""}${tagline ? ` — ${tagline}` : ""}`);
+  console.log(`seeded ${d.name} → ${slug}${iconUrl ? " [icon]" : ""}${content ? " [content]" : ""}${tagline ? ` — ${tagline}` : ""}`);
 }
 
 console.log(`Done: ${seeded} app(s) from ${workspaceRoot}`);

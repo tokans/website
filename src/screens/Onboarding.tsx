@@ -190,6 +190,14 @@ function DoneScreen({
         {role === "builder" && websiteUrl && (
           <SiteSetupInstructions websiteUrl={websiteUrl} />
         )}
+        {role === "builder" && (
+          <div style={{ marginTop: 20, textAlign: "center" }}>
+            <a className="ui-btn ui-btn--primary" href="/list-app">List your app in the directory →</a>
+            <div className="ui-field-hint" style={{ marginTop: 8 }}>
+              Get a native tokans.org page — features, demo and downloads — no hosting needed.
+            </div>
+          </div>
+        )}
         {email && emailVerified === false ? (
           <div className="done-verify-email-notice">
             <strong>Verify your email to complete your profile.</strong>

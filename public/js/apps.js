@@ -53,7 +53,7 @@ export function mount() {
   <div class="ui-step-title">Browse listed apps</div>
   <div id="apps-deck">${appsListHTML(null)}</div>
 </div>
-<div class="dir-cta">Built an app already? <a href="/founders">List your app →</a></div>
+<div class="dir-cta">Built an app already? <a href="/list-app">List your app →</a></div>
 <div class="dir-cta">Build one using our <a target="_blank" href="https://github.com/tokans/sharedCoreLib">sharedCoreLib →</a></div>`.trim();
 
   const deckEl = qs(root, "#apps-deck");

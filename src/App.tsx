@@ -7,6 +7,7 @@ import FirstTokanTask from "./screens/FirstTokanTask.js";
 import MwaMount from "./screens/MwaMount.js";
 import AdminTemplates from "./screens/AdminTemplates.js";
 import OnboardTemplate from "./screens/OnboardTemplate.js";
+import ListApp from "./screens/ListApp.js";
 import type { SessionResponse, SessionPayload, RoleId } from "./lib/types.js";
 
 // ── App state ─────────────────────────────────────────────────────────────────
@@ -53,6 +54,7 @@ export default function App() {
     if (path.startsWith("/professionals") || q === "professionals") return "professionals";
     if (path === "/onboard" || q === "onboard") return "onboard";
     if (path === "/admin" || path.startsWith("/admin/")) return "admin";
+    if (path === "/list-app" || q === "list-app") return "list-app";
     return q;
   });
 
@@ -121,6 +123,12 @@ export default function App() {
   // Admin panel — template management.
   if (flow === "admin") {
     return <AdminTemplates user={session.user} />;
+  }
+
+  // List-your-app onboarding form (/list-app). Authenticated; collects the app's
+  // detail-page content and posts it via registerApp.
+  if (flow === "list-app") {
+    return <ListApp user={session.user} />;
   }
 
   // Template-driven onboarding (/onboard?val=...&ref=...).

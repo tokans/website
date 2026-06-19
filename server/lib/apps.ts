@@ -3,7 +3,7 @@
  * projection; the authoritative acceptance workflow lives in the backend
  * (BE Workflow.NewTask) — see server/lib/backend + docs/BUILD-PLAN.md §2.1.
  */
-import type { AppListing, AppSupportStatus } from "./backend/contract.js";
+import type { AppContent, AppListing, AppSupportStatus } from "./backend/contract.js";
 
 export interface AppRow {
   id: string;
@@ -19,6 +19,8 @@ export interface AppRow {
   support_status: string;
   listed: boolean;
   owner_user_id: string | null;
+  /** Detail-page content (apps.content JSONB); only selected for the detail view. */
+  content?: AppContent | null;
 }
 
 const STATUSES: readonly AppSupportStatus[] = ["none", "requested", "accepted", "listed"];
@@ -44,6 +46,15 @@ export function mapAppRow(row: AppRow, viewerUserId: string | null): AppListing 
     listed: row.listed,
     isOwner: viewerUserId != null && row.owner_user_id === viewerUserId,
   };
+}
+
+/**
+ * Detail-page mapping: the lean directory row plus the rich `content` payload.
+ * Used by the single-app endpoint (GET /api/apps/<id-or-slug>) — never by the
+ * directory listing, which stays lightweight.
+ */
+export function mapAppDetail(row: AppRow, viewerUserId: string | null): AppListing {
+  return { ...mapAppRow(row, viewerUserId), content: row.content ?? null };
 }
 
 export function slugify(name: string): string {
