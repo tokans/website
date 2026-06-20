@@ -1,0 +1,22 @@
+{
+  "heroTagline": "A private, offline-first family health companion. No account, no cloud, no server — your health data never leaves your device.",
+  "features": [
+    { "icon": "👪", "title": "Profiles for the whole family", "body": "Track vitals, goals and medications per person." },
+    { "icon": "📈", "title": "Vitals & trends", "body": "Log weight, blood pressure and glucose; view trends against healthy ranges." },
+    { "icon": "🎯", "title": "Goals with projected ETA", "body": "Set targets and get realistic estimates from your own readings." },
+    { "icon": "⏰", "title": "Gentle reminders", "body": "On-device notifications for water, tasks, medications and schedules." },
+    { "icon": "🧾", "title": "Medical documents", "body": "Encrypted vault for prescriptions, lab reports and insurance cards." },
+    { "icon": "🆘", "title": "Emergency ICE card", "body": "Quick-access medical card with blood group, conditions and allergies." },
+    { "icon": "🔐", "title": "Encrypted vault", "body": "Master-password protected (Argon2id + Stronghold) with AES-256-GCM." },
+    { "icon": "🧘", "title": "Guided movement", "body": "Downloadable yoga and exercise routines." },
+    { "icon": "🔄", "title": "LAN sync", "body": "Sync desktop and mobile directly over your own Wi-Fi — nothing over the internet." }
+  ],
+  "downloads": [
+    { "os": "windows", "arch": "x64", "label": "Windows (.msi)", "url": "https://github.com/tokans/myHealth/releases/download/v0.1.2/myHealth_0.1.2_x64_en-US.msi" },
+    { "os": "macos", "arch": "universal", "label": "macOS (Universal)", "url": "https://github.com/tokans/myHealth/releases/download/v0.1.2/myHealth_0.1.2_universal.dmg" }
+  ],
+  "privacyNote": {
+    "title": "No backend. No telemetry.",
+    "body": "All data lives in a local SQLite database and an encrypted vault on your own machine. myHealth can't phone home — there's nowhere for it to call. The only network use is receive-only: pulling signed public reference content."
+  }
+}
