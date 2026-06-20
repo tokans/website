@@ -1143,7 +1143,7 @@ body > footer {
   flex-direction: column;
   box-shadow: var(--shadow-sm);
 }
-.app-card-top { margin-bottom: 14px; min-height: 22px; }
+.app-card-top { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; min-height: 22px; }
 .app-badge {
   display: inline-flex;
   align-items: center;
@@ -1162,6 +1162,11 @@ body > footer {
 .app-badge--soon {
   background: var(--sky-light);
   color: var(--sky-dark);
+}
+.app-badge--web {
+  background: #EEF2FF;
+  color: #4338CA;
+  border: 1px solid rgba(67,56,202,0.2);
 }
 .app-icon { font-size: 2rem; margin-bottom: 14px; line-height: 1; }
 .app-name {
