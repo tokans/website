@@ -11,10 +11,12 @@
 import { escapeHtml, safeUrl, onReady, fetchJson } from "./html.js";
 
 // ── OS detection ────────────────────────────────────────────────────────────────
-/** Best-effort visitor OS → one of windows | macos | linux | null. */
+/** Best-effort visitor OS → one of windows | macos | linux | android | null. */
 export function detectOs(nav = typeof navigator !== "undefined" ? navigator : {}) {
   const plat = String(nav.userAgentData?.platform || nav.platform || "").toLowerCase();
   const ua = String(nav.userAgent || "").toLowerCase();
+  // Android must be checked before Linux — Android UAs contain "linux".
+  if (plat.includes("android") || ua.includes("android")) return "android";
   if (plat.includes("win") || ua.includes("windows")) return "windows";
   // iPadOS reports "MacIntel"; there's no iOS build, so macOS is the right bucket.
   if (plat.includes("mac") || ua.includes("mac os x") || ua.includes("macintosh")) return "macos";

@@ -30,6 +30,12 @@ describe("detectOs", () => {
     expect(detectOs({ platform: "MacIntel" })).toBe("macos");
     expect(detectOs({ platform: "Linux x86_64" })).toBe("linux");
   });
+  it("detects Android before Linux (Android UAs contain 'linux')", () => {
+    expect(
+      detectOs({ userAgent: "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36" }),
+    ).toBe("android");
+    expect(detectOs({ platform: "Android" })).toBe("android");
+  });
   it("falls back to the user-agent and returns null when unknown", () => {
     expect(detectOs({ userAgent: "Mozilla/5.0 (Windows NT 10.0)" })).toBe("windows");
     expect(detectOs({ platform: "", userAgent: "weird-bot" })).toBeNull();

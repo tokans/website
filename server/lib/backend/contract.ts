@@ -85,7 +85,7 @@ export interface DownloadGrant {
 export type AppSupportStatus = "none" | "requested" | "accepted" | "listed";
 
 /** Target OS for a download asset. */
-export type AppDownloadOs = "windows" | "macos" | "linux";
+export type AppDownloadOs = "windows" | "macos" | "linux" | "android";
 
 export interface AppDownload {
   os: AppDownloadOs;

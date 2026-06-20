@@ -194,7 +194,7 @@ export interface SubscriptionStatus {
 export type AppSupportStatus = "none" | "requested" | "accepted" | "listed";
 
 /** Target OS for a download asset. Mirrors server/lib/backend/contract.ts. */
-export type AppDownloadOs = "windows" | "macos" | "linux";
+export type AppDownloadOs = "windows" | "macos" | "linux" | "android";
 
 export interface AppDownload {
   os: AppDownloadOs;

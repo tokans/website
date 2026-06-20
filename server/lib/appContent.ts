@@ -19,7 +19,7 @@ import type {
 const MAX_FEATURES = 24;
 const MAX_DOWNLOADS = 12;
 const MAX_SHOTS = 12;
-const OSES: readonly AppDownloadOs[] = ["windows", "macos", "linux"];
+const OSES: readonly AppDownloadOs[] = ["windows", "macos", "linux", "android"];
 
 /** Trim + length-cap a string; returns null when empty. */
 function str(v: unknown, max: number): string | null {

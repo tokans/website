@@ -34,6 +34,7 @@ const OS_OPTIONS: { value: AppDownloadOs; label: string }[] = [
   { value: "windows", label: "Windows" },
   { value: "macos", label: "macOS" },
   { value: "linux", label: "Linux" },
+  { value: "android", label: "Android" },
 ];
 
 function slugify(name: string): string {
