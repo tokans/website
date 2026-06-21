@@ -25,6 +25,7 @@ import { withErrorHandling } from "../server/lib/handler.js";
 import appsIndex from "../server/apps/index.js";
 import appsById from "../server/apps/[id].js";
 import appsRequestSupport from "../server/apps/[id]/request-support.js";
+import appsDownload from "../server/apps/[id]/download.js";
 import appApprove from "../server/apps/approve.js";
 import authSignup from "../server/auth/signup.js";
 import authSignin from "../server/auth/signin.js";
@@ -80,6 +81,7 @@ const ROUTES: Route[] = [
   { segs: ["apps"], handler: appsIndex },
   { segs: ["apps", "approve"], handler: appApprove },
   { segs: ["apps", ":id", "request-support"], handler: appsRequestSupport },
+  { segs: ["apps", ":id", "download"], handler: appsDownload },
   { segs: ["apps", ":id"], handler: appsById },
   { segs: ["auth", "signup"], handler: authSignup },
   { segs: ["auth", "signin"], handler: authSignin },

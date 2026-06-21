@@ -24,12 +24,24 @@ export function detectOs(nav = typeof navigator !== "undefined" ? navigator : {}
   return null;
 }
 
+const DOWNLOAD_OSES = ["windows", "macos", "linux", "android"];
+
+/**
+ * Stable same-origin link to the latest-release download for a platform. The
+ * server (GET /api/apps/<slug>/download?os=<os>) resolves the newest GitHub
+ * release at click time and 302-redirects, so links never pin to a stale tag.
+ */
+export function downloadHref(slug, os) {
+  return `/api/apps/${encodeURIComponent(slug)}/download?os=${encodeURIComponent(os)}`;
+}
+
 /**
  * Split downloads into the one to feature (matching the visitor's OS) and the
  * rest. With no detection / no match, everything is "other" (all shown equally).
+ * Entries only need a recognised `os` — the actual URL is resolved server-side.
  */
 export function pickDownloads(downloads, os) {
-  const list = Array.isArray(downloads) ? downloads.filter((d) => d && safeUrl(d.url)) : [];
+  const list = Array.isArray(downloads) ? downloads.filter((d) => d && DOWNLOAD_OSES.includes(d.os)) : [];
   if (!list.length) return { primary: null, others: [] };
   const idx = os ? list.findIndex((d) => d.os === os) : -1;
   if (idx === -1) return { primary: null, others: list };
@@ -37,24 +49,24 @@ export function pickDownloads(downloads, os) {
 }
 
 // ── Render helpers ──────────────────────────────────────────────────────────────
-function downloadBtn(d, primary) {
+function downloadBtn(d, slug, primary) {
   const cls = primary ? "btn btn-primary btn-lg" : "btn btn-outline";
-  return `<a class="${cls}" href="${safeUrl(d.url)}">⬇ ${escapeHtml(d.label || d.os)}</a>`;
+  return `<a class="${cls}" href="${escapeHtml(downloadHref(slug, d.os))}">⬇ ${escapeHtml(d.label || d.os)}</a>`;
 }
 
-function downloadsHTML(downloads, os) {
+function downloadsHTML(downloads, slug, os) {
   const { primary, others } = pickDownloads(downloads, os);
   if (!primary && !others.length) return "";
   if (!primary) {
     // No OS match — present every platform as an equal choice.
-    return `<div class="ad-ctas">${others.map((d) => downloadBtn(d, others.length === 1)).join("")}</div>`;
+    return `<div class="ad-ctas">${others.map((d) => downloadBtn(d, slug, others.length === 1)).join("")}</div>`;
   }
   const otherLinks = others.length
     ? `<div class="ad-dl-other">Other platforms: ${others
-        .map((d) => `<a href="${safeUrl(d.url)}">${escapeHtml(d.label || d.os)}</a>`)
+        .map((d) => `<a href="${escapeHtml(downloadHref(slug, d.os))}">${escapeHtml(d.label || d.os)}</a>`)
         .join(" · ")}</div>`
     : "";
-  return `<div class="ad-ctas">${downloadBtn(primary, true)}</div>${otherLinks}`;
+  return `<div class="ad-ctas">${downloadBtn(primary, slug, true)}</div>${otherLinks}`;
 }
 
 function featuresHTML(features) {
@@ -150,7 +162,7 @@ export function appDetailHTML(app) {
       <p class="eyebrow">${app.usesSharedCoreLib ? "// Privacy-native · sharedCoreLib" : "// On the Tokans network"}</p>
       <h1 class="h-hero">${escapeHtml(app.name)}</h1>
       ${heroSub ? `<p class="lead">${escapeHtml(heroSub)}</p>` : ""}
-      ${downloadsHTML(content.downloads, detectOs())}
+      ${downloadsHTML(content.downloads, app.slug, detectOs())}
       ${secondary.length ? `<div class="ad-ctas">${secondary.join("")}</div>` : ""}
     </div>
   </section>
