@@ -16,10 +16,9 @@
     "caption": "Importing a spreadsheet in myFinance."
   },
   "downloads": [
-    { "os": "windows", "arch": "x64", "label": "Windows (.msi)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/myFinance_1.0.3_x64_en-US.msi" },
-    { "os": "macos", "arch": "arm64", "label": "macOS (Apple Silicon)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/myFinance_1.0.3_aarch64.dmg" },
-    { "os": "macos", "arch": "x64", "label": "macOS (Intel)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/myFinance_1.0.3_x64.dmg" },
-    { "os": "android", "arch": "universal", "label": "Android (.apk)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.3/app-universal-debug.apk" }
+    { "os": "windows", "arch": "x64", "label": "Windows (.msi)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.4/myFinance_1.0.4_x64_en-US.msi" },
+    { "os": "macos", "arch": "universal", "label": "macOS (Universal)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.4/myFinance_1.0.4_universal.dmg" },
+    { "os": "android", "arch": "universal", "label": "Android (.apk)", "url": "https://github.com/tokans/myFinance/releases/download/v1.0.4/app-universal-debug.apk" }
   ],
   "privacyNote": {
     "title": "No backend. No telemetry.",
