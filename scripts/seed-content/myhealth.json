@@ -13,7 +13,8 @@
   ],
   "downloads": [
     { "os": "windows", "arch": "x64", "label": "Windows (.msi)", "url": "https://github.com/tokans/myHealth/releases/download/v0.1.2/myHealth_0.1.2_x64_en-US.msi" },
-    { "os": "macos", "arch": "universal", "label": "macOS (Universal)", "url": "https://github.com/tokans/myHealth/releases/download/v0.1.2/myHealth_0.1.2_universal.dmg" }
+    { "os": "macos", "arch": "universal", "label": "macOS (Universal)", "url": "https://github.com/tokans/myHealth/releases/download/v0.1.2/myHealth_0.1.2_universal.dmg" },
+    { "os": "android", "arch": "universal", "label": "Android (.apk)", "url": "https://github.com/tokans/myHealth/releases/download/v0.1.2/app-universal-debug.apk" }
   ],
   "privacyNote": {
     "title": "No backend. No telemetry.",
