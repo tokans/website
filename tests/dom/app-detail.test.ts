@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { AppListing } from "../../src/lib/types.js";
-import { detectOs, pickDownloads, appDetailHTML } from "../../public/js/app-detail.js";
+import { detectOs, pickDownloads, downloadHref, appDetailHTML } from "../../public/js/app-detail.js";
 
 const app = (over: Partial<AppListing> = {}): AppListing => ({
   id: "a1",
@@ -53,12 +53,18 @@ describe("pickDownloads", () => {
     expect(primary).toBeNull();
     expect(others).toHaveLength(2);
   });
-  it("drops downloads with unsafe URLs", () => {
+  it("drops entries without a recognised OS (the URL is resolved server-side)", () => {
     const { others } = pickDownloads(
-      [{ os: "windows" as const, label: "x", url: "javascript:alert(1)" }],
+      [{ os: "solaris" as unknown as "windows", label: "x", url: "https://ex.com/a" }],
       null,
     );
     expect(others).toHaveLength(0);
+  });
+});
+
+describe("downloadHref", () => {
+  it("builds a same-origin latest-release endpoint URL per OS", () => {
+    expect(downloadHref("myfinance", "windows")).toBe("/api/apps/myfinance/download?os=windows");
   });
 });
 
@@ -82,7 +88,8 @@ describe("appDetailHTML", () => {
     );
     expect(html).toContain("Net worth");
     expect(html).toContain('src="https://ex.com/demo.mp4"');
-    // At least one download button is present.
-    expect(html).toContain("app.msi");
+    // Download buttons link to the latest-release resolver, not a pinned URL.
+    expect(html).toContain("/api/apps/myfinance/download?os=windows");
+    expect(html).not.toContain("app.msi");
   });
 });
